@@ -8,8 +8,7 @@ use Zanra\Framework\Translator\Translator;
 
 class Application
 {
-  const LOCALE      = '_locale';
-  
+  const LOCALE      = "default.locale";
   const APPLICATION = "application";
   const ROUTING     = "routing.file";
   const FILTERS     = "filters.file";
@@ -72,8 +71,10 @@ class Application
     foreach ($this->getFilters() as $class => $method) {
       $filterNamespaceClass = "\\Filter\\{$class}Filter";
       $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
+      
       if (null === $filterClass)
           throw new \Zanra\Framework\Exception\FilterNotFoundException(sprintf('Class "%s" not found', $filterNamespaceClass));
+      
       if (!method_exists($filterClass, $method))
           throw new \Zanra\Framework\Exception\FilterMethodNotFoundException(sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
       
@@ -114,11 +115,13 @@ class Application
       throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
       sprintf('key "%s" path "%s" not found in resources [%s]', self::FILTERS, $filtersCfg, self::APPLICATION));
     
+    if (!isset($this->resources->{self::LOCALE}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
+      sprintf('key "%s" not declared in resources [%s]', self::LOCALE, self::APPLICATION));
+    
     $this->routes             = $this->fileLoader->load($routesCfg);
     $this->filters            = $this->fileLoader->load($filtersCfg);
-    
-    // default locale
-    $this->defaultLocale      = isset($this->resources->{self::APPLICATION}->locale) ? $this->resources->{self::APPLICATION}->locale : 'en';
+    $this->defaultLocale      = $this->resources->{self::APPLICATION}->{self::LOCALE};
   }
   
   public function mvcHandle()
@@ -425,7 +428,7 @@ class Application
           if (!$this->hasSession()) {
               $locale = $this->defaultLocale;
           } else {
-              $sessionLocale = $this->getSession()->get(self::LOCALE);
+              $sessionLocale = $this->getSession()->get('_locale');
               $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
           }
       }
