@@ -115,7 +115,7 @@ class Application
       throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
       sprintf('key "%s" path "%s" not found in resources [%s]', self::FILTERS, $filtersCfg, self::APPLICATION));
     
-    if (!isset($this->resources->{self::LOCALE}))
+    if (!isset($this->resources->{self::APPLICATION}->{self::LOCALE}))
       throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
       sprintf('key "%s" not declared in resources [%s]', self::LOCALE, self::APPLICATION));
     
