@@ -233,8 +233,8 @@ class Application
     return $this->urlBag->getUrl();
   }
   
-	/**
-		*  Get path
+  /**
+   *  Get path
    *  return String
    *  app->getPath()
    */
@@ -242,7 +242,7 @@ class Application
   {
     return $this->urlBag->getPath();
   }
-	
+  
   /**
    *  Get context
    *  return String
