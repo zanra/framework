@@ -8,17 +8,19 @@ use Zanra\Framework\Translator\Translator;
 
 class Application
 {
-  const LOCALE      = "default.locale";
-  const APPLICATION = "application";
-  const ROUTING     = "routing.file";
-  const FILTERS     = "filters.file";
-  const TRANSLATION = "translation.dir";
-  const TEMPLATE    = "template.dir";
-  const CACHE       = "cache.dir";
+  const RES_LOCALE_KEY = "default.locale";
+  const RES_APPLICATION_KEY = "application";
+  const RES_ROUTING_KEY = "routing.file";
+  const RES_FILTERS_KEY = "filters.file";
+  const RES_TRANSLATION_KEY = "translation.dir";
+  const RES_TEMPLATE_KEY = "template.dir";
+  const RES_CACHE_KEY = "cache.dir";
   
+	const SESSION_LOCALE_KEY = "_locale";
+	
   private $resources = array();
-  private $routes    = array();
-  private $filters   = array();
+  private $routes = array();
+  private $filters = array();
   
   private $route;
   private $controller;
@@ -28,15 +30,15 @@ class Application
   private $urlBag;
   private $router;
   private $fileLoader;
-  private $fileLoaderContext = null;
+  private $configRealPath = null;
   
   private $translator;
   private $defaultLocale;
   
   private $template;
   
-  private $configLoaded     = false;
-  private $filtersLoaded    = false;
+  private $configLoaded  = false;
+  private $filtersLoaded = false;
   
   private static $_instance = null;
   
@@ -58,12 +60,12 @@ class Application
     return false;
   }
   
-  private function getFileLoaderContext()
+  private function getConfigRealPath()
   {
-    if (null === $this->fileLoaderContext)
+    if (null === $this->configRealPath)
        throw new \Zanra\Framework\Exception\LoadConfigFileException(sprintf('please call "%s"', 'loadConfig'));
        
-    return $this->fileLoaderContext;
+    return $this->configRealPath;
   }
   
   private function loadFilters()
@@ -88,40 +90,40 @@ class Application
       return;
     }
     
-    $this->configLoaded       = true;
-    $this->fileLoaderContext  = dirname($config);
-    $this->resources          = $this->fileLoader->load($config);
+    $this->configLoaded   = true;
+    $this->configRealPath = dirname($config);
+    $this->resources      = $this->fileLoader->load($config);
     
-    if (!isset($this->resources->{self::APPLICATION}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources', self::APPLICATION));
+    if (!isset($this->resources->{self::RES_APPLICATION_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
     
-    if (!isset($this->resources->{self::APPLICATION}->{self::ROUTING}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources [%s]', self::ROUTING, self::APPLICATION));
+    if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('key "%s" not declared in resources [%s] section', self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
       
-    if (!isset($this->resources->{self::APPLICATION}->{self::FILTERS}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources [%s]', self::FILTERS, self::APPLICATION));
+    if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('key "%s" not declared in resources [%s] section', self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
-    $routesCfg                = $this->fileLoaderContext . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION}->{self::ROUTING};
-    $filtersCfg               = $this->fileLoaderContext . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION}->{self::FILTERS};
+    $routesCfg            = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY};
+    $filtersCfg           = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY};
     
     if (!file_exists($routesCfg))
       throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
-      sprintf('key "%s" path "%s" not found in resources [%s]', self::ROUTING, $routesCfg, self::APPLICATION));
+      sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $routesCfg, self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
     
     if (!file_exists($filtersCfg))
       throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
-      sprintf('key "%s" path "%s" not found in resources [%s]', self::FILTERS, $filtersCfg, self::APPLICATION));
+      sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $filtersCfg, self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
-    if (!isset($this->resources->{self::APPLICATION}->{self::LOCALE}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources [%s]', self::LOCALE, self::APPLICATION));
+    if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('resource key "%s" not declared in resources [%s] section', self::RES_LOCALE_KEY, self::RES_APPLICATION_KEY));
     
-    $this->routes             = $this->fileLoader->load($routesCfg);
-    $this->filters            = $this->fileLoader->load($filtersCfg);
-    $this->defaultLocale      = $this->resources->{self::APPLICATION}->{self::LOCALE};
+    $this->routes         = $this->fileLoader->load($routesCfg);
+    $this->filters        = $this->fileLoader->load($filtersCfg);
+    $this->defaultLocale  = $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY};
   }
   
   public function mvcHandle()
@@ -130,7 +132,7 @@ class Application
           return;
       }
       
-      $this->router      = new Router($this->routes, $this->urlBag);
+      $this->router     = new Router($this->routes, $this->urlBag);
       
       // match current request
       if (false === $matches = $this->router->matchRequest()) {
@@ -293,7 +295,7 @@ class Application
    */
   public function getPort()
   {
-    return $this->urlBag->gePort();
+    return $this->urlBag->getPort();
   }
   
   /**
@@ -388,17 +390,17 @@ class Application
    */
   public function renderView($filename, array $vars = array())
   {
-    if (!isset($this->getResources()->{self::APPLICATION}->{self::TEMPLATE}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE, self::APPLICATION));
+    if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('key "%s" not declared in resources [%s] section', self::RES_TEMPLATE_KEY, self::RES_APPLICATION_KEY));
       
-    if (!isset($this->getResources()->{self::APPLICATION}->{self::CACHE}))
-      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-      sprintf('key "%s" not declared in resources [%s] section', self::CACHE, self::APPLICATION));
+    if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('key "%s" not declared in resources [%s] section', self::RES_CACHE_KEY, self::RES_APPLICATION_KEY));
     
     if (null === $this->template) {
-      $templateDir = $this->getFileLoaderContext() . DIRECTORY_SEPARATOR . $this->getResources()->{self::APPLICATION}->{self::TEMPLATE};
-      $cacheDir = $this->getFileLoaderContext() . DIRECTORY_SEPARATOR . $this->getResources()->{self::APPLICATION}->{self::CACHE};
+      $templateDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY};
+      $cacheDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY};
       $this->template = new \Zanra\Framework\Template($templateDir, $cacheDir);
     }
     
@@ -413,14 +415,14 @@ class Application
    */
   public function translate($message, $locale = null)
   {
-      if (!isset($this->getResources()->{self::APPLICATION}->{self::TRANSLATION}))
-          throw new \Zanra\Framework\Exception\ResourceKeyNotFoundExtensionException(
-          sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION, self::APPLICATION));
+      if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY}))
+          throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+          sprintf('resource key "%s" not declared in resources [%s] section', self::RES_TRANSLATION_KEY, self::RES_APPLICATION_KEY));
               
       if (null === $this->translator) {
           $this->translator = new Translator($this->fileLoader);
           
-          $translationDir = $this->getFileLoaderContext() . DIRECTORY_SEPARATOR . $this->getResources()->{self::APPLICATION}->{self::TRANSLATION};
+          $translationDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY};
           $this->translator->setTranslationDir($translationDir);
       }
       
@@ -428,7 +430,7 @@ class Application
           if (!$this->hasSession()) {
               $locale = $this->defaultLocale;
           } else {
-              $sessionLocale = $this->getSession()->get('_locale');
+              $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
               $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
           }
       }
