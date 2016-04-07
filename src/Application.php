@@ -62,8 +62,9 @@ class Application
   
   private function getConfigRealPath()
   {
-    if (null === $this->configRealPath)
-       throw new \Zanra\Framework\Exception\LoadConfigFileException(sprintf('please call "%s"', 'loadConfig'));
+    if (false === $this->configLoaded)
+       throw new \Zanra\Framework\Exception\LoadConfigFileException(
+       sprintf('Please call "%s"', __CLASS__ . "::loadConfig"));
        
     return $this->configRealPath;
   }
@@ -131,6 +132,10 @@ class Application
       if (null !== $this->router) {
           return;
       }
+      
+      if (false === $this->configLoaded)
+       throw new \Zanra\Framework\Exception\LoadConfigFileException(
+       sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
       
       $this->router     = new Router($this->routes, $this->urlBag);
       
