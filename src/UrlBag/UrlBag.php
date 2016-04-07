@@ -48,7 +48,7 @@ class UrlBag implements UrlBagInterface
     $info             = pathinfo($scriptName);
     
     $this->context    = !empty($info['basename']) ? '/'.$info['basename'] : '';
-		
+    
     $this->scheme     = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
     $this->host       = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
     $this->port       = !empty($parseUrl['port']) ? "{$parseUrl['port']}" : '';
@@ -58,9 +58,9 @@ class UrlBag implements UrlBagInterface
     $this->baseUrl    = $this->scheme . "://" . $this->host . ":" . $this->port . $this->basePath;
     $this->contextUrl = preg_replace("#{$this->context}#", '', preg_replace("#{$this->basePath}#", '', $this->path)) | '/';
     
-		// if php cli or if mod_rewrite On 
-    if (php_sapi_name() !== 'cli' || false === $this->urlRewriting()) {
-			 $this->context = '';
+    // if php cli or if mod_rewrite On 
+    if (php_sapi_name() == 'cli' || true === $this->urlRewriting()) {
+       $this->context = '';
     } else {
       if (false == preg_match("#^{$this->baseUrl}{$this->context}#", $this->getUrl())) {
         header("location:{$scriptName}/");

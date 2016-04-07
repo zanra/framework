@@ -16,8 +16,8 @@ class Application
   const RES_TEMPLATE_KEY = "template.dir";
   const RES_CACHE_KEY = "cache.dir";
   
-	const SESSION_LOCALE_KEY = "_locale";
-	
+  const SESSION_LOCALE_KEY = "_locale";
+  
   private $resources = array();
   private $routes = array();
   private $filters = array();
@@ -262,6 +262,10 @@ class Application
    *  Get context url
    *  return String
    *  app->getContextUrl()
+   *
+   *  Return converted url to framework url format.
+   *  ex: http://www.zanra.local/bootstrap.php/test/hello => /test/hello
+   *  ex: http://www.zanra.local/bootstrap.php/home/10/read => /home/10/read
    */
   public function getContextUrl()
   {
