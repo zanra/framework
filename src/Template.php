@@ -8,8 +8,6 @@ class Template
   private $loader;
   private $template;
   
-  private static $_instance = null;
-  
   public function __Construct($templateDir, $cacheDir = false)
   {
     if (false === realpath($templateDir))
