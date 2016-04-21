@@ -260,7 +260,7 @@ class Application
    */
   public function getAssetPath()
   {
-    return $this->urlBag->assetPath;
+    return $this->urlBag->getAssetPath();
   }
   
   /**
@@ -270,7 +270,7 @@ class Application
    */
   public function getBasePath()
   {
-    return $this->urlBag->basePath;
+    return $this->urlBag->getBasePath();
   }
   
   /**
@@ -280,7 +280,7 @@ class Application
    */
   public function getBaseUrl()
   {
-    return $this->urlBag->baseUrl;
+    return $this->urlBag->getBaseUrl();
   }
   
   /**
