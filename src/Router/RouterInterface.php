@@ -5,5 +5,5 @@ interface RouterInterface
 {
   public function matchRequest();
   
-  public function generateContextUrl($routename, array $parameters = array());
+  public function generateUrl($routename, array $parameters = array());
 }

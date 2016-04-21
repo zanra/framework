@@ -14,9 +14,9 @@ interface UrlBagInterface
   public function getPath();
   
   /**
-   *  application context
+   *  getAssetPath
    */
-  public function getContext();
+  public function getAssetPath();
   
   /**
    *  application relative url
@@ -27,13 +27,6 @@ interface UrlBagInterface
    *  application absolute url
    */
   public function getBaseUrl();
-  
-  /**
-   *  Get host
-   *  return String
-   *  app->getContextUrl()
-   */
-  public function getContextUrl();
   
   /**
    *  Get host

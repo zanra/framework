@@ -2,6 +2,7 @@
 namespace Zanra\Framework;
 
 use Zanra\Framework\Exception\TemplateDirectoryNotFoundException;
+use Zanra\Framework\Application;
 
 class Template
 {
@@ -21,10 +22,7 @@ class Template
     ));
     
     // Extension
-    $this->template->addExtension(new \Zanra\Framework\TwigExtend\Globals());
-    $this->template->addExtension(new \Zanra\Framework\TwigExtend\Filters());
-    $this->template->addExtension(new \Zanra\Framework\TwigExtend\Functions());
-    $this->template->addExtension(new \Zanra\Framework\TwigExtend\Operators());
+    $this->template->addGlobal('app', Application::getInstance());
   }
   
   public function render($filename, array $vars = array())

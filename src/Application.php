@@ -254,27 +254,33 @@ class Application
   }
   
   /**
-   *  Get context
+   *  Get asset path
    *  return String
-   *  app->getContext()
+   *  app->getAssetPath()
    */
-  public function getContext()
+  public function getAssetPath()
   {
-    return $this->urlBag->getContext();
+    return $this->urlBag->assetPath;
   }
   
   /**
-   *  Get context url
+   *  Get base path
    *  return String
-   *  app->getContextUrl()
-   *
-   *  Return converted url to framework url format.
-   *  ex: http://www.zanra.local/bootstrap.php/test/hello => /test/hello
-   *  ex: http://www.zanra.local/bootstrap.php/home/10/read => /home/10/read
+   *  app->getBasePath()
    */
-  public function getContextUrl()
+  public function getBasePath()
   {
-    return $this->urlBag->getContextUrl();
+    return $this->urlBag->basePath;
+  }
+  
+  /**
+   *  Get base url
+   *  return String
+   *  app->getBaseUrl()
+   */
+  public function getBaseUrl()
+  {
+    return $this->urlBag->baseUrl;
   }
   
   /**
@@ -315,7 +321,7 @@ class Application
    */
   public function url($route, $params = array())
   {
-    return $this->urlBag->getBaseUrl() . $this->router->generateContextUrl($route, $params);
+    return $this->urlBag->getBaseUrl() . $this->router->generateUrl($route, $params);
   }
   
   /**
@@ -326,7 +332,7 @@ class Application
    */
   public function path($route, $params = array())
   {
-    return $this->urlBag->getBasePath() . $this->router->generateContextUrl($route, $params);
+    return $this->urlBag->getBasePath() . $this->router->generateUrl($route, $params);
   }
   
   /**
@@ -337,7 +343,7 @@ class Application
    */
   public function asset($path)
   {
-    return $this->urlBag->getBasePath() . '/' . $path;
+    return $this->urlBag->getAssetPath() . '/' . $path;
   }
   
   /**

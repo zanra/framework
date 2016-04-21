@@ -13,8 +13,7 @@ class UrlBag implements UrlBagInterface
   private $port;
   private $baseUrl;
   private $basePath;
-  private $contextUrl;
-  private $context;
+  private $assetPath;
   private $customUrl;
   
   public function __construct($customUrl = null)
@@ -47,24 +46,19 @@ class UrlBag implements UrlBagInterface
     
     $info             = pathinfo($scriptName);
     
-    $this->context    = !empty($info['basename']) ? '/'.$info['basename'] : '';
-    
     $this->scheme     = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
     $this->host       = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
     $this->port       = !empty($parseUrl['port']) ? "{$parseUrl['port']}" : '';
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
     
-    $this->basePath   = rtrim(preg_replace("#{$this->context}$#", '', $scriptName), '/');
-    $this->baseUrl    = $this->scheme . "://" . $this->host . ":" . $this->port . $this->basePath;
-    $this->contextUrl = preg_replace("#{$this->context}#", '', preg_replace("#{$this->basePath}#", '', $this->path)) | '/';
+    $context          = !empty($info['basename']) ? '/'.$info['basename'] : '';
+    $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '';
+    $this->basePath   = !empty($this->assetPath) ? "{$this->assetPath}{$context}" : '';
+    $this->baseUrl    = "{$this->scheme}://{$this->host}:{$this->port}{$this->basePath}";
     
     // if php cli or if mod_rewrite On 
-    if (php_sapi_name() == 'cli' || true === $this->urlRewriting()) {
-       $this->context = '';
-    } else {
-      if (false == preg_match("#^{$this->baseUrl}{$this->context}#", $this->getUrl())) {
-        header("location:{$scriptName}/");
-      }
+    if (php_sapi_name() != 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
+      header("location:{$scriptName}/");
     }
   }
   
@@ -96,11 +90,11 @@ class UrlBag implements UrlBagInterface
   }
   
   /**
-   *  getContext
+   *  getAssetPath
    */
-  public function getContext()
+  public function getAssetPath()
   {
-    return $this->context;
+    return $this->assetPath;
   }
   
   /**
@@ -117,14 +111,6 @@ class UrlBag implements UrlBagInterface
   public function getBaseUrl()
   {
     return $this->baseUrl;
-  }
-  
-  /**
-   *  getContextUrl
-   */
-  public function getContextUrl()
-  {
-    return $this->contextUrl;
   }
   
   /**

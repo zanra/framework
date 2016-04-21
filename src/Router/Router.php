@@ -166,27 +166,28 @@ class Router implements RouterInterface
   public function matchRequest()
   {
     // Search $contextUrl and if not found search contextUrl with "/" to match empty parameter;
-    $contextUrl      = $this->urlBag->getContextUrl();
-    $testContextUrls = array($contextUrl);
+    $url         = $this->urlBag->getPath();
+    $rootUrl     = $this->urlBag->getBasePath() . '/';
+    $testUrls    = array($url);
     
-    if($contextUrl !== '/')
-      array_push($testContextUrls, "{$contextUrl}/");
+    if($url !== $rootUrl)
+      array_push($testUrls, "{$url}/");
       
-    foreach ($testContextUrls as $testContextUrl) {
+    foreach ($testUrls as $testUrl) {
       
       foreach ($this->routes as $routename => $route) {
         
-        $routePattern = $this->getRoutePattern($route);
+        $routePattern = $this->urlBag->getBasePath() . $this->getRoutePattern($route);
         
-        if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $contextUrl) && $contextUrl != '/') {
+        if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $url) && $url != $rootUrl) {
           continue;
         }
         
         $delimiters       = $this->getDelimiters($routePattern);
-        $uriValues        = $this->extractValues($testContextUrl, $delimiters);
+        $uriValues        = $this->extractValues($testUrl, $delimiters);
         $buildUrl         = $this->buildUrl($delimiters, $uriValues);
         
-        if ($buildUrl == $testContextUrl) {
+        if ($buildUrl == $testUrl) {
           
           $defaults       = $this->getRouteParams($route);
           
@@ -209,9 +210,9 @@ class Router implements RouterInterface
     return false;
   }
   
-  public function generateContextUrl($routename, array $params = array())
+  public function generateUrl($routename, array $params = array())
   {
-    $contextUrl = null;
+    $url = null;
     
     if (property_exists($this->routes, $routename)) {
       
@@ -230,16 +231,16 @@ class Router implements RouterInterface
       $defaults     = $this->getRouteParams($route);
       $slugs        = array_merge($slugs, $params);
       $slugs        = $this->setSlugDefaultValues($slugs, $defaults, false);
-      $contextUrl   = $this->buildUrl($delimiters, array_values($slugs));
+      $url          = $this->buildUrl($delimiters, array_values($slugs));
       
       if (!preg_match("#/$#", $routePattern)) {
-        $contextUrl = preg_replace("#/$#","",$contextUrl);
+        $url = preg_replace("#/$#", "", $url);
       }
       
     } else {
       throw new RouteNotFoundException(sprintf('unable to find Route "%s"', $routename));
     }
     
-    return $this->urlBag->getContext() . $contextUrl;
+    return $url;
   }
 }
