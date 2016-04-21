@@ -141,7 +141,7 @@ class Application
       
       // match current request
       if (false === $matches = $this->router->matchRequest()) {
-        throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(sprintf('No route found for "%s"', $this->getContextUrl()));
+        throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(sprintf('No route found for "%s"', $this->urlBag->getUrl()));
       }
     
       $this->route      = $matches["route"];
