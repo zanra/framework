@@ -46,18 +46,19 @@ class UrlBag implements UrlBagInterface
     
     $info             = pathinfo($scriptName);
     
+    $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "/{$info['basename']}" : '';
+    
     $this->scheme     = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
     $this->host       = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
     $this->port       = !empty($parseUrl['port']) ? "{$parseUrl['port']}" : '';
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
     
-    $context          = !empty($info['basename']) ? '/'.$info['basename'] : '';
     $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '';
     $this->basePath   = !empty($this->assetPath) ? "{$this->assetPath}{$context}" : '';
     $this->baseUrl    = "{$this->scheme}://{$this->host}:{$this->port}{$this->basePath}";
     
     // if php cli or if mod_rewrite On 
-    if (php_sapi_name() != 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
+    if (php_sapi_name() !== 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
       header("location:{$scriptName}/");
     }
   }
