@@ -50,7 +50,7 @@ class Session
   */
   public function getFlash()
   {
-    return \Core\Flash::getInstance();
+    return \Zanra\Framework\Flash::getInstance();
   }
   
   public static function getInstance()
