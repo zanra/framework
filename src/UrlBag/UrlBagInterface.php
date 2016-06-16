@@ -27,25 +27,4 @@ interface UrlBagInterface
    *  application absolute url
    */
   public function getBaseUrl();
-  
-  /**
-   *  Get host
-   *  return String
-   *  app->getHost()
-   */
-  public function getHost();
-  
-  /**
-   *  Get scheme
-   *  return String
-   *  app->getScheme()
-   */
-  public function getScheme();
-  
-  /**
-   *  Get port
-   *  return String
-   *  app->getPort()
-   */
-  public function getPort();
 }

@@ -284,36 +284,6 @@ class Application
   }
   
   /**
-   *  Get scheme
-   *  return String
-   *  app->getScheme()
-   */
-  public function getScheme()
-  {
-    return $this->urlBag->getScheme();
-  }
-  
-  /**
-   *  Get host
-   *  return String
-   *  app->getHost()
-   */
-  public function getHost()
-  {
-    return $this->urlBag->getHost();
-  }
-  
-  /**
-   *  Get port
-   *  return String
-   *  app->getPort()
-   */
-  public function getPort()
-  {
-    return $this->urlBag->getPort();
-  }
-  
-  /**
    *  generate url
    *  params string $route, array $params
    *  return String

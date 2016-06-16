@@ -8,9 +8,6 @@ class UrlBag implements UrlBagInterface
 {
   private $url;
   private $path;
-  private $scheme;
-  private $host;
-  private $port;
   private $baseUrl;
   private $basePath;
   private $assetPath;
@@ -32,7 +29,7 @@ class UrlBag implements UrlBagInterface
    */
   private function urlRewriting()
   {
-    return (isset($_SERVER['REDIRECT_URL']) ? true : false);
+    return (isset($_SERVER['REDIRECT_URL'])||isset($_SERVER['BASE']) ? true : false);
   }
   
   /**
@@ -42,21 +39,32 @@ class UrlBag implements UrlBagInterface
   {
     $scriptName       = (php_sapi_name() !== 'cli') ? $_SERVER['SCRIPT_NAME'] : '';
     
-    $parseUrl         = parse_url($this->getUrl());
+    if (php_sapi_name() !== 'cli' && null === $this->customUrl) {
+      $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
+      $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
+      $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
+      $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
+      
+      $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
+    } else {
+      $this->url = $this->customUrl;
+    }
+
+    $parseUrl         = parse_url($this->url);
     
     $info             = pathinfo($scriptName);
     
     $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "/{$info['basename']}" : '';
     
-    $this->scheme     = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
-    $this->host       = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
-    $this->port       = !empty($parseUrl['port']) ? "{$parseUrl['port']}" : '';
+    $scheme           = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
+    $host             = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
+    $port             = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
+
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
-    
     $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '';
     $this->basePath   = !empty($this->assetPath) ? "{$this->assetPath}{$context}" : '';
-    $this->baseUrl    = "{$this->scheme}://{$this->host}:{$this->port}{$this->basePath}";
-    
+    $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
+
     // if php cli or if mod_rewrite On 
     if (php_sapi_name() !== 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
       header("location:{$scriptName}/");
@@ -68,17 +76,6 @@ class UrlBag implements UrlBagInterface
    */
   public function getUrl()
   {
-    if (php_sapi_name() !== 'cli' && null === $this->customUrl) {
-      $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
-      $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
-      $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
-      $port = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
-      
-      $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
-    } else {
-      $this->url = $this->customUrl;
-    }
-    
     return $this->url;
   }
   
@@ -112,35 +109,5 @@ class UrlBag implements UrlBagInterface
   public function getBaseUrl()
   {
     return $this->baseUrl;
-  }
-  
-  /**
-   *  Get host
-   *  return String
-   *  app->getHost()
-   */
-  public function getHost()
-  {
-    return $this->host;
-  }
-  
-  /**
-   *  Get scheme
-   *  return String
-   *  app->getScheme()
-   */
-  public function getScheme()
-  {
-    return $this->scheme;
-  }
-  
-  /**
-   *  Get port
-   *  return String
-   *  app->getPort()
-   */
-  public function getPort()
-  {
-    return $this->port;
   }
 }
