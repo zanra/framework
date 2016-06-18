@@ -313,7 +313,7 @@ class Application
    */
   public function asset($path)
   {
-    return $this->urlBag->getAssetPath() . '/' . $path;
+    return $this->urlBag->getAssetPath() . $path;
   }
   
   /**

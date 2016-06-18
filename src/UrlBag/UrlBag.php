@@ -54,14 +54,14 @@ class UrlBag implements UrlBagInterface
     
     $info             = pathinfo($scriptName);
     
-    $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "/{$info['basename']}" : '';
+    $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "{$info['basename']}" : '';
     
     $scheme           = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
     $host             = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
     $port             = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
 
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
-    $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '';
+    $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '/';
     $this->basePath   = !empty($this->assetPath) ? "{$this->assetPath}{$context}" : '';
     $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
 
