@@ -166,8 +166,8 @@ class Router implements RouterInterface
   public function matchRequest()
   {
     // Search $contextUrl and if not found search contextUrl with "/" to match empty parameter;
-    $url         = $this->urlBag->getPath();
-    $rootUrl     = $this->urlBag->getBasePath() . '/';
+    $url         = $this->urlBag->getUrl();
+    $rootUrl     = $this->urlBag->getBaseUrl() . '/';
     $testUrls    = array($url);
     
     if($url !== $rootUrl)
@@ -177,7 +177,7 @@ class Router implements RouterInterface
       
       foreach ($this->routes as $routename => $route) {
         
-        $routePattern = $this->urlBag->getBasePath() . $this->getRoutePattern($route);
+        $routePattern = $this->urlBag->getBaseUrl() . $this->getRoutePattern($route);
         
         if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $url) && $url != $rootUrl) {
           continue;

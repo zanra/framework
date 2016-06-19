@@ -19,11 +19,6 @@ interface UrlBagInterface
   public function getAssetPath();
   
   /**
-   *  application relative url
-   */
-  public function getBasePath();
-  
-  /**
    *  application absolute url
    */
   public function getBaseUrl();
