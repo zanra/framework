@@ -30,29 +30,29 @@ class UrlBag implements UrlBagInterface
   {
     return (isset($_SERVER['REDIRECT_URL'])||isset($_SERVER['BASE'])||(!isset($_SERVER['PATH_TRANSLATED']))) ? true : false;
   }
-  
+
   /**
    *  initializeUrl
    */
   private function initializeUrl()
   {
     $scriptName       = (php_sapi_name() !== 'cli') ? $_SERVER['SCRIPT_NAME'] : '';
-    
+
     if (php_sapi_name() !== 'cli' && null === $this->customUrl) {
       $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
       $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
       $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
       $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
-      
+
       $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
     } else {
       $this->url = $this->customUrl;
     }
 
     $parseUrl         = parse_url($this->url);
-    
+
     $info             = pathinfo($scriptName);
-    
+
     $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "/{$info['basename']}" : '';
 
     $scheme           = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
@@ -61,8 +61,8 @@ class UrlBag implements UrlBagInterface
 
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
     $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '/';
-    
-		$baseRequestUri   = trim('/', $this->assetPath).$context;
+
+    $baseRequestUri   = rtrim($this->assetPath, '/').$context;
     $this->baseUrl    = "{$scheme}://{$host}{$port}{$baseRequestUri}";
 
     // if php cli or if mod_rewrite On 
@@ -70,7 +70,7 @@ class UrlBag implements UrlBagInterface
       header("location:{$scriptName}/");
     }
   }
-  
+
   /**
    *  getUrl
    */
