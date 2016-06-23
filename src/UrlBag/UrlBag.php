@@ -9,6 +9,7 @@ class UrlBag implements UrlBagInterface
   private $url;
   private $path;
   private $baseUrl;
+  private $basePath;
   private $assetPath;
   private $customUrl;
   
@@ -62,8 +63,8 @@ class UrlBag implements UrlBagInterface
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
     $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] : '/';
 
-    $baseRequestUri   = rtrim($this->assetPath, '/').$context;
-    $this->baseUrl    = "{$scheme}://{$host}{$port}{$baseRequestUri}";
+    $this->basePath   = rtrim($this->assetPath, '/').$context;
+    $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
 
     // if php cli or if mod_rewrite On 
     if (php_sapi_name() !== 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
@@ -101,5 +102,13 @@ class UrlBag implements UrlBagInterface
   public function getBaseUrl()
   {
     return $this->baseUrl;
+  }
+
+  /**
+   * getBasePath
+   */
+  public function getBasePath()
+  {
+   return $this->basePath;
   }
 }

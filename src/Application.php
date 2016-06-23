@@ -272,7 +272,17 @@ class Application
   {
     return $this->urlBag->getBaseUrl();
   }
-  
+
+  /**
+   * Get base path
+   * return String
+   * app->getBasePath()
+   */
+  public function getBasePath()
+  {
+    return $this->urlBag->getBasePath();
+  }
+
   /**
    *  generate url
    *  params string $route, array $params
