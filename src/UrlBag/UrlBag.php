@@ -61,7 +61,7 @@ class UrlBag implements UrlBagInterface
     $port             = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
 
     $this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}" : '';
-    $this->assetPath  = !empty($info['dirname']) ? $info['dirname'] . '/' : '/';
+    $this->assetPath  = (!empty($info['dirname']) && $info['dirname'] != '/') ? $info['dirname'] . '/' : '/';
 
     $this->basePath   = rtrim($this->assetPath, '/').$context;
     $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
