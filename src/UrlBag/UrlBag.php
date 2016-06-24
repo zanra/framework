@@ -11,35 +11,14 @@ class UrlBag implements UrlBagInterface
   private $baseUrl;
   private $basePath;
   private $assetPath;
-  private $customUrl;
   
   public function __construct($customUrl = null)
   {
-    $this->customUrl = $customUrl;
-   
-    if (null === $this->customUrl && 'cli' === php_sapi_name()) {
+    if (null === $customUrl && 'cli' === php_sapi_name()) {
       throw new EmptyURLException(sprintf('url can\'t be empty in CLI mode. Please Initialize the constructor'));
     }
     
-    $this->initializeUrl();
-  }
-  
-  /**
-   *  urlRewriting
-   */
-  private function urlRewriting()
-  {
-    return !isset($_SERVER['BASE'])&&!isset($_SERVER['PATH_TRANSLATED'])&&isset($_SERVER['REDIRECT_BASE']) ? true : false;
-  }
-
-  /**
-   *  initializeUrl
-   */
-  private function initializeUrl()
-  {
-    $scriptName       = (php_sapi_name() !== 'cli') ? $_SERVER['SCRIPT_NAME'] : '';
-
-    if (php_sapi_name() !== 'cli' && null === $this->customUrl) {
+    if (php_sapi_name() !== 'cli' && null === $customUrl) {
       $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
       $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
       $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
@@ -47,14 +26,30 @@ class UrlBag implements UrlBagInterface
 
       $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
     } else {
-      $this->url = $this->customUrl;
+      $this->url = $customUrl;
+    }
+
+    $this->initializeBag();
+  }
+
+  /**
+   *  initializeBag
+   */
+  private function initializeBag()
+  {
+    $scriptName       = '';
+    $rewriteOn        = false;
+
+    if(php_sapi_name() !== 'cli') {
+      $scriptName     = $_SERVER['SCRIPT_NAME'];
+      $rewriteOn      = !preg_match("#{$scriptName}#", $this->getUrl());
     }
 
     $parseUrl         = parse_url($this->url);
 
     $info             = pathinfo($scriptName);
-
-    $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $this->urlRewriting()) ? "/{$info['basename']}" : '';
+    
+    $context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
 
     $scheme           = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
     $host             = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
@@ -65,12 +60,6 @@ class UrlBag implements UrlBagInterface
 
     $this->basePath   = rtrim($this->assetPath, '/').$context;
     $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
-
-    // if php cli or if mod_rewrite On 
-    if (php_sapi_name() !== 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
-      header("location:{$scriptName}/");
-      exit();
-    }
   }
 
   /**
