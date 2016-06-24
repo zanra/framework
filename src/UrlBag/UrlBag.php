@@ -29,7 +29,7 @@ class UrlBag implements UrlBagInterface
    */
   private function urlRewriting()
   {
-    return !isset($_SERVER['BASE'])&&isset($_SERVER['REDIRECT_BASE']) ? true : false;
+    return !isset($_SERVER['BASE'])&&!isset($_SERVER['PATH_TRANSLATED'])&&isset($_SERVER['REDIRECT_BASE']) ? true : false;
   }
 
   /**
