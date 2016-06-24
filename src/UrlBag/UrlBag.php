@@ -29,7 +29,7 @@ class UrlBag implements UrlBagInterface
    */
   private function urlRewriting()
   {
-    return (isset($_SERVER['REDIRECT_URL'])||isset($_SERVER['BASE'])||(!isset($_SERVER['PATH_TRANSLATED']))) ? true : false;
+    return isset($_SERVER['REDIRECT_BASE']) ? true : false;
   }
 
   /**
@@ -69,6 +69,7 @@ class UrlBag implements UrlBagInterface
     // if php cli or if mod_rewrite On 
     if (php_sapi_name() !== 'cli' && false === $this->urlRewriting() && false == preg_match("#^{$this->baseUrl}#", $this->getUrl())) {
       header("location:{$scriptName}/");
+      exit();
     }
   }
 
