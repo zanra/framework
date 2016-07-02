@@ -163,10 +163,21 @@ class Router implements RouterInterface
     return $url;
   }
   
+  private function getUrlWithoutQueryString() 
+  {
+    $url = $this->urlBag->getUrl();
+
+    $urlWithoutQuery = strstr($url, '?', true);
+    $url = (false === $urlWithoutQuery) ? $url : $urlWithoutQuery;
+
+    return $url;
+  }
+
   public function matchRequest()
   {
     // Search $contextUrl and if not found search contextUrl with "/" to match empty parameter;
-    $url         = $this->urlBag->getUrl();
+    $url         = $this->getUrlWithoutQueryString();
+
     $rootUrl     = $this->urlBag->getBaseUrl() . '/';
     $testUrls    = array($url);
     
