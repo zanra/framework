@@ -129,27 +129,27 @@ class Application
   
   public function mvcHandle()
   {
-      if (null !== $this->router) {
-          return;
-      }
-      
-      if (false === $this->configLoaded)
-       throw new \Zanra\Framework\Exception\LoadConfigFileException(
-       sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
-      
-      $this->router     = new Router($this->routes, $this->urlBag);
-      
-      // match current request
-      if (false === $matches = $this->router->matchRequest()) {
+    if (null !== $this->router) {
+      return;
+    }
+  
+    if (false === $this->configLoaded)
+        throw new \Zanra\Framework\Exception\LoadConfigFileException(
+        sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
+  
+    $this->router     = new Router($this->routes, $this->urlBag);
+  
+    // match current request
+    if (false === $matches = $this->router->matchRequest()) {
         throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(sprintf('No route found for "%s"', $this->urlBag->getUrl()));
-      }
-    
-      $this->route      = $matches["route"];
-      $this->controller = $matches["controller"];
-      $this->action     = $matches["action"];
-      $this->params     = $matches["params"];
-      
-      print $this->renderController("{$this->getcontroller()}:{$this->getAction()}", $this->getParams());
+    }
+
+    $this->route      = $matches["route"];
+    $this->controller = $matches["controller"];
+    $this->action     = $matches["action"];
+    $this->params     = $matches["params"];
+  
+    print $this->renderController("{$this->getcontroller()}:{$this->getAction()}", $this->getParams());
   }
   
   /**
@@ -224,13 +224,15 @@ class Application
   
   /**
    *  Get session
-   *  params string key
    *  return Session instance
    *  app->getSession()
    */
   public function getSession()
   {
-    return \Zanra\Framework\Session::getInstance();
+    $session = new \Zanra\Framework\Session();
+    $session->start();
+    
+    return $session;
   }
   
   /**
@@ -400,27 +402,27 @@ class Application
    */
   public function translate($message, $locale = null)
   {
-      if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY}))
-          throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
-          sprintf('resource key "%s" not declared in resources [%s] section', self::RES_TRANSLATION_KEY, self::RES_APPLICATION_KEY));
-              
-      if (null === $this->translator) {
-          $this->translator = new Translator($this->fileLoader);
+    if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY}))
+      throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+      sprintf('resource key "%s" not declared in resources [%s] section', self::RES_TRANSLATION_KEY, self::RES_APPLICATION_KEY));
           
-          $translationDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY};
-          $this->translator->setTranslationDir($translationDir);
-      }
+    if (null === $this->translator) {
+      $this->translator = new Translator($this->fileLoader);
       
-      if (null === $locale) {
-          if (!$this->hasSession()) {
-              $locale = $this->defaultLocale;
-          } else {
-              $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
-              $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
-          }
+      $translationDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY};
+      $this->translator->setTranslationDir($translationDir);
+    }
+  
+    if (null === $locale) {
+      if (!$this->hasSession()) {
+          $locale = $this->defaultLocale;
+      } else {
+          $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
+          $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
       }
-    
-      return $this->translator->translate($message, $locale);
+    }
+
+    return $this->translator->translate($message, $locale);
   }
   
   public static function getInstance()

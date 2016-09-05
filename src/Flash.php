@@ -3,31 +3,44 @@ namespace Zanra\Framework;
 
 class Flash
 {
-  const FLASH = '_flash';
-  private static $_instance = null;
+  private $name = '_flash';
   
-  public function set($key, $val)
+  private $flashes = array();
+  
+  public function getName()
   {
-    $_SESSION[self::FLASH][$key] = $val;
+    return $this->name;
+  }
+  
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
+  
+  public function add($key, $val)
+  {
+    $this->flashes[$key] = $val;
   }
   
   public function get($key)
   {
-    $msg = array();
-    if (isset($_SESSION[self::FLASH][$key])) {
-      $msg = $_SESSION[self::FLASH][$key];
-      $_SESSION[self::FLASH] = array();
+    $flash = null;
+    
+    if (isset($this->flashes[$key])) {
+      $flash = $this->flashes[$key];
+      
+      unset($this->flashes[$key]);
     }
     
-    return $msg;
+    return $flash;
   }
   
-  public static function getInstance()
+  public function all()
   {
-    if (is_null(self::$_instance)) {
-      self::$_instance = new Flash();
-    }
+    $all = $this->flashes;
     
-    return self::$_instance;
+    $this->flashes = array();
+    
+    return $all;
   }
 }

@@ -3,12 +3,26 @@ namespace Zanra\Framework;
 
 class Session
 {
-  private static $_instance = null;
+  private $flashname = null;
   
-  private function __Construct()
+  public function __Construct()
+  { 
+    $this->flash = new \Zanra\Framework\Flash();
+    $this->flashname = $this->flash->getName();
+  }
+  
+  public function start()
+  {
+    if (!session_start()) {
+      throw new \RuntimeException('failed to start the session');
+    }
+    
+    $_SESSION[$this->flashname] = isset($_SESSION[$this->flashname]) ? $_SESSION[$this->flashname] : $this->flash;
+  }
+  
+  public function close()
   {
     session_write_close();
-    session_start();
   }
   
   public function set($key, $val)
@@ -18,11 +32,12 @@ class Session
   
   public function get($key)
   {
-    $msg = null;
+    $val = null;
     if(isset($_SESSION[$key])) {
-      $msg = $_SESSION[$key];
+      $val = $_SESSION[$key];
     }
-    return $msg;
+    
+    return $val;
   }
   
   public function destroy()
@@ -50,14 +65,6 @@ class Session
   */
   public function getFlash()
   {
-    return \Zanra\Framework\Flash::getInstance();
-  }
-  
-  public static function getInstance()
-  {
-    if(is_null(self::$_instance)) {
-      self::$_instance = new Session();
-    }
-    return self::$_instance;
+    return $this->get($this->flashname);
   }
 }
