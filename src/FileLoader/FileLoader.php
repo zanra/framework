@@ -2,8 +2,8 @@
 namespace Zanra\Framework\FileLoader;
 
 use Zanra\Framework\FileLoader\FileLoaderInterface;
-use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
+use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
 class FileLoader implements FileLoaderInterface
 {
