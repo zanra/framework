@@ -2,7 +2,7 @@
     "name": "zanra/framework",
     "type": "library",
     "description": "PHP Framework",
-    "keywords": ["mvc","framework", "php"],
+    "keywords": ["mvc","framework", "php", "zanra"],
     "homepage": "https://github.com/zanra/framework",
     "license": "MIT",
     "authors": [
