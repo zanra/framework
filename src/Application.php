@@ -3,6 +3,7 @@ namespace Zanra\Framework;
 
 use Zanra\Framework\UrlBag\UrlBag;
 use Zanra\Framework\Router\Router;
+use Zanra\Framework\Session;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
 
@@ -45,6 +46,7 @@ class Application
   private function __Construct()
   {
     $this->urlBag     = new UrlBag();
+    $this->session    = new Session();
     $this->fileLoader = FileLoader::getInstance();
   }
   
@@ -63,8 +65,8 @@ class Application
   private function getConfigRealPath()
   {
     if (false === $this->configLoaded)
-       throw new \Zanra\Framework\Exception\LoadConfigFileException(
-       sprintf('Please call "%s"', __CLASS__ . "::loadConfig"));
+      throw new \Zanra\Framework\Exception\LoadConfigFileException(
+        sprintf('Please call "%s"', __CLASS__ . "::loadConfig"));
        
     return $this->configRealPath;
   }
@@ -76,10 +78,12 @@ class Application
       $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
       
       if (null === $filterClass)
-          throw new \Zanra\Framework\Exception\FilterNotFoundException(sprintf('Class "%s" not found', $filterNamespaceClass));
+        throw new \Zanra\Framework\Exception\FilterNotFoundException(
+          sprintf('Class "%s" not found', $filterNamespaceClass));
       
       if (!method_exists($filterClass, $method))
-          throw new \Zanra\Framework\Exception\FilterMethodNotFoundException(sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
+        throw new \Zanra\Framework\Exception\FilterMethodNotFoundException(
+          sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
       
       call_user_func_array(array($filterClass, $method), array($this));
     }
@@ -97,15 +101,15 @@ class Application
     
     if (!isset($this->resources->{self::RES_APPLICATION_KEY}))
       throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
-      sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
+        sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
     
     if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY}))
       throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
-      sprintf('key "%s" not declared in resources [%s] section', self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
+        sprintf('key "%s" not declared in resources [%s] section', self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
       
     if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY}))
       throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
-      sprintf('key "%s" not declared in resources [%s] section', self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
+        sprintf('key "%s" not declared in resources [%s] section', self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
     $routesCfg            = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY};
     $filtersCfg           = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY};
@@ -116,11 +120,11 @@ class Application
     
     if (!file_exists($filtersCfg))
       throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
-      sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $filtersCfg, self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
+        sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $filtersCfg, self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
     if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY}))
       throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
-      sprintf('resource key "%s" not declared in resources [%s] section', self::RES_LOCALE_KEY, self::RES_APPLICATION_KEY));
+        sprintf('resource key "%s" not declared in resources [%s] section', self::RES_LOCALE_KEY, self::RES_APPLICATION_KEY));
     
     $this->routes         = $this->fileLoader->load($routesCfg);
     $this->filters        = $this->fileLoader->load($filtersCfg);
@@ -134,14 +138,15 @@ class Application
     }
   
     if (false === $this->configLoaded)
-        throw new \Zanra\Framework\Exception\LoadConfigFileException(
+      throw new \Zanra\Framework\Exception\LoadConfigFileException(
         sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
   
     $this->router     = new Router($this->routes, $this->urlBag);
   
     // match current request
     if (false === $matches = $this->router->matchRequest()) {
-        throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(sprintf('No route found for "%s"', $this->urlBag->getUrl()));
+      throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(
+        sprintf('No route found for "%s"', $this->urlBag->getUrl()));
     }
 
     $this->route      = $matches["route"];
@@ -229,10 +234,7 @@ class Application
    */
   public function getSession()
   {
-    $session = new \Zanra\Framework\Session();
-    $session->start();
-    
-    return $session;
+    return $this->session;
   }
   
   /**
@@ -289,7 +291,7 @@ class Application
    *  generate url
    *  params string $route, array $params
    *  return String
-   *  app->url( $route, $params = array() )
+   *  app->url($route, $params = array())
    */
   public function url($route, $params = array())
   {
@@ -339,11 +341,11 @@ class Application
     // Check Controller\Zanra\Framework\Controller
     $controllerClass = class_exists($controller) ? new $controller() : null;
     if (null === $controllerClass)
-        throw new \Zanra\Framework\Exception\ControllerNotFoundException(sprintf('"%s" not found', $controller));
+      throw new \Zanra\Framework\Exception\ControllerNotFoundException(sprintf('"%s" not found', $controller));
     
     // Check Action
     if (!method_exists($controllerClass, "{$action}"))
-        throw new \Zanra\Framework\Exception\ControllerActionNotFoundException(sprintf('unable to find "%s" in "%s" scope', $action, $controller));
+      throw new \Zanra\Framework\Exception\ControllerActionNotFoundException(sprintf('unable to find "%s" in "%s" scope', $action, $controller));
     
     // Method Args
     $methodArgs = array();
@@ -355,7 +357,7 @@ class Application
         $methodArgs[$p->getName()] = $p->getDefaultValue();
       } else {
         if (!isset($params[$p->getName()]) && $params[$p->getName()] !== null)
-           throw new \Zanra\Framework\Router\Exception\ControllerActionMissingDefaultParameterException(sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)", $controller, $action, $p->getName()));
+          throw new \Zanra\Framework\Router\Exception\ControllerActionMissingDefaultParameterException(sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)", $controller, $action, $p->getName()));
       }
     }
     
@@ -364,7 +366,7 @@ class Application
     // Call Action
     $callAction = call_user_func_array(array($controllerClass, $action), $params);
     if (!isset($callAction))
-       throw new \Zanra\Framework\Exception\ControllerBadReturnResponseException(sprintf('"%s:%s" must return a response. null given', $controller, $action));
+      throw new \Zanra\Framework\Exception\ControllerBadReturnResponseException(sprintf('"%s:%s" must return a response. null given', $controller, $action));
     
     return $callAction;
   }
@@ -398,7 +400,7 @@ class Application
    *  translate
    *  params string key
    *  return String
-   *  app->translate( $message )
+   *  app->translate($message)
    */
   public function translate($message, $locale = null)
   {
@@ -415,10 +417,10 @@ class Application
   
     if (null === $locale) {
       if (!$this->hasSession()) {
-          $locale = $this->defaultLocale;
+        $locale = $this->defaultLocale;
       } else {
-          $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
-          $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
+        $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
+        $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
       }
     }
 

@@ -52,14 +52,14 @@ class FileLoader implements FileLoaderInterface
     try {
       if (is_string($var)) {
           if (!file_exists($var))
-             throw new FileNotFoundException(sprintf('File "%s" not found', $var));
+            throw new FileNotFoundException(sprintf('File "%s" not found', $var));
           $extension = $this->getExtension($var);
           $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
         } elseif (is_array($var)) {
           $parser = $var;
         }
     } catch (Exception $e) {
-        throw new WrongFileExtensionException(sprintf('No FileLoader was found for "%s" extension', $extension));
+        throw new WrongFileExtensionException(sprintf('No FileLoader function was found for "%s" extension', $extension));
     }
     
     return $this->toObject($parser);

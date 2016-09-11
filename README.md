@@ -1,1 +1,1 @@
-Zanra framework for PHP
+Zanra PHP framework
