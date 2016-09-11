@@ -1,7 +1,6 @@
 <?php
 namespace Zanra\Framework\FileLoader;
 
-use Symfony\Component\Yaml\Yaml;
 use Zanra\Framework\FileLoader\FileLoaderInterface;
 use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
@@ -20,14 +19,6 @@ class FileLoader implements FileLoaderInterface
   private function iniFileParser($file)
   {
     $parser = parse_ini_file($file, true);
-    
-    return $parser;
-  }
-  
-  private function ymlFileParser($file)
-  {
-    $parser = Yaml::parse(file_get_contents($file));
-    $parser = isset($parser) ? $parser : array();
     
     return $parser;
   }
