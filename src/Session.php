@@ -39,6 +39,10 @@ class Session
   
   public function close()
   {
+    if (!$this->started) {
+      return true;
+    }
+    
     session_write_close();
 
     $this->closed = true;
