@@ -4,7 +4,9 @@ namespace Zanra\Framework;
 class Session
 {
   private $started = false;
+  
   private $closed = false;
+
   private $flashname = null;
   
   public function __Construct()
@@ -42,7 +44,7 @@ class Session
     if (!$this->started) {
       return true;
     }
-    
+
     session_write_close();
 
     $this->closed = true;
