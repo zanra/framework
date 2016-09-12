@@ -81,8 +81,10 @@ class Router implements RouterInterface
     {
         $flag = 0;
         $vars = array();
-    
-        $url = preg_replace("#^{$delimiters[0]}#", '', $url);
+        
+        $delimiter = preg_quote($delimiters[0]);
+        
+        $url = preg_replace("#^{$delimiter}#", '', $url);
         for ($i=1; $i < count($delimiters); $i++) {
       
             $delimiter = preg_quote($delimiters[$i]);
@@ -113,8 +115,9 @@ class Router implements RouterInterface
                     // default assignment
                     $vars[] = $value;
                 }
-        
-                $url = preg_replace("#^{$value}{$delimiter}#", '', $url);
+                
+                $valueQuoted = preg_quote($value);
+                $url = preg_replace("#^{$valueQuoted}{$delimiter}#", '', $url);
             } else {
                 $flag++;
             }

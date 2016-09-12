@@ -3,18 +3,38 @@ namespace Zanra\Framework;
 
 class Session
 {
+    /**
+     * @var bool
+     */
     private $started = false;
   
+    /**
+     * @var bool
+     */
     private $closed = false;
-
+    
+    /**
+     * @var string
+     */
     private $flashname = null;
   
+    /**
+     * @var \Zanra\Framework\Flash
+     */
+    private $flash;
+    
+    /**
+     * Constructor.
+     */
     public function __Construct()
     { 
         $this->flash = new \Zanra\Framework\Flash();
         $this->flashname = $this->flash->getName();
     }
-
+    
+    /**
+     * Start a new session.
+     */
     public function start()
     {
         if ($this->started) {
@@ -38,7 +58,10 @@ class Session
         $this->closed = false;
         $this->started = true;
     }
-  
+    
+    /**
+     * Close session writing.
+     */
     public function close()
     {
         if (!$this->started) {
@@ -50,7 +73,13 @@ class Session
         $this->closed = true;
         $this->started = false;
     }
-  
+    
+    /**
+     * Set an object in session.
+     *
+     * @param string $key
+     * @param object $val
+     */
     public function set($key, $val)
     {
         if (!$this->started) {
@@ -59,7 +88,14 @@ class Session
 
         $_SESSION[$key] = $val;
     }
-  
+    
+    /**
+     * Get an object in session.
+     *
+     * @param string $key
+     *
+     * @return object
+     */
     public function get($key)
     {
         if (!$this->started) {
@@ -73,7 +109,10 @@ class Session
         
         return $val;
     }
-  
+    
+    /**
+     * Destroy a session.
+     */
     public function destroy()
     {
         $_SESSION = array();
@@ -93,12 +132,11 @@ class Session
         $this->closed = false;
         $this->started = false;
     }
-  
+    
     /**
-     * Get flash message
-     * params string key
-     * return Flash instance
-     * session->getFlash()
+     * Get flash object from session.
+     *
+     * @return \Zanra\Framework\Flash
      */
     public function getFlash()
     {
