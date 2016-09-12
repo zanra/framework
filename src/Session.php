@@ -18,7 +18,7 @@ class Session
     public function start()
     {
         if ($this->started) {
-        return true;
+            return true;
         }
 
         // This prevents PHP from attempting to send the headers again
