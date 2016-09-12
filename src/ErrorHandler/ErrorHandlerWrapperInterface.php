@@ -3,5 +3,5 @@ namespace Zanra\Framework\ErrorHandler;
 
 interface ErrorHandlerWrapperInterface
 {
-	public function wrap($exception, $type);
+    public function wrap($exception, $type);
 }

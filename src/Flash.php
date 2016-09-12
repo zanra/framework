@@ -3,44 +3,44 @@ namespace Zanra\Framework;
 
 class Flash
 {
-  private $name = '_flash';
-  
-  private $flashes = array();
-  
-  public function getName()
-  {
-    return $this->name;
-  }
-  
-  public function setName($name)
-  {
-    $this->name = $name;
-  }
-  
-  public function add($key, $val)
-  {
-    $this->flashes[$key] = $val;
-  }
-  
-  public function get($key)
-  {
-    $flash = null;
+    private $name = '_flash';
     
-    if (isset($this->flashes[$key])) {
-      $flash = $this->flashes[$key];
-      
-      unset($this->flashes[$key]);
+    private $flashes = array();
+  
+    public function getName()
+    {
+        return $this->name;
     }
-    
-    return $flash;
-  }
   
-  public function all()
-  {
-    $all = $this->flashes;
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+  
+    public function add($key, $val)
+    {
+        $this->flashes[$key] = $val;
+    }
+  
+    public function get($key)
+    {
+        $flash = null;
     
-    $this->flashes = array();
+        if (isset($this->flashes[$key])) {
+            $flash = $this->flashes[$key];
+      
+            unset($this->flashes[$key]);
+        }
     
-    return $all;
-  }
+        return $flash;
+    }
+  
+    public function all()
+    {
+        $all = $this->flashes;
+    
+        $this->flashes = array();
+    
+        return $all;
+    }
 }

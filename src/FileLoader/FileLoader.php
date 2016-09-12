@@ -7,61 +7,64 @@ use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
 class FileLoader implements FileLoaderInterface
 {
-  private static $_instance = null;
+    private static $_instance = null;
   
-  private function __Construct(){}
+    private function __Construct(){}
   
-  private function getExtension($string) 
-  {
-    return strtolower(substr(strrchr($string,'.'),1));
-  }
-  
-  private function iniFileParser($file)
-  {
-    $parser = parse_ini_file($file, true);
-    
-    return $parser;
-  }
-  
-  private function toObject(array $array)
-  {
-    $obj = new \stdClass;
-    foreach ($array as $k => $v) {
-      if (is_array($v)) {
-        $obj->{$k} = $this->toObject($v);
-      } else {
-        $obj->{$k} = $v;
-      }
+    private function getExtension($string) 
+    {
+        return strtolower(substr(strrchr($string,'.'),1));
     }
-    return $obj;
-  }
   
-  public function load($var)
-  {
-    $parser = array();
+    private function iniFileParser($file)
+    {
+        $parser = parse_ini_file($file, true);
     
-    try {
-      if (is_string($var)) {
-          if (!file_exists($var))
-            throw new FileNotFoundException(sprintf('File "%s" not found', $var));
-          $extension = $this->getExtension($var);
-          $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
-        } elseif (is_array($var)) {
-          $parser = $var;
+        return $parser;
+    }
+  
+    private function toObject(array $array)
+    {
+        $obj = new \stdClass;
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                $obj->{$k} = $this->toObject($v);
+            } else {
+                $obj->{$k} = $v;
+            }
         }
-    } catch (Exception $e) {
-        throw new WrongFileExtensionException(sprintf('No FileLoader function was found for "%s" extension', $extension));
+        
+        return $obj;
     }
-    
-    return $this->toObject($parser);
-  }
   
-  public static function getInstance()
-  {
-    if (is_null(self::$_instance)) {
-      self::$_instance = new FileLoader();
-    }
+    public function load($var)
+    {
+        $parser = array();
     
-    return self::$_instance;
-  }
+        try {
+            if (is_string($var)) {
+                if (!file_exists($var))
+                    throw new FileNotFoundException(
+                        sprintf('File "%s" not found', $var));
+                $extension = $this->getExtension($var);
+                $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
+            } elseif (is_array($var)) {
+                $parser = $var;
+            }
+        } catch (Exception $e) {
+            throw new WrongFileExtensionException(
+                sprintf('No FileLoader function was found for "%s" extension', $extension));
+        }
+    
+        return $this->toObject($parser);
+    }
+  
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new FileLoader();
+        }
+    
+        return self::$_instance;
+    }
 }
