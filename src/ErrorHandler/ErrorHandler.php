@@ -21,6 +21,7 @@ class ErrorHandler
                 ob_end_clean();
       
             self::$wrapper->wrap($e, self::EXCEPTION);
+            
             exit(0);
         });
     
@@ -33,6 +34,7 @@ class ErrorHandler
                     ob_end_clean();
         
                 self::$wrapper->wrap($e, self::ERROR_EXCEPTION);
+                
                 exit(0);
             }
         });
@@ -48,6 +50,7 @@ class ErrorHandler
                     ob_end_clean();
         
                 self::$wrapper->wrap($e, self::FATAL_ERROR_EXCEPTION);
+                
                 exit(0);
             }
         });

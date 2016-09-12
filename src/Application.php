@@ -59,6 +59,7 @@ class Application
                 return session_id() === '' ? false : true;
             }
         }
+        
         return false;
     }
   
@@ -437,6 +438,7 @@ class Application
         if (is_null(self::$_instance)) {
             self::$_instance = new Application();
         }
+        
         return self::$_instance;
     }
 }
