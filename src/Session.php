@@ -20,7 +20,7 @@ class Session
         if ($this->started) {
             return true;
         }
-
+        
         // This prevents PHP from attempting to send the headers again
         // when session_write_close is called
         if ($this->closed) {
@@ -28,11 +28,11 @@ class Session
             ini_set('session.use_cookies', false);
             ini_set('session.cache_limiter', null);
         }
-
+        
         if (!session_start()) {
             throw new \RuntimeException('failed to start the session');
         }
-    
+        
         $_SESSION[$this->flashname] = isset($_SESSION[$this->flashname]) ? $_SESSION[$this->flashname] : $this->flash;
 
         $this->closed = false;
