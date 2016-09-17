@@ -131,6 +131,15 @@ class Router implements RouterInterface
         return $vars;
     }
     
+    private function encodeParams(array $params = array()) {
+        
+        foreach ($params as $key => $param) {
+            $params[$key] = urlencode($param);
+        }
+
+        return $params;
+    }
+
     private function decodeParams(array $params = array()) {
         
         foreach ($params as $key => $param) {
@@ -189,12 +198,15 @@ class Router implements RouterInterface
 
     public function matchRequest()
     {
-        // Search $contextUrl and if not found search contextUrl with "/" to match empty parameter;
         $url         = $this->getUrlWithoutQueryString();
 
         $rootUrl     = $this->urlBag->getBaseUrl() . '/';
+
+        // Search $contextUrl and if not found 
+        // search contextUrl with "/" to match 
+        // empty parameters;
+        
         $testUrls    = array($url);
-    
         if($url !== $rootUrl)
             array_push($testUrls, "{$url}/");
       
@@ -257,9 +269,13 @@ class Router implements RouterInterface
             }
       
             $defaults     = $this->getRouteParams($route);
+
+            $params      = $this->encodeParams($params);
+
             $slugs        = array_merge($slugs, $params);
             $slugs        = $this->setSlugDefaultValues($slugs, $defaults, false);
             $url          = $this->buildUrl($delimiters, array_values($slugs));
+
       
             if (!preg_match("#/$#", $routePattern)) {
                 $url = preg_replace("#/$#", "", $url);
