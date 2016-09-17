@@ -130,10 +130,19 @@ class Router implements RouterInterface
     
         return $vars;
     }
-  
+    
+    private function decodeParams(array $params = array()) {
+        
+        foreach ($params as $key => $param) {
+            $params[$key] = urldecode($param);
+        }
+
+        return $params;
+    }
+
     private function setSlugDefaultValues($slugs, $defaults, $setAll = true)
     {
-        // check available slugs default values
+        // check availables slugs default values
         foreach ($slugs as $key => $value) {
             if (trim($value) == '') {
                 if (in_array($key, array_keys($defaults))) {
@@ -200,13 +209,15 @@ class Router implements RouterInterface
                 }
         
                 $delimiters       = $this->getDelimiters($routePattern);
-                $uriValues        = $this->extractValues($testUrl, $delimiters);
+                $uriParams        = $this->extractValues($testUrl, $delimiters);
                 $buildUrl         = $this->buildUrl($delimiters, $uriValues);
         
                 if ($buildUrl == $testUrl) {
           
                     $defaults       = $this->getRouteParams($route);
-              
+                    
+                    $uriParams      = $this->decodeParams($uriParams);
+
                     $params         = $this->getSlugs($routePattern);
                     $params         = $this->forceArrayCombine($params, $uriValues);
                     $params         = $this->setSlugDefaultValues($params, $defaults);
