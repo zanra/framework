@@ -210,7 +210,7 @@ class Router implements RouterInterface
         
                 $delimiters       = $this->getDelimiters($routePattern);
                 $uriParams        = $this->extractValues($testUrl, $delimiters);
-                $buildUrl         = $this->buildUrl($delimiters, $uriValues);
+                $buildUrl         = $this->buildUrl($delimiters, $uriParams);
         
                 if ($buildUrl == $testUrl) {
           
@@ -219,7 +219,7 @@ class Router implements RouterInterface
                     $uriParams      = $this->decodeParams($uriParams);
 
                     $params         = $this->getSlugs($routePattern);
-                    $params         = $this->forceArrayCombine($params, $uriValues);
+                    $params         = $this->forceArrayCombine($params, $uriParams);
                     $params         = $this->setSlugDefaultValues($params, $defaults);
               
                     $controller     = explode(':', $this->getRouteController($route));
