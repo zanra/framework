@@ -18,7 +18,7 @@ use Zanra\Framework\Session\Flash\Flash;
 class Session implements SessionInterface
 {
     /**
-	 * @var bool
+     * @var bool
      */
     private $started = false;
   
