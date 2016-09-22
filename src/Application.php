@@ -1,4 +1,14 @@
 <?php
+    
+/**
+ * This file is part of the Zanra Framework package.
+ *
+ * (c) Targalis Group <targalisgroup@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zanra\Framework;
 
 use Zanra\Framework\UrlBag\UrlBag;
@@ -10,27 +20,27 @@ use Zanra\Framework\Translator\Translator;
 
 class Application
 {
-    const RES_LOCALE_KEY        = "default.locale";
-    const RES_APPLICATION_KEY   = "application";
-    const RES_ROUTING_KEY       = "routing.file";
-    const RES_FILTERS_KEY       = "filters.file";
-    const RES_TRANSLATION_KEY   = "translation.dir";
-    const RES_TEMPLATE_KEY      = "template.dir";
-    const RES_CACHE_KEY         = "cache.dir";
-    const SESSION_LOCALE_KEY    = "_locale";
+    const RES_LOCALE_KEY = "default.locale";
+    const RES_APPLICATION_KEY = "application";
+    const RES_ROUTING_KEY = "routing.file";
+    const RES_FILTERS_KEY = "filters.file";
+    const RES_TRANSLATION_KEY = "translation.dir";
+    const RES_TEMPLATE_KEY = "template.dir";
+    const RES_CACHE_KEY = "cache.dir";
+    const SESSION_LOCALE_KEY = "_locale";
     
     /**
-     * @var string[]
+     * @var object[]
      */
     private $resources = array();
     
     /**
-     * @var string[]
+     * @var object[]
      */
     private $routes = array();
     
     /**
-     * @var string[]
+     * @var object[]
      */
     private $filters = array();
     
@@ -113,7 +123,12 @@ class Application
         $this->session    = new Session();
         $this->fileLoader = FileLoader::getInstance();
     }
-  
+    
+    /**
+     * Check if a php session has been started.
+     *
+     * @return bool
+     */
     private function hasSession()
     {
         if (php_sapi_name() !== 'cli') {
@@ -126,7 +141,13 @@ class Application
         
         return false;
     }
-  
+    
+    /**
+     * Get configuration absolute path.
+     * this absolute path is used to find resources path variables absolute path
+     *
+     * @return string
+     */
     private function getConfigRealPath()
     {
         if (false === $this->configLoaded)
@@ -135,7 +156,10 @@ class Application
        
         return $this->configRealPath;
     }
-  
+    
+    /**
+     * Load declared filters.
+     */
     private function loadFilters()
     {
         foreach ($this->getFilters() as $class => $method) {
@@ -153,7 +177,12 @@ class Application
             call_user_func_array(array($filterClass, $method), array($this));
         }
     }
-  
+    
+    /**
+     * Load configuration file
+     *
+     * @param string $config The config file
+     */
     public function loadConfig($config)
     {
         if (false !== $this->configLoaded) {
@@ -195,7 +224,10 @@ class Application
         $this->filters        = $this->fileLoader->load($filtersCfg);
         $this->defaultLocale  = $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY};
     }
-  
+    
+    /**
+     * Start the framework MVC engine
+     */
     public function mvcHandle()
     {
         if (null !== $this->router) {
@@ -223,9 +255,9 @@ class Application
     }
   
     /**
-     *  Get route
+     * Get route
      *
-     *  @return string $route
+     * @return string
      */
     public function getRoute()
     {
@@ -233,9 +265,9 @@ class Application
     }
   
     /**
-     *  Get current controller
+     * Get current controller
      *  
-     *  @return string $controller
+     * @return string
      */
     public function getController()
     {
@@ -243,9 +275,9 @@ class Application
     }
   
     /**
-     *  Get current action
+     * Get current action
      *
-     *  @return string $action
+     * @return string
      */
     public function getAction()
     {
@@ -253,9 +285,9 @@ class Application
     }
   
     /**
-     *  Get params
+     * Get params
      *
-     *  @return string[] $params
+     * @return string[]
      */
     public function getParams()
     {
@@ -263,9 +295,9 @@ class Application
     }
   
     /**
-     *  Get all routes
+     * Get all routes
      *
-     *  return object[] $routes
+     * @return object[]
      */
     public function getRoutes()
     {
@@ -273,9 +305,9 @@ class Application
     }
   
     /**
-     *  Get all resources
+     * Get all resources
      *
-     *  @return object[] $resources
+     * @return object[]
      */
     public function getResources()
     {
@@ -283,9 +315,9 @@ class Application
     }
   
     /**
-     *  Get all filters
+     * Get all filters
      *
-     *  @return object[] $filters
+     * @return object[]
      */
     public function getFilters()
     {
@@ -293,9 +325,9 @@ class Application
     }
   
     /**
-     *  Get session
+     * Get session
      *
-     *  @return \Zanra\Framework\Session\Session $session
+     * @return \Zanra\Framework\Session\Session
      */
     public function getSession()
     {
@@ -318,9 +350,9 @@ class Application
     }
 
     /**
-     *  Get base url
+     * Get base url
      *
-     *  @return string
+     * @return string
      */
     public function getBaseUrl()
     {
@@ -336,39 +368,39 @@ class Application
     {
         return $this->urlBag->getBasePath();
     }
-
+    
     /**
-     *  Generate url
+     * Generate url
      *
-     *  @param string $route
-     *  @param string[] $params
+     * @param string $route
+     * @param array  $params
      *
-     *  @return string
+     * @return string
      */
-    public function url($route, $params = array())
+    public function url($route, array $params = array())
     {
         return $this->urlBag->getBaseUrl() . $this->router->generateUrl($route, $params);
     }
   
     /**
-     *  Generate path
+     * Generate path
      *
-     *  @param string $route
-     *  @param string[] $params
+     * @param string   $route
+     * @param string[] $params
      *
-     *  @return string
+     * @return string
      */
-    public function path($route, $params = array())
+    public function path($route, array $params = array())
     {
         return $this->urlBag->getBasePath() . $this->router->generateUrl($route, $params);
     }
   
     /**
-     *  Generate asset
+     * Generate asset
      *
-     *  @param string $path
+     * @param string $path
      *
-     *  @return string
+     * @return string
      */
     public function asset($path)
     {
@@ -376,12 +408,12 @@ class Application
     }
   
     /**
-     *  Render a controller
+     * Render a controller
      *
-     *  @param string $controller
-     *  @param string[] $params
+     * @param string   $controller
+     * @param string[] $params
      *
-     *  @return response
+     * @return string
      */
     public function renderController($controller, array $params = array())
     {
@@ -434,12 +466,12 @@ class Application
     }
   
     /**
-     *  Render a template
+     * Render a template
      *
-     *  @param string $filename
-     *  @param string[] $vars
+     * @param string   $filename
+     * @param string[] $vars
      *
-     *  @return html
+     * @return string
      */
     public function renderView($filename, array $vars = array())
     {
@@ -461,12 +493,12 @@ class Application
     }
   
     /**
-     *  translate a word
+     * Translator
      *
-     *  @param string $message
-     *  @param string $locale
+     * @param string $message
+     * @param string $locale
      *
-     *  @return string
+     * @return string
      */
     public function translate($message, $locale = null)
     {

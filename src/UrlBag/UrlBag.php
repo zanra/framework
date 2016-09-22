@@ -1,4 +1,14 @@
 <?php
+    
+/**
+ * This file is part of the Zanra Framework package.
+ *
+ * (c) Targalis Group <targalisgroup@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+ 
 namespace Zanra\Framework\UrlBag;
 
 use Zanra\Framework\UrlBag\UrlBagInterface;
@@ -6,12 +16,36 @@ use Zanra\Framework\UrlBag\Exception\EmptyURLException;
 
 class UrlBag implements UrlBagInterface
 {
+    /**
+     * @var string
+     */
     private $url;
+    
+    /**
+     * @var string
+     */
     private $path;
+    
+    /**
+     * @var string
+     */
     private $baseUrl;
+    
+    /**
+     * @var string
+     */
     private $basePath;
+    
+    /**
+     * @var string
+     */
     private $assetPath;
-  
+	
+    /**
+     * Constructor.
+     *
+     * @param string $customUrl Used to lunch custom url when in cli mode 
+     */
     public function __construct($customUrl = null)
     {
         if (null === $customUrl && 'cli' === php_sapi_name()) {
@@ -32,9 +66,9 @@ class UrlBag implements UrlBagInterface
 
         $this->initializeBag();
     }
-
+	
     /**
-     *  initializeBag
+     * initializeBag
      */
     private function initializeBag()
     {
@@ -63,41 +97,51 @@ class UrlBag implements UrlBagInterface
         $this->basePath   = rtrim($this->assetPath, '/').$context;
         $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
     }
-
+	
     /**
-     *  getUrl
+     * Get the current full url
+     *
+     * @return string
      */
     public function getUrl()
     {
         return $this->url;
     }
-  
+    
     /**
-     *  getPath
+     * Get the current path
+     *
+     * @return string
      */
     public function getPath()
     {
         return $this->path;
     }
-  
+    
     /**
-     *  getAssetPath
+     * Get asset path
+     *
+     * @return string
      */
     public function getAssetPath()
     {
         return $this->assetPath;
     }
-  
+    
     /**
-     *  getBaseUrl
+     * Get the current base url
+     *
+     * @return string
      */
     public function getBaseUrl()
     {
         return $this->baseUrl;
     }
-
+    
     /**
-     * getBasePath
+     * Get the current base path
+     *
+     * @return string
      */
     public function getBasePath()
     {

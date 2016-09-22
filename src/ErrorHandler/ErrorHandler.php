@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * This file is part of the Zanra Framework package.
+ *
+ * (c) Targalis Group <targalisgroup@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zanra\Framework\ErrorHandler;
 
 use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
@@ -8,7 +18,7 @@ class ErrorHandler
     const EXCEPTION = 'exception';
     const ERROR_EXCEPTION = 'error';
     const FATAL_ERROR_EXCEPTION = 'fatal';
-  
+	
     private static $wrapper;
   
     public static function init(ErrorHandlerWrapperInterface $wrapper)
