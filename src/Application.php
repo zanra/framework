@@ -3,46 +3,110 @@ namespace Zanra\Framework;
 
 use Zanra\Framework\UrlBag\UrlBag;
 use Zanra\Framework\Router\Router;
-use Zanra\Framework\Session;
+use Zanra\Framework\Session\Session;
+use Zanra\Framework\Template;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
 
 class Application
 {
-    const RES_LOCALE_KEY = "default.locale";
-    const RES_APPLICATION_KEY = "application";
-    const RES_ROUTING_KEY = "routing.file";
-    const RES_FILTERS_KEY = "filters.file";
-    const RES_TRANSLATION_KEY = "translation.dir";
-    const RES_TEMPLATE_KEY = "template.dir";
-    const RES_CACHE_KEY = "cache.dir";
-  
-    const SESSION_LOCALE_KEY = "_locale";
-  
+    const RES_LOCALE_KEY        = "default.locale";
+    const RES_APPLICATION_KEY   = "application";
+    const RES_ROUTING_KEY       = "routing.file";
+    const RES_FILTERS_KEY       = "filters.file";
+    const RES_TRANSLATION_KEY   = "translation.dir";
+    const RES_TEMPLATE_KEY      = "template.dir";
+    const RES_CACHE_KEY         = "cache.dir";
+    const SESSION_LOCALE_KEY    = "_locale";
+    
+    /**
+     * @var string[]
+     */
     private $resources = array();
+    
+    /**
+     * @var string[]
+     */
     private $routes = array();
+    
+    /**
+     * @var string[]
+     */
     private $filters = array();
-  
+    
+    /**
+     * @var string
+     */
     private $route;
+    
+    /**
+     * @var string
+     */
     private $controller;
+    
+    /**
+     * @var string
+     */
     private $action;
+    
+    /**
+     * @var string[]
+     */
     private $params = array();
-  
+    
+    /**
+     * @var \Zanra\Framework\UrlBag\UrlBag
+     */
     private $urlBag;
+    
+    /**
+     * @var \Zanra\Framework\Router\Router
+     */
     private $router;
+    
+    /**
+     * @var \Zanra\Framework\FileLoader\FileLoader
+     */
     private $fileLoader;
+    
+    /**
+     * @var string
+     */
     private $configRealPath = null;
-  
+    
+    /**
+     * @var \Zanra\Framework\Translator\Translator
+     */
     private $translator;
+    
+    /**
+     * @var string
+     */
     private $defaultLocale;
-  
+    
+    /**
+     * @var \Zanra\Framework\Template
+     */
     private $template;
-  
+    
+    /**
+     * @var bool
+     */
     private $configLoaded  = false;
+    
+    /**
+     * @var bool
+     */
     private $filtersLoaded = false;
-  
+    
+    /**
+     * @var Zanra\Framework\Application
+     */
     private static $_instance = null;
-  
+    
+    /**
+     * Constructor.
+     */
     private function __Construct()
     {
         $this->urlBag     = new UrlBag();
@@ -160,8 +224,8 @@ class Application
   
     /**
      *  Get route
-     *  return String
-     *  app->getRoute()
+     *
+     *  @return string $route
      */
     public function getRoute()
     {
@@ -169,9 +233,9 @@ class Application
     }
   
     /**
-     *  Get controller
-     *  return current controller
-     *  app->getController()
+     *  Get current controller
+     *  
+     *  @return string $controller
      */
     public function getController()
     {
@@ -179,9 +243,9 @@ class Application
     }
   
     /**
-     *  Get action
-     *  return String
-     *  app->getAction()
+     *  Get current action
+     *
+     *  @return string $action
      */
     public function getAction()
     {
@@ -190,8 +254,8 @@ class Application
   
     /**
      *  Get params
-     *  return Array
-     *  app->getParams()
+     *
+     *  @return string[] $params
      */
     public function getParams()
     {
@@ -199,19 +263,19 @@ class Application
     }
   
     /**
-     *  Get route Collection
-     *  return Array
-     *  app->getRoutes()
+     *  Get all routes
+     *
+     *  return object[] $routes
      */
     public function getRoutes()
     {
-        return $this->getRoutes();
+        return $this->routes;
     }
   
     /**
-     *  Get resource Collection
-     *  return Array
-     *  app->getResources()
+     *  Get all resources
+     *
+     *  @return object[] $resources
      */
     public function getResources()
     {
@@ -219,9 +283,9 @@ class Application
     }
   
     /**
-     *  Get filter Collection
-     *  return Array
-     *  app->getFilters()
+     *  Get all filters
+     *
+     *  @return object[] $filters
      */
     public function getFilters()
     {
@@ -230,39 +294,24 @@ class Application
   
     /**
      *  Get session
-     *  return Session instance
-     *  app->getSession()
+     *
+     *  @return \Zanra\Framework\Session\Session $session
      */
     public function getSession()
     {
         return $this->session;
     }
-  
-    /**
-     *  Get url
-     *  return String
-     *  app->getUrl()
-     */
+    
     public function getUrl()
     {
         return $this->urlBag->getUrl();
     }
-  
-    /**
-     *  Get path
-     *  return String
-     *  app->getPath()
-     */
+    
     public function getPath()
     {
         return $this->urlBag->getPath();
     }
-  
-    /**
-     *  Get asset path
-     *  return String
-     *  app->getAssetPath()
-     */
+    
     public function getAssetPath()
     {
         return $this->urlBag->getAssetPath();
@@ -270,8 +319,8 @@ class Application
 
     /**
      *  Get base url
-     *  return String
-     *  app->getBaseUrl()
+     *
+     *  @return string
      */
     public function getBaseUrl()
     {
@@ -280,8 +329,8 @@ class Application
 
     /**
      * Get base path
-     * return String
-     * app->getBasePath()
+     *
+     * @return string
      */
     public function getBasePath()
     {
@@ -289,10 +338,12 @@ class Application
     }
 
     /**
-     *  generate url
-     *  params string $route, array $params
-     *  return String
-     *  app->url($route, $params = array())
+     *  Generate url
+     *
+     *  @param string $route
+     *  @param string[] $params
+     *
+     *  @return string
      */
     public function url($route, $params = array())
     {
@@ -300,10 +351,12 @@ class Application
     }
   
     /**
-     *  generate path
-     *  params string $route, array $params
-     *  return String
-     *  app->path($route, $params = array())
+     *  Generate path
+     *
+     *  @param string $route
+     *  @param string[] $params
+     *
+     *  @return string
      */
     public function path($route, $params = array())
     {
@@ -311,10 +364,11 @@ class Application
     }
   
     /**
-     *  generate asset
-     *  params: string $path
-     *  return String
-     *  app->asset($path)
+     *  Generate asset
+     *
+     *  @param string $path
+     *
+     *  @return string
      */
     public function asset($path)
     {
@@ -322,10 +376,12 @@ class Application
     }
   
     /**
-     *  renderController (call a new controller)
-     *  params string $controller, array $params
-     *  return response
-     *  app->renderController($controller, array $params = array())
+     *  Render a controller
+     *
+     *  @param string $controller
+     *  @param string[] $params
+     *
+     *  @return response
      */
     public function renderController($controller, array $params = array())
     {
@@ -378,10 +434,12 @@ class Application
     }
   
     /**
-     *  renderView (call a new template)
-     *  params string $filename, array $vars
-     *  return response
-     *  app->renderView($filename, array $vars = array())
+     *  Render a template
+     *
+     *  @param string $filename
+     *  @param string[] $vars
+     *
+     *  @return html
      */
     public function renderView($filename, array $vars = array())
     {
@@ -396,17 +454,19 @@ class Application
         if (null === $this->template) {
             $templateDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY};
             $cacheDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY};
-            $this->template = new \Zanra\Framework\Template($templateDir, $cacheDir);
+            $this->template = new Template($templateDir, $cacheDir);
         }
     
         return $this->template->render($filename, $vars);
     }
   
     /**
-     *  translate
-     *  params string key
-     *  return String
-     *  app->translate($message)
+     *  translate a word
+     *
+     *  @param string $message
+     *  @param string $locale
+     *
+     *  @return string
      */
     public function translate($message, $locale = null)
     {

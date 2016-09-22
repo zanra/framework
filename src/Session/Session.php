@@ -1,7 +1,11 @@
 <?php
-namespace Zanra\Framework;
+namespace Zanra\Framework\Session;
 
-class Session
+use Zanra\Framework\Session\SessionInterface;
+use Zanra\Framework\Session\Exception\SessionStartException;
+use Zanra\Framework\Session\Flash\Flash;
+
+class Session implements SessionInterface
 {
     /**
      * @var bool
@@ -19,7 +23,7 @@ class Session
     private $flashname = null;
   
     /**
-     * @var \Zanra\Framework\Flash
+     * @var \Zanra\Framework\Session\Flash\Flash
      */
     private $flash;
     
@@ -28,7 +32,7 @@ class Session
      */
     public function __Construct()
     { 
-        $this->flash = new \Zanra\Framework\Flash();
+        $this->flash = new Flash();
         $this->flashname = $this->flash->getName();
     }
     
@@ -50,7 +54,8 @@ class Session
         }
         
         if (!session_start()) {
-            throw new \RuntimeException('failed to start the session');
+            throw new SessionStartException(
+                sprintf('failed to start the session'));
         }
         
         $_SESSION[$this->flashname] = isset($_SESSION[$this->flashname]) ? $_SESSION[$this->flashname] : $this->flash;
@@ -136,7 +141,7 @@ class Session
     /**
      * Get flash object from session.
      *
-     * @return \Zanra\Framework\Flash
+     * @return \Zanra\Framework\Session\Flash\Flash
      */
     public function getFlash()
     {
