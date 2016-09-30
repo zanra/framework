@@ -103,8 +103,8 @@ class UrlBag implements UrlBagInterface
     }
     
     /**
-     * Get the current full url
-     * @return string
+     * (non-PHPdoc)
+     * @see Zanra\Framework\UrlBag.UrlBagInterface::getUrl()
      */
     public function getUrl()
     {
@@ -112,8 +112,8 @@ class UrlBag implements UrlBagInterface
     }
     
     /**
-     * Get the current path
-     * @return string
+     * (non-PHPdoc)
+     * @see Zanra\Framework\UrlBag.UrlBagInterface::getPath()
      */
     public function getPath()
     {
@@ -121,8 +121,8 @@ class UrlBag implements UrlBagInterface
     }
     
     /**
-     * Get asset path
-     * @return string
+     * (non-PHPdoc)
+     * @see Zanra\Framework\UrlBag.UrlBagInterface::getAssetPath()
      */
     public function getAssetPath()
     {
@@ -130,8 +130,8 @@ class UrlBag implements UrlBagInterface
     }
     
     /**
-     * Get the current base url
-     * @return string
+     * (non-PHPdoc)
+     * @see Zanra\Framework\UrlBag.UrlBagInterface::getBaseUrl()
      */
     public function getBaseUrl()
     {
@@ -139,8 +139,8 @@ class UrlBag implements UrlBagInterface
     }
     
     /**
-     * Get the current base path
-     * @return string
+     * (non-PHPdoc)
+     * @see Zanra\Framework\UrlBag.UrlBagInterface::getBasePath()
      */
     public function getBasePath()
     {

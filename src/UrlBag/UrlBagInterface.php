@@ -14,27 +14,32 @@ namespace Zanra\Framework\UrlBag;
 interface UrlBagInterface
 {
     /**
-     * getUrl
+     * Get the current full url
+     * @return string
      */
     public function getUrl();
   
     /**
-     * getPath
+     * Get the current path
+     * @return string
      */
     public function getPath();
   
     /**
-     * getAssetPath
+     * Get asset path
+     * @return string
      */
     public function getAssetPath();
   
     /**
-     * getBaseUrl
+     * Get the current base url
+     * @return string
      */
     public function getBaseUrl();
 
     /**
-     * getBasePath
+     * Get the current base path
+     * @return string
      */
     public function getBasePath();
 }
