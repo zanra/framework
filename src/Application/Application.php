@@ -28,6 +28,11 @@ use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParamete
 use Zanra\Framework\Application\Exception\ControllerBadReturnResponseException;
 use Zanra\Framework\Router\Exception\RouteNotFoundException;
 
+/**
+ * Zanra Application
+ * @author Targalis
+ *
+ */
 class Application
 {
     const RES_LOCALE_KEY = "default.locale";
@@ -136,7 +141,6 @@ class Application
     
     /**
      * Check if a php session has been started.
-     *
      * @return bool
      */
     private function hasSession()
@@ -155,7 +159,6 @@ class Application
     /**
      * Get configuration absolute path.
      * this absolute path is used to find resources path variables absolute path
-     *
      * @return string
      */
     private function getConfigRealPath()
@@ -190,7 +193,6 @@ class Application
     
     /**
      * Load configuration file
-     *
      * @param string $config The config file
      */
     public function loadConfig($config)
@@ -266,7 +268,6 @@ class Application
   
     /**
      * Get route
-     *
      * @return string
      */
     public function getRoute()
@@ -276,7 +277,6 @@ class Application
   
     /**
      * Get current controller
-     *  
      * @return string
      */
     public function getController()
@@ -286,7 +286,6 @@ class Application
   
     /**
      * Get current action
-     *
      * @return string
      */
     public function getAction()
@@ -296,7 +295,6 @@ class Application
   
     /**
      * Get params
-     *
      * @return string[]
      */
     public function getParams()
@@ -306,7 +304,6 @@ class Application
   
     /**
      * Get all routes
-     *
      * @return object[]
      */
     public function getRoutes()
@@ -316,7 +313,6 @@ class Application
   
     /**
      * Get all resources
-     *
      * @return object[]
      */
     public function getResources()
@@ -326,7 +322,6 @@ class Application
   
     /**
      * Get all filters
-     *
      * @return object[]
      */
     public function getFilters()
@@ -336,7 +331,6 @@ class Application
   
     /**
      * Get session
-     *
      * @return \Zanra\Framework\Session\Session
      */
     public function getSession()
@@ -361,7 +355,6 @@ class Application
 
     /**
      * Get base url
-     *
      * @return string
      */
     public function getBaseUrl()
@@ -371,7 +364,6 @@ class Application
 
     /**
      * Get base path
-     *
      * @return string
      */
     public function getBasePath()
@@ -381,10 +373,8 @@ class Application
     
     /**
      * Generate url
-     *
      * @param string $route
-     * @param array  $params
-     *
+     * @param array $params
      * @return string
      */
     public function url($route, array $params = array())
@@ -394,10 +384,8 @@ class Application
   
     /**
      * Generate path
-     *
-     * @param string   $route
+     * @param string $route
      * @param string[] $params
-     *
      * @return string
      */
     public function path($route, array $params = array())
@@ -407,9 +395,7 @@ class Application
   
     /**
      * Generate asset
-     *
      * @param string $path
-     *
      * @return string
      */
     public function asset($path)
@@ -419,10 +405,8 @@ class Application
   
     /**
      * Render a controller
-     *
-     * @param string   $controller
+     * @param string $controller
      * @param string[] $params
-     *
      * @return string
      */
     public function renderController($controller, array $params = array())
@@ -477,10 +461,8 @@ class Application
   
     /**
      * Render a template
-     *
-     * @param string   $filename
+     * @param string $filename
      * @param string[] $vars
-     *
      * @return string
      */
     public function renderView($filename, array $vars = array())
@@ -504,10 +486,8 @@ class Application
   
     /**
      * Translator
-     *
      * @param string $message
      * @param string $locale
-     *
      * @return string
      */
     public function translate($message, $locale = null)

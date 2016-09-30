@@ -14,7 +14,7 @@ namespace Zanra\Framework\Controller;
 use Zanra\Framework\Application\Application;
 
 /**
- * Abstract controller
+ * Zanra Abstract controller
  * @author Targalis
  *
  */
