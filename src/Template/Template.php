@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework;
+namespace Zanra\Framework\Template;
 
 use Zanra\Framework\Template\TemplateInterface;
 use Zanra\Framework\Template\Exception\TemplateDirectoryNotFoundException;
