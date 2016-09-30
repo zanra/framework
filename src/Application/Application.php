@@ -208,26 +208,26 @@ class Application
                 sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
     
         if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
       
         if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
         $routesCfg            = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY};
         $filtersCfg           = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY};
     
         if (!file_exists($routesCfg))
-            throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
+            throw new FileNotFoundException(
                 sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $routesCfg, self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
     
         if (!file_exists($filtersCfg))
-            throw new \Zanra\Framework\FileLoader\Exception\FileNotFoundException(
+            throw new FileNotFoundException(
                 sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $filtersCfg, self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
     
         if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::RES_LOCALE_KEY, self::RES_APPLICATION_KEY));
     
         $this->routes         = $this->fileLoader->load($routesCfg);
@@ -245,7 +245,7 @@ class Application
         }
   
         if (false === $this->configLoaded)
-            throw new \Zanra\Framework\Exception\LoadConfigFileException(
+            throw new LoadConfigFileException(
                 sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
   
         $this->router     = new Router($this->routes, $this->urlBag);
@@ -486,11 +486,11 @@ class Application
     public function renderView($filename, array $vars = array())
     {
         if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_TEMPLATE_KEY, self::RES_APPLICATION_KEY));
       
         if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_CACHE_KEY, self::RES_APPLICATION_KEY));
     
         if (null === $this->template) {
@@ -513,7 +513,7 @@ class Application
     public function translate($message, $locale = null)
     {
         if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::RES_TRANSLATION_KEY, self::RES_APPLICATION_KEY));
           
         if (null === $this->translator) {
