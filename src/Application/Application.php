@@ -80,17 +80,17 @@ class Application
     private $params = array();
     
     /**
-     * @var \Zanra\Framework\UrlBag\UrlBag
+     * @var UrlBag
      */
     private $urlBag;
     
     /**
-     * @var \Zanra\Framework\Router\Router
+     * @var Router
      */
     private $router;
     
     /**
-     * @var \Zanra\Framework\FileLoader\FileLoader
+     * @var FileLoader
      */
     private $fileLoader;
     
@@ -100,7 +100,7 @@ class Application
     private $configRealPath = null;
     
     /**
-     * @var \Zanra\Framework\Translator\Translator
+     * @var Translator
      */
     private $translator;
     
@@ -110,7 +110,7 @@ class Application
     private $defaultLocale;
     
     /**
-     * @var \Zanra\Framework\Template
+     * @var Template
      */
     private $template;
     
@@ -331,23 +331,35 @@ class Application
   
     /**
      * Get session
-     * @return \Zanra\Framework\Session\Session
+     * @return Session
      */
     public function getSession()
     {
         return $this->session;
     }
     
+    /**
+     * Get url
+     * @return string
+     */
     public function getUrl()
     {
         return $this->urlBag->getUrl();
     }
     
+    /**
+     * Get path
+     * @return string
+     */
     public function getPath()
     {
         return $this->urlBag->getPath();
     }
     
+    /**
+     * Get asset path
+     * @return string
+     */
     public function getAssetPath()
     {
         return $this->urlBag->getAssetPath();

@@ -17,6 +17,11 @@ use Zanra\Framework\Router\Exception\RouteNotFoundException;
 use Zanra\Framework\Router\Exception\MissingDefaultParameterException;
 use Zanra\Framework\UrlBag\UrlBagInterface;
 
+/**
+ * Zanra router
+ * @author Targalis
+ *
+ */
 class Router implements RouterInterface
 {
     /**
