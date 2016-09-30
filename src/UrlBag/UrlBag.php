@@ -14,6 +14,11 @@ namespace Zanra\Framework\UrlBag;
 use Zanra\Framework\UrlBag\UrlBagInterface;
 use Zanra\Framework\UrlBag\Exception\EmptyURLException;
 
+/**
+ * Zanra urlBag
+ * @author Targalis
+ *
+ */
 class UrlBag implements UrlBagInterface
 {
     /**
@@ -43,7 +48,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Constructor.
-     *
      * @param string $customUrl Used to lunch custom url when in cli mode 
      */
     public function __construct($customUrl = null)
@@ -100,7 +104,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Get the current full url
-     *
      * @return string
      */
     public function getUrl()
@@ -110,7 +113,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Get the current path
-     *
      * @return string
      */
     public function getPath()
@@ -120,7 +122,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Get asset path
-     *
      * @return string
      */
     public function getAssetPath()
@@ -130,7 +131,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Get the current base url
-     *
      * @return string
      */
     public function getBaseUrl()
@@ -140,7 +140,6 @@ class UrlBag implements UrlBagInterface
     
     /**
      * Get the current base path
-     *
      * @return string
      */
     public function getBasePath()
