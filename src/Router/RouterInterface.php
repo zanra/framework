@@ -13,7 +13,7 @@ namespace Zanra\Framework\Router;
 
 interface RouterInterface
 {
-	/**
+    /**
      * @return array|bool
      */
     public function matchRequest();

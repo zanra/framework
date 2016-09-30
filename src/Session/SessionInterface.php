@@ -18,9 +18,9 @@ namespace Zanra\Framework\Session;
  */
 interface SessionInterface
 {
-	/**
-	 * Start a new session
-	 */
+    /**
+     * Start a new session
+     */
     public function start();
     
     /**

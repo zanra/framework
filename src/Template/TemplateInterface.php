@@ -13,10 +13,10 @@ namespace Zanra\Framework\Template;
 
 interface TemplateInterface
 {
-	/**
-	 * Render a template view
-	 * @param unknown_type $filename
-	 * @param array $vars
-	 */
+    /**
+     * Render a template view
+     * @param unknown_type $filename
+     * @param array $vars
+     */
     public function render($filename, array $vars = array());
 }

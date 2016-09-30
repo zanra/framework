@@ -18,9 +18,9 @@ use Zanra\Framework\FileLoader\FileLoaderInterface;
 
 class Translator implements TranslatorInterface
 {
-	/**
-	 * @var FileLoader
-	 */
+    /**
+     * @var FileLoader
+     */
     private $fileLoader;
     
     /**

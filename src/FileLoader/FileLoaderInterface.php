@@ -13,10 +13,10 @@ namespace Zanra\Framework\FileLoader;
 
 interface FileLoaderInterface
 {
-	/**
-	 * Load a file
-	 * @param string $var path of the file to load
-	 * @return object
-	 */
+    /**
+     * Load a file
+     * @param string $var path of the file to load
+     * @return object
+     */
     public function load($var);
 }

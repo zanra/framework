@@ -13,10 +13,10 @@ namespace Zanra\Framework\Session\Flash;
 
 interface FlashInterface
 {
-	/**
-	 * Render flash name.
-	 * @return string
-	 */
+    /**
+     * Render flash name.
+     * @return string
+     */
     public function getName();
     
     /**

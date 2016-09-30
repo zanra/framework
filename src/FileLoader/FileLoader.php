@@ -22,9 +22,9 @@ use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
  */
 class FileLoader implements FileLoaderInterface
 {
-	/**
-	 * @var FileLoader
-	 */
+    /**
+     * @var FileLoader
+     */
     private static $_instance = null;
     
     /**

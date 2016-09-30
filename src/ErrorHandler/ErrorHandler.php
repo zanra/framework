@@ -23,7 +23,7 @@ class ErrorHandler
     const EXCEPTION = 'exception';
     const ERROR_EXCEPTION = 'error';
     const FATAL_ERROR_EXCEPTION = 'fatal';
-	
+    
     private static $wrapper;
   
     public static function init(ErrorHandlerWrapperInterface $wrapper)

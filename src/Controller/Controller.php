@@ -20,49 +20,49 @@ use Zanra\Framework\Application\Application;
  */
 abstract class Controller
 {
-	/**
-	 * @var \Zanra\Framework\Application\Application
-	 */
-	protected $app;
+    /**
+     * @var \Zanra\Framework\Application\Application
+     */
+    protected $app;
 
-	/**
-	 * Constructor.
-	 */
-	public function __Construct()
-	{
-		$this->app = Application::getInstance();
-	}
+    /**
+     * Constructor.
+     */
+    public function __Construct()
+    {
+        $this->app = Application::getInstance();
+    }
 
-	/**
-	 * Helper function to forward in a new controller method.
-	 * @param string $controller
-	 * @param object[] $params
-	 * @return string
-	 */
-	public function forward($controller, array $params = array())
-	{
-		return $this->app->renderController($controller, $params);
-	}
+    /**
+     * Helper function to forward in a new controller method.
+     * @param string $controller
+     * @param object[] $params
+     * @return string
+     */
+    public function forward($controller, array $params = array())
+    {
+        return $this->app->renderController($controller, $params);
+    }
 
-	/**
-	 * Helper function to render a view.
-	 * @param string $filename
-	 * @param object[] $vars
-	 * @return string
-	 */
-	public function render($filename, array $vars = array())
-	{
-		return $this->app->renderView($filename, $vars);
-	}
-	
-	/**
-	 * Redirect to new route
-	 * @param string $route
-	 * @param array $params
-	 */
-	public function redirect($route, array $params = array())
-	{
-		\header('Location: ' . $this->app->path($route, $params));
-		exit();
-	}
+    /**
+     * Helper function to render a view.
+     * @param string $filename
+     * @param object[] $vars
+     * @return string
+     */
+    public function render($filename, array $vars = array())
+    {
+        return $this->app->renderView($filename, $vars);
+    }
+    
+    /**
+     * Redirect to new route
+     * @param string $route
+     * @param array $params
+     */
+    public function redirect($route, array $params = array())
+    {
+        \header('Location: ' . $this->app->path($route, $params));
+        exit();
+    }
 }

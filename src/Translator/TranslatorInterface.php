@@ -18,10 +18,10 @@ namespace Zanra\Framework\Translator;
  */
 interface TranslatorInterface
 {
-	/**
-	 * Return translation directory
-	 * @return string
-	 */
+    /**
+     * Return translation directory
+     * @return string
+     */
     public function getTranslationDir();
     
     /**

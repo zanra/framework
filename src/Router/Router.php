@@ -19,9 +19,9 @@ use Zanra\Framework\UrlBag\UrlBagInterface;
 
 class Router implements RouterInterface
 {
-	/**
-	 * @var RouterInterface
-	 */
+    /**
+     * @var RouterInterface
+     */
     private $routes;
     
     /**
