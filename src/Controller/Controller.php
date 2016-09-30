@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Application;
+namespace Zanra\Framework\Controller;
 
 use Zanra\Framework\Application\Application;
 
