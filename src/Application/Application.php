@@ -9,14 +9,24 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework;
+namespace Zanra\Framework\Application;
 
 use Zanra\Framework\UrlBag\UrlBag;
 use Zanra\Framework\Router\Router;
 use Zanra\Framework\Session\Session;
-use Zanra\Framework\Template;
+use Zanra\Framework\Template\Template;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
+use Zanra\Framework\Application\Exception\LoadConfigFileException;
+use Zanra\Framework\Application\Exception\FilterNotFoundException;
+use Zanra\Framework\Application\Exception\FilterMethodNotFoundException;
+use Zanra\Framework\Application\Exception\ResourceKeyNotFoundException;
+use Zanra\Framework\Application\Exception\FileNotFoundException;
+use Zanra\Framework\Application\Exception\ControllerNotFoundException;
+use Zanra\Framework\Application\Exception\ControllerActionNotFoundException;
+use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParameterException;
+use Zanra\Framework\Application\Exception\ControllerBadReturnResponseException;
+use Zanra\Framework\Router\Exception\RouteNotFoundException;
 
 class Application
 {
@@ -110,7 +120,7 @@ class Application
     private $filtersLoaded = false;
     
     /**
-     * @var Zanra\Framework\Application
+     * @var Application
      */
     private static $_instance = null;
     
@@ -151,7 +161,7 @@ class Application
     private function getConfigRealPath()
     {
         if (false === $this->configLoaded)
-            throw new \Zanra\Framework\Exception\LoadConfigFileException(
+            throw new LoadConfigFileException(
                 sprintf('Please call "%s"', __CLASS__ . "::loadConfig"));
        
         return $this->configRealPath;
@@ -167,11 +177,11 @@ class Application
             $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
       
             if (null === $filterClass)
-                throw new \Zanra\Framework\Exception\FilterNotFoundException(
+                throw new FilterNotFoundException(
                     sprintf('Class "%s" not found', $filterNamespaceClass));
       
             if (!method_exists($filterClass, $method))
-                throw new \Zanra\Framework\Exception\FilterMethodNotFoundException(
+                throw new FilterMethodNotFoundException(
                     sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
       
             call_user_func_array(array($filterClass, $method), array($this));
@@ -194,7 +204,7 @@ class Application
         $this->resources      = $this->fileLoader->load($config);
     
         if (!isset($this->resources->{self::RES_APPLICATION_KEY}))
-            throw new \Zanra\Framework\Exception\ResourceKeyNotFoundException(
+            throw new ResourceKeyNotFoundException(
                 sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
     
         if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY}))
@@ -242,7 +252,7 @@ class Application
   
         // match current request
         if (false === $matches = $this->router->matchRequest()) {
-            throw new \Zanra\Framework\Router\Exception\RouteNotFoundException(
+            throw new RouteNotFoundException(
                 sprintf('No route found for "%s"', $this->urlBag->getUrl()));
         }
 
@@ -430,12 +440,12 @@ class Application
         // Check Controller\Zanra\Framework\Controller
         $controllerClass = class_exists($controller) ? new $controller() : null;
         if (null === $controllerClass)
-            throw new \Zanra\Framework\Exception\ControllerNotFoundException(
+            throw new ControllerNotFoundException(
                 sprintf('"%s" not found', $controller));
     
         // Check Action
         if (!method_exists($controllerClass, "{$action}"))
-            throw new \Zanra\Framework\Exception\ControllerActionNotFoundException(
+            throw new ControllerActionNotFoundException(
                 sprintf('unable to find "%s" in "%s" scope', $action, $controller));
     
         // Method Args
@@ -448,7 +458,7 @@ class Application
                 $methodArgs[$p->getName()] = $p->getDefaultValue();
             } else {
                 if (!isset($params[$p->getName()]) && $params[$p->getName()] !== null)
-                    throw new \Zanra\Framework\Router\Exception\ControllerActionMissingDefaultParameterException(
+                    throw new ControllerActionMissingDefaultParameterException(
                         sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)", 
                         $controller, $action, $p->getName()));
             }
@@ -459,7 +469,7 @@ class Application
         // Call Action
         $callAction = call_user_func_array(array($controllerClass, $action), $params);
         if (!isset($callAction))
-            throw new \Zanra\Framework\Exception\ControllerBadReturnResponseException(
+            throw new ControllerBadReturnResponseException(
                 sprintf('"%s:%s" must return a response. null given', $controller, $action));
     
         return $callAction;
@@ -524,7 +534,11 @@ class Application
 
         return $this->translator->translate($message, $locale);
     }
-  
+    
+    /**
+     * Singleton
+     * @return Application
+     */
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {

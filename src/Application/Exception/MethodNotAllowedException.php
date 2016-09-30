@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Exception;
+namespace Zanra\Framework\Application\Exception;
 
-class LoadConfigFileException extends \ErrorException
+class MethodNotAllowedException extends \Exception
 {
     public function __construct($message = null)
     {
-        parent::__construct($message, 404);
+        parent::__construct($message, 405);
     }
 }

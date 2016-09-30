@@ -19,26 +19,49 @@ use Zanra\Framework\UrlBag\UrlBagInterface;
 
 class Router implements RouterInterface
 {
+	/**
+	 * @var RouterInterface
+	 */
     private $routes;
     
+    /**
+     * @var UrlBagInterface
+     */
     private $urlBag;
-  
+    
+    /**
+     * Constructor
+     * @param RouterInterface $routes
+     * @param UrlBagInterface $urlBag
+     */
     public function __construct(\stdClass $routes, UrlBagInterface $urlBag)
     {
         $this->routes  = $routes;
         $this->urlBag  = $urlBag;
     }
-  
+    
+    /**
+     * @param stdClass $route
+     * @return string
+     */
     private function getRoutePattern($route)
     {
         return $route->pattern;
     }
-  
+    
+    /**
+     * @param stdClass $route
+     * @return string
+     */
     private function getRouteController($route)
     {
         return $route->controller;
     }
-  
+    
+    /**
+     * @param stdClass $route
+     * @return array
+     */
     private function getRouteParams($route)
     {
         $defaults = array();
@@ -51,7 +74,12 @@ class Router implements RouterInterface
         
         return $defaults;
     }
-  
+    
+    /**
+     * @param array $array1
+     * @param array $array2
+     * @return array
+     */
     private function forceArrayCombine(array $array1, array $array2) 
     {
         $i = 0;
@@ -62,7 +90,11 @@ class Router implements RouterInterface
         
         return $array1;
     }
-  
+    
+    /**
+     * @param string $pattern
+     * @return array
+     */
     private function getDelimiters($pattern)
     {
         $p = preg_split("#\{[^\{]+\}#",$pattern);
@@ -74,7 +106,11 @@ class Router implements RouterInterface
     
         return $delimiters;
     }
-  
+    
+    /**
+     * @param string $pattern
+     * @return array
+     */
     private function getSlugs($pattern)
     {
         preg_match_all("#{(.*?)}#", $pattern, $matches);
@@ -86,7 +122,12 @@ class Router implements RouterInterface
     
         return $slugs;
     }
-  
+    
+    /**
+     * @param string $url
+     * @param array $delimiters
+     * @return array
+     */
     private function extractValues($url, $delimiters)
     {
         $flag = 0;
@@ -141,6 +182,10 @@ class Router implements RouterInterface
         return $vars;
     }
     
+    /**
+     * @param array $params
+     * @return array
+     */
     private function encodeParams(array $params = array()) {
         
         foreach ($params as $key => $param) {
@@ -149,7 +194,11 @@ class Router implements RouterInterface
 
         return $params;
     }
-
+    
+    /**
+     * @param array $params
+     * @return array
+     */
     private function decodeParams(array $params = array()) {
         
         foreach ($params as $key => $param) {
@@ -158,7 +207,14 @@ class Router implements RouterInterface
 
         return $params;
     }
-
+    
+    /**
+     * @param array $slugs
+     * @param array $defaults
+     * @param bool $setAll
+     * @throws MissingDefaultParameterException
+     * @return array
+     */
     private function setSlugDefaultValues($slugs, $defaults, $setAll = true)
     {
         // check availables slugs default values
@@ -177,7 +233,12 @@ class Router implements RouterInterface
     
         return $slugs;
     }
-  
+    
+    /**
+     * @param array $delimiters
+     * @param array $values
+     * @return array
+     */
     private function buildUrl($delimiters, $values)
     {
         $url = '';
@@ -195,7 +256,10 @@ class Router implements RouterInterface
     
         return $url;
     }
-  
+    
+    /**
+     * @return string
+     */
     private function getUrlWithoutQueryString() 
     {
         $url = $this->urlBag->getUrl();
@@ -205,7 +269,10 @@ class Router implements RouterInterface
 
         return $url;
     }
-
+    
+    /**
+     * @return array|bool
+     */
     public function matchRequest()
     {
         $url         = $this->getUrlWithoutQueryString();
@@ -258,7 +325,12 @@ class Router implements RouterInterface
     
         return false;
     }
-  
+    
+    /**
+     * @param string $routename
+     * @param array $params
+     * @return string
+     */
     public function generateUrl($routename, array $params = array())
     {
         $url = null;

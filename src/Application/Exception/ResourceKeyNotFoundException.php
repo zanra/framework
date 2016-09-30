@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Exception;
+namespace Zanra\Framework\Application\Exception;
 
-class ControllerBadReturnResponseException extends \ErrorException
+class ResourceKeyNotFoundException extends \ErrorException
 {
     public function __construct($message = null)
     {

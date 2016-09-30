@@ -9,14 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\FileLoader;
+namespace Zanra\Framework\Application\Exception;
 
-interface FileLoaderInterface
+class ControllerNotFoundException extends \ErrorException
 {
-	/**
-	 * Load a file
-	 * @param string $var path of the file to load
-	 * @return object
-	 */
-    public function load($var);
+    public function __construct($message = null)
+    {
+        parent::__construct($message, 404);
+    }
 }

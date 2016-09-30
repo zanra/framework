@@ -13,7 +13,14 @@ namespace Zanra\Framework\Router;
 
 interface RouterInterface
 {
+	/**
+     * @return array|bool
+     */
     public function matchRequest();
-  
+    
+    /**
+     * @param array $routename
+     * @param array $parameters
+     */
     public function generateUrl($routename, array $parameters = array());
 }

@@ -40,7 +40,7 @@ class UrlBag implements UrlBagInterface
      * @var string
      */
     private $assetPath;
-	
+    
     /**
      * Constructor.
      *
@@ -66,7 +66,7 @@ class UrlBag implements UrlBagInterface
 
         $this->initializeBag();
     }
-	
+    
     /**
      * initializeBag
      */
@@ -97,7 +97,7 @@ class UrlBag implements UrlBagInterface
         $this->basePath   = rtrim($this->assetPath, '/').$context;
         $this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
     }
-	
+    
     /**
      * Get the current full url
      *

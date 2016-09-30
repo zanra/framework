@@ -18,32 +18,51 @@ use Zanra\Framework\FileLoader\FileLoaderInterface;
 
 class Translator implements TranslatorInterface
 {
+	/**
+	 * @var FileLoader
+	 */
     private $fileLoader;
     
+    /**
+     * @var object
+     */
     private $translation;
     
+    /**
+     * @var string
+     */
     private $translationDir;
-  
+    
+    /**
+     * Constructor
+     * @param FileLoaderInterface $fileLoader
+     */
     public function __Construct(FileLoaderInterface $fileLoader)
     {
         $this->fileLoader = $fileLoader;
     }
-  
+    
+    /**
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Translator.TranslatorInterface::setTranslationDir()
+     */
     public function setTranslationDir($translationDir)
     {
         $this->translationDir = $translationDir;
     }
-  
+    
+    /**
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Translator.TranslatorInterface::getTranslationDir()
+     */
     public function getTranslationDir()
     {
         return $this->translationDir;
     }
-  
+    
     /**
-     * translate
-     * params string key
-     * return String
-     * app->translate( $message )
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Translator.TranslatorInterface::translate()
      */
     public function translate($message, $locale)
     {

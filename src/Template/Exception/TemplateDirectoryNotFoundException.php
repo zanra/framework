@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Exception;
+namespace Zanra\Framework\Template\Exception;
 
-class MethodNotAllowedException extends \Exception
+class TemplateDirectoryNotFoundException extends \ErrorException
 {
     public function __construct($message = null)
     {
-        parent::__construct($message, 405);
+        parent::__construct($message, 404);
     }
 }

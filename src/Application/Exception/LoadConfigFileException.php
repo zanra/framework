@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Router\Exception;
+namespace Zanra\Framework\Application\Exception;
 
-class ControllerActionMissingDefaultParameterException extends \Exception
+class LoadConfigFileException extends \ErrorException
 {
     public function __construct($message = null)
     {

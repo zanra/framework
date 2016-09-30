@@ -15,6 +15,11 @@ use Zanra\Framework\Session\SessionInterface;
 use Zanra\Framework\Session\Exception\SessionStartException;
 use Zanra\Framework\Session\Flash\Flash;
 
+/**
+ * Zanra session
+ * @author Targalis
+ *
+ */
 class Session implements SessionInterface
 {
     /**
@@ -31,7 +36,7 @@ class Session implements SessionInterface
      * @var string
      */
     private $flashname = null;
-  
+    
     /**
      * @var \Zanra\Framework\Session\Flash\Flash
      */
@@ -47,7 +52,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Start a new session.
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::start()
      */
     public function start()
     {
@@ -75,7 +81,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Close session writing.
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::close()
      */
     public function close()
     {
@@ -90,10 +97,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Set an object in session.
-     *
-     * @param string $key
-     * @param object $val
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::set()
      */
     public function set($key, $val)
     {
@@ -105,11 +110,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Get an object in session.
-     *
-     * @param string $key
-     *
-     * @return object
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::get()
      */
     public function get($key)
     {
@@ -126,7 +128,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Destroy a session.
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::destroy()
      */
     public function destroy()
     {
@@ -149,9 +152,8 @@ class Session implements SessionInterface
     }
     
     /**
-     * Get flash object from session.
-     *
-     * @return \Zanra\Framework\Session\Flash\Flash
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\Session.SessionInterface::getFlash()
      */
     public function getFlash()
     {

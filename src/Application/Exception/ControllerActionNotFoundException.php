@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Exception;
+namespace Zanra\Framework\Application\Exception;
 
-class ControllerNotFoundException extends \ErrorException
+class ControllerActionNotFoundException extends \ErrorException
 {
     public function __construct($message = null)
     {

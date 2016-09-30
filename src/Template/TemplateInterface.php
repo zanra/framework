@@ -9,12 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Exception;
+namespace Zanra\Framework\Template;
 
-class TemplateDirectoryNotFoundException extends \ErrorException
+interface TemplateInterface
 {
-    public function __construct($message = null)
-    {
-        parent::__construct($message, 404);
-    }
+	/**
+	 * Render a template view
+	 * @param unknown_type $filename
+	 * @param array $vars
+	 */
+    public function render($filename, array $vars = array());
 }

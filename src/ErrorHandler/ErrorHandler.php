@@ -13,6 +13,11 @@ namespace Zanra\Framework\ErrorHandler;
 
 use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
 
+/**
+ * Zanra error handler
+ * @author Targalis
+ *
+ */
 class ErrorHandler
 {
     const EXCEPTION = 'exception';

@@ -11,11 +11,29 @@
 
 namespace Zanra\Framework\Translator;
 
+/**
+ * Zanra translator
+ * @author Targalis
+ *
+ */
 interface TranslatorInterface
 {
+	/**
+	 * Return translation directory
+	 * @return string
+	 */
     public function getTranslationDir();
     
+    /**
+     * Set translation directory
+     * @param string $translationDir
+     */
     public function setTranslationDir($translationDir);
     
+    /**
+     * @param string $message
+     * @param string $locale
+     * @return string
+     */
     public function translate($message, $locale);
 }

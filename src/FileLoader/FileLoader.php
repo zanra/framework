@@ -15,24 +15,47 @@ use Zanra\Framework\FileLoader\FileLoaderInterface;
 use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
 use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
+/**
+ * Zanra fileloader
+ * @author Targalis
+ *
+ */
 class FileLoader implements FileLoaderInterface
 {
+	/**
+	 * @var FileLoader
+	 */
     private static $_instance = null;
-	
+    
+    /**
+     * Constructor
+     */
     private function __Construct(){}
-  
+    
+    /**
+     * @param string $string
+     * @return string
+     */
     private function getExtension($string) 
     {
         return strtolower(substr(strrchr($string,'.'),1));
     }
-  
+    
+    /**
+     * @param $file
+     * @return array
+     */
     private function iniFileParser($file)
     {
         $parser = parse_ini_file($file, true);
     
         return $parser;
     }
-  
+    
+    /**
+     * @param array $array
+     * @return object
+     */
     private function toObject(array $array)
     {
         $obj = new \stdClass;
@@ -46,7 +69,11 @@ class FileLoader implements FileLoaderInterface
         
         return $obj;
     }
-  
+    
+    /**
+     * (non-PHPdoc)
+     * @see \Zanra\Framework\FileLoader.FileLoaderInterface::load()
+     */
     public function load($var)
     {
         $parser = array();
@@ -68,7 +95,11 @@ class FileLoader implements FileLoaderInterface
     
         return $this->toObject($parser);
     }
-  
+    
+    /**
+     * Singleton
+     * @return FileLoader
+     */
     public static function getInstance()
     {
         if (is_null(self::$_instance)) {
