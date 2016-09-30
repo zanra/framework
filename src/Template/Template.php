@@ -22,9 +22,9 @@ use Zanra\Framework\Application\Application;
  */
 class Template implements TemplateInterface
 {
-	/**
-	 * @var Twig_Loader_Filesystem
-	 */
+    /**
+     * @var Twig_Loader_Filesystem
+     */
     private $loader;
     
     /**
