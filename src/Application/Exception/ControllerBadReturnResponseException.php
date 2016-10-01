@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Application\Exception;
 
+/**
+ * Zanra ControllerBadReturnResponseException
+ *
+ * @author Targalis
+ *
+ */
 class ControllerBadReturnResponseException extends \ErrorException
 {
     public function __construct($message = null)

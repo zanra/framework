@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Template\Exception;
 
+/**
+ * Zanra TemplateDirectoryNotFoundException
+ *
+ * @author Targalis
+ *
+ */
 class TemplateDirectoryNotFoundException extends \ErrorException
 {
     public function __construct($message = null)

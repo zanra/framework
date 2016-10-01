@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Router\Exception;
 
+/**
+ * Zanra InvalidParameterException
+ *
+ * @author Targalis
+ *
+ */
 class InvalidParameterException extends \Exception
 {
     public function __construct($message = null)

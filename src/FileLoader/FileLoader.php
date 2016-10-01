@@ -17,6 +17,7 @@ use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
 /**
  * Zanra fileloader
+ *
  * @author Targalis
  *
  */
@@ -26,34 +27,37 @@ class FileLoader implements FileLoaderInterface
      * @var FileLoader
      */
     private static $_instance = null;
-    
+
     /**
      * Constructor
      */
     private function __Construct(){}
-    
+
     /**
      * @param string $string
+     *
      * @return string
      */
-    private function getExtension($string) 
+    private function getExtension($string)
     {
         return strtolower(substr(strrchr($string,'.'),1));
     }
-    
+
     /**
-     * @param $file
+     * @param string $file
+     *
      * @return array
      */
     private function iniFileParser($file)
     {
         $parser = parse_ini_file($file, true);
-    
+
         return $parser;
     }
-    
+
     /**
      * @param array $array
+     *
      * @return object
      */
     private function toObject(array $array)
@@ -66,18 +70,19 @@ class FileLoader implements FileLoaderInterface
                 $obj->{$k} = $v;
             }
         }
-        
+
         return $obj;
     }
-    
+
     /**
      * (non-PHPdoc)
+     *
      * @see \Zanra\Framework\FileLoader.FileLoaderInterface::load()
      */
     public function load($var)
     {
         $parser = array();
-    
+
         try {
             if (is_string($var)) {
                 if (!file_exists($var))
@@ -92,12 +97,13 @@ class FileLoader implements FileLoaderInterface
             throw new WrongFileExtensionException(
                 sprintf('No FileLoader function was found for "%s" extension', $extension));
         }
-    
+
         return $this->toObject($parser);
     }
-    
+
     /**
      * Singleton
+     *
      * @return FileLoader
      */
     public static function getInstance()
@@ -105,7 +111,7 @@ class FileLoader implements FileLoaderInterface
         if (is_null(self::$_instance)) {
             self::$_instance = new FileLoader();
         }
-    
+
         return self::$_instance;
     }
 }

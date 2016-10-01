@@ -11,10 +11,17 @@
 
 namespace Zanra\Framework\Template;
 
+/**
+ * Zanra TemplateInterface
+ *
+ * @author Targalis
+ *
+ */
 interface TemplateInterface
 {
     /**
      * Render a template view
+     *
      * @param unknown_type $filename
      * @param array $vars
      */

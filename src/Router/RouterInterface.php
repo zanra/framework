@@ -11,13 +11,19 @@
 
 namespace Zanra\Framework\Router;
 
+/**
+ * Zanra RouterInterface
+ *
+ * @author Targalis
+ *
+ */
 interface RouterInterface
 {
     /**
      * @return array|bool
      */
     public function matchRequest();
-    
+
     /**
      * @param array $routename
      * @param array $parameters

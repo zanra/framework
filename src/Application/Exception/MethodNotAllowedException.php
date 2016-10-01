@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Application\Exception;
 
+/**
+ * Zanra MethodNotAllowedException
+ *
+ * @author Targalis
+ *
+ */
 class MethodNotAllowedException extends \Exception
 {
     public function __construct($message = null)

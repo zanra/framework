@@ -14,7 +14,8 @@ namespace Zanra\Framework\Controller;
 use Zanra\Framework\Application\Application;
 
 /**
- * Zanra Abstract controller
+ * Zanra Abstract Controller
+ *
  * @author Targalis
  *
  */
@@ -35,8 +36,10 @@ abstract class Controller
 
     /**
      * Helper function to forward in a new controller method.
+     *
      * @param string $controller
      * @param object[] $params
+     *
      * @return string
      */
     public function forward($controller, array $params = array())
@@ -46,17 +49,20 @@ abstract class Controller
 
     /**
      * Helper function to render a view.
+     *
      * @param string $filename
      * @param object[] $vars
+     *
      * @return string
      */
     public function render($filename, array $vars = array())
     {
         return $this->app->renderView($filename, $vars);
     }
-    
+
     /**
      * Redirect to new route
+     *
      * @param string $route
      * @param array $params
      */

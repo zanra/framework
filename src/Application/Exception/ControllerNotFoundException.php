@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Application\Exception;
 
+/**
+ * Zanra ControllerNotFoundException
+ *
+ * @author Targalis
+ *
+ */
 class ControllerNotFoundException extends \ErrorException
 {
     public function __construct($message = null)

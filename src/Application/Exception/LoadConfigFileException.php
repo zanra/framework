@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Application\Exception;
 
+/**
+ * Zanra LoadConfigFileException
+ *
+ * @author Targalis
+ *
+ */
 class LoadConfigFileException extends \ErrorException
 {
     public function __construct($message = null)

@@ -11,11 +11,19 @@
 
 namespace Zanra\Framework\FileLoader;
 
+/**
+ * Zanra FileLoaderInterface
+ *
+ * @author Targalis
+ *
+ */
 interface FileLoaderInterface
 {
     /**
      * Load a file
+     *
      * @param string $var path of the file to load
+     *
      * @return object
      */
     public function load($var);

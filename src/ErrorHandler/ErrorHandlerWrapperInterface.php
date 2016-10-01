@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\ErrorHandler;
 
+/**
+ * Zanra ErrorHandlerWrapperInterface
+ *
+ * @author Targalis
+ *
+ */
 interface ErrorHandlerWrapperInterface
 {
     public function wrap($exception, $type);

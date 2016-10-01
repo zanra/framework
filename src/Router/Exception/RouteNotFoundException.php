@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\Router\Exception;
 
+/**
+ * Zanra RouteNotFoundException
+ *
+ * @author Targalis
+ *
+ */
 class RouteNotFoundException extends \ErrorException
 {
     public function __construct($message = null)

@@ -11,6 +11,12 @@
 
 namespace Zanra\Framework\FileLoader\Exception;
 
+/**
+ * Zanra FileNotFoundException
+ *
+ * @author Targalis
+ *
+ */
 class FileNotFoundException extends \ErrorException
 {
     public function __construct($message = null)

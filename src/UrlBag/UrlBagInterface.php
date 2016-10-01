@@ -11,34 +11,45 @@
 
 namespace Zanra\Framework\UrlBag;
 
+/**
+ * Zanra UrlBagInterface
+ *
+ * @author Targalis
+ *
+ */
 interface UrlBagInterface
 {
     /**
      * Get the current full url
+     *
      * @return string
      */
     public function getUrl();
-  
+
     /**
      * Get the current path
+     *
      * @return string
      */
     public function getPath();
-  
+
     /**
      * Get asset path
+     *
      * @return string
      */
     public function getAssetPath();
-  
+
     /**
      * Get the current base url
+     *
      * @return string
      */
     public function getBaseUrl();
 
     /**
      * Get the current base path
+     *
      * @return string
      */
     public function getBasePath();
