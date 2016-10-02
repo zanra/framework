@@ -75,7 +75,7 @@ class Translator implements TranslatorInterface
      *
      * @see \Zanra\Framework\Translator.TranslatorInterface::translate()
      */
-    public function translate($message, $locale == null)
+    public function translate($message, $locale = null)
     {
         if (null == $locale) {
             throw new TranslationEmptyLocaleException(

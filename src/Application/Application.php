@@ -137,7 +137,7 @@ class Application
     {
         $this->urlBag     = new UrlBag();
         $this->session    = new Session();
-        $this->fileLoader = new FileLoader::getInstance();
+        $this->fileLoader = FileLoader::getInstance();
     }
 
     /**
