@@ -60,7 +60,7 @@ class Session implements SessionInterface
     public function start()
     {
         if ($this->started) {
-            return true;
+            return;
         }
 
         // This prevents PHP from attempting to send the headers again
@@ -90,7 +90,7 @@ class Session implements SessionInterface
     public function close()
     {
         if (!$this->started) {
-            return true;
+            return;
         }
 
         session_write_close();
@@ -139,6 +139,10 @@ class Session implements SessionInterface
      */
     public function destroy()
     {
+        if (!$this->started) {
+            return;
+        }
+
         $_SESSION = array();
 
         if (ini_get("session.use_cookies")) {
