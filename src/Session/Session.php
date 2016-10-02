@@ -39,7 +39,7 @@ class Session implements SessionInterface
     private $flashname = null;
 
     /**
-     * @var \Zanra\Framework\Session\Flash\Flash
+     * @var Flash
      */
     private $flash;
 

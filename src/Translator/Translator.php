@@ -11,9 +11,10 @@
 
 namespace Zanra\Framework\Translator;
 
-use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\TranslatorInterface;
 use Zanra\Framework\Translator\Exception\TranslationFileNotFoundException;
+use Zanra\Framework\Translator\Exception\TranslationEmptyLocaleException;
+use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\FileLoader\FileLoaderInterface;
 
 /**
@@ -32,7 +33,7 @@ class Translator implements TranslatorInterface
     /**
      * @var object
      */
-    private $translation;
+    private $translations = array();
 
     /**
      * @var string
@@ -74,17 +75,27 @@ class Translator implements TranslatorInterface
      *
      * @see \Zanra\Framework\Translator.TranslatorInterface::translate()
      */
-    public function translate($message, $locale)
+    public function translate($message, $locale == null)
     {
+        if (null == $locale) {
+            throw new TranslationEmptyLocaleException(
+                sprintf('translation locale can\'t be empty'));
+        }
+
         $locale = strtolower($locale);
         $translationFile = "{$this->getTranslationDir()}/messages.{$locale}.ini";
 
-        if (!file_exists($translationFile))
+        if (!file_exists($translationFile)) {
             throw new TranslationFileNotFoundException(
                 sprintf('translation file "%s" not found', $translationFile));
+        }
 
-        $this->translation = $this->fileLoader->load($translationFile);
+        if (!isset($this->translation[$locale])) {
+            $this->translation[$locale] = $this->fileLoader->load($translationFile);    
+        }
+        
+        $trans = $this->translation[$locale];
 
-        return !empty($this->translation->$message) ? $this->translation->$message : $message;
+        return !empty($trans->$message) ? $trans->$message : $message;
     }
 }

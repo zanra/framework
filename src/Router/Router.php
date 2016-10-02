@@ -76,7 +76,7 @@ class Router implements RouterInterface
     {
         $defaults = array();
 
-        if(!empty($route->params)) {
+        if (!empty($route->params)) {
             foreach ($route->params as $k => $v) {
                 $defaults[$k] = (trim($v) == '') ? null : trim($v);
             }
@@ -95,7 +95,7 @@ class Router implements RouterInterface
     {
         $i = 0;
         foreach ($array1 as $index => $val) {
-            $array1[$index] = isset($array2[$i])?$array2[$i]:$val;
+            $array1[$index] = isset($array2[$i]) ? $array2[$i] : $val;
             $i++;
         }
 
@@ -150,7 +150,7 @@ class Router implements RouterInterface
         $delimiter = preg_quote($delimiters[0]);
 
         $url = preg_replace("#^{$delimiter}#", '', $url);
-        for ($i=1; $i < count($delimiters); $i++) {
+        for ($i = 1; $i < count($delimiters); $i++) {
 
             $delimiter = preg_quote($delimiters[$i]);
 
@@ -188,9 +188,9 @@ class Router implements RouterInterface
             }
         }
 
-        $vars = array_map(function($value){
+        $vars = array_map(function($value) {
             // if $value is false or $value contains "/" return empty
-            return ($value===false || preg_match("#/#", $value)) ? '' : $value;
+            return ($value === false || preg_match("#/#", $value)) ? '' : $value;
         }, $vars);
 
         return $vars;
@@ -241,13 +241,15 @@ class Router implements RouterInterface
                 if (in_array($key, array_keys($defaults))) {
                     $slugs[$key] = $defaults[$key];
                 } else {
-                    throw new MissingDefaultParameterException(sprintf('missing slug "%s" default value', $key));
+                    throw new MissingDefaultParameterException(
+                        sprintf('missing slug "%s" default value', $key));
                 }
             }
         }
 
-        if($setAll)
+        if ($setAll) {
             $slugs = array_merge($defaults, $slugs);
+        }
 
         return $slugs;
     }
@@ -263,13 +265,14 @@ class Router implements RouterInterface
         $url = '';
         $values[] = '';
 
-        for ($i=0; $i<count($delimiters); $i++) {
+        for ($i = 0; $i < count($delimiters); $i++) {
             // example url: /xxx/{slug1}/xxx/{slug2}
             // in this example if slug1 is empty return false
             // but slug2 can be empty
-            if (isset($delimiters[$i+1]) && $delimiters[$i+1] != '' && $values[$i] == ''){
+            if (isset($delimiters[$i+1]) && $delimiters[$i+1] != '' && $values[$i] == '') {
                 return false;
             }
+
             $url .= "{$delimiters[$i]}{$values[$i]}";
         }
 
@@ -303,8 +306,9 @@ class Router implements RouterInterface
         // empty parameters;
 
         $testUrls    = array($url);
-        if($url !== $rootUrl)
+        if ($url !== $rootUrl) {
             array_push($testUrls, "{$url}/");
+        }
 
         foreach ($testUrls as $testUrl) {
 
@@ -366,13 +370,13 @@ class Router implements RouterInterface
             foreach ($params as $key => $val) {
                 if (!in_array($key, array_keys($slugs))) {
                     throw new InvalidParameterException(
-                    sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
+                       sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
                 }
             }
 
             $defaults     = $this->getRouteParams($route);
 
-            $params      = $this->encodeParams($params);
+            $params       = $this->encodeParams($params);
 
             $slugs        = array_merge($slugs, $params);
             $slugs        = $this->setSlugDefaultValues($slugs, $defaults, false);
@@ -384,7 +388,8 @@ class Router implements RouterInterface
             }
 
         } else {
-            throw new RouteNotFoundException(sprintf('unable to find Route "%s"', $routename));
+            throw new RouteNotFoundException(
+                sprintf('unable to find Route "%s"', $routename));
         }
 
         return $url;

@@ -81,7 +81,7 @@ class UrlBag implements UrlBagInterface
 		$scriptName       = '';
 		$rewriteOn        = false;
 
-		if(php_sapi_name() !== 'cli') {
+		if (php_sapi_name() !== 'cli') {
 			$scriptName     = $_SERVER['SCRIPT_NAME'];
 			$rewriteOn      = !preg_match("#{$scriptName}#", $this->getUrl());
 		}
@@ -100,7 +100,7 @@ class UrlBag implements UrlBagInterface
 		$this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
 		$this->assetPath  = (!empty($info['dirname']) && $info['dirname'] != '/') ? $info['dirname'] . '/' : '/';
 
-		$this->basePath   = rtrim($this->assetPath, '/').$context;
+		$this->basePath   = rtrim($this->assetPath, '/') . $context;
 		$this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
 	}
 

@@ -31,7 +31,7 @@ class FileLoader implements FileLoaderInterface
     /**
      * Constructor
      */
-    private function __Construct(){}
+    private function __Construct() {}
 
     /**
      * @param string $string
@@ -40,7 +40,7 @@ class FileLoader implements FileLoaderInterface
      */
     private function getExtension($string)
     {
-        return strtolower(substr(strrchr($string,'.'),1));
+        return strtolower(substr(strrchr($string,'.'), 1));
     }
 
     /**
@@ -85,9 +85,10 @@ class FileLoader implements FileLoaderInterface
 
         try {
             if (is_string($var)) {
-                if (!file_exists($var))
+                if (!file_exists($var)) {
                     throw new FileNotFoundException(
                         sprintf('File "%s" not found', $var));
+                }
                 $extension = $this->getExtension($var);
                 $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
             } elseif (is_array($var)) {

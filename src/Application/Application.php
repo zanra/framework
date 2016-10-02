@@ -28,7 +28,6 @@ use Zanra\Framework\Application\Exception\ControllerActionNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParameterException;
 use Zanra\Framework\Application\Exception\ControllerBadReturnResponseException;
 
-
 /**
  * Zanra Application
  *
@@ -138,7 +137,7 @@ class Application
     {
         $this->urlBag     = new UrlBag();
         $this->session    = new Session();
-        $this->fileLoader = FileLoader::getInstance();
+        $this->fileLoader = new FileLoader::getInstance();
     }
 
     /**
@@ -183,13 +182,15 @@ class Application
             $filterNamespaceClass = "\\Filter\\{$class}Filter";
             $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
 
-            if (null === $filterClass)
+            if (null === $filterClass) {
                 throw new FilterNotFoundException(
                     sprintf('Class "%s" not found', $filterNamespaceClass));
+            }
 
-            if (!method_exists($filterClass, $method))
+            if (!method_exists($filterClass, $method)) {
                 throw new FilterMethodNotFoundException(
                     sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
+            }
 
             call_user_func_array(array($filterClass, $method), array($this));
         }
@@ -210,32 +211,38 @@ class Application
         $this->configRealPath = dirname($config);
         $this->resources      = $this->fileLoader->load($config);
 
-        if (!isset($this->resources->{self::RES_APPLICATION_KEY}))
+        if (!isset($this->resources->{self::RES_APPLICATION_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('section key "[%s]" not declared in resources', self::RES_APPLICATION_KEY));
+        }
 
-        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY}))
+        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
+        }
 
-        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY}))
+        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
+        }
 
         $routesCfg            = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_ROUTING_KEY};
         $filtersCfg           = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::RES_APPLICATION_KEY}->{self::RES_FILTERS_KEY};
 
-        if (!file_exists($routesCfg))
+        if (!file_exists($routesCfg)) {
             throw new FileNotFoundException(
                 sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $routesCfg, self::RES_ROUTING_KEY, self::RES_APPLICATION_KEY));
+        }
 
-        if (!file_exists($filtersCfg))
+        if (!file_exists($filtersCfg)) {
             throw new FileNotFoundException(
                 sprintf('File "%s" with key "%s" declared in resources [%s] section not found', $filtersCfg, self::RES_FILTERS_KEY, self::RES_APPLICATION_KEY));
+        }
 
-        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY}))
+        if (!isset($this->resources->{self::RES_APPLICATION_KEY}->{self::RES_LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::RES_LOCALE_KEY, self::RES_APPLICATION_KEY));
+        }
 
         $this->routes         = $this->fileLoader->load($routesCfg);
         $this->filters        = $this->fileLoader->load($filtersCfg);
@@ -251,9 +258,10 @@ class Application
             return;
         }
 
-        if (false === $this->configLoaded)
+        if (false === $this->configLoaded) {
             throw new LoadConfigFileException(
                 sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
+        }
 
         $this->router     = new Router($this->routes, $this->urlBag);
 
@@ -268,7 +276,7 @@ class Application
         $this->action     = $matches["action"];
         $this->params     = $matches["params"];
 
-        print $this->renderController("{$this->getcontroller()}:{$this->getAction()}", $this->getParams());
+        print($this->renderController("{$this->getcontroller()}:{$this->getAction()}", $this->getParams()));
     }
 
     /**
@@ -461,14 +469,16 @@ class Application
 
         // Check Controller\Zanra\Framework\Controller
         $controllerClass = class_exists($controller) ? new $controller() : null;
-        if (null === $controllerClass)
+        if (null === $controllerClass) {
             throw new ControllerNotFoundException(
                 sprintf('"%s" not found', $controller));
+        }
 
         // Check Action
-        if (!method_exists($controllerClass, "{$action}"))
+        if (!method_exists($controllerClass, "{$action}")) {
             throw new ControllerActionNotFoundException(
                 sprintf('unable to find "%s" in "%s" scope', $action, $controller));
+        }
 
         // Method Args
         $methodArgs = array();
@@ -479,10 +489,11 @@ class Application
             if ($p->isOptional()) {
                 $methodArgs[$p->getName()] = $p->getDefaultValue();
             } else {
-                if (!isset($params[$p->getName()]) && $params[$p->getName()] !== null)
+                if (!isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
                     throw new ControllerActionMissingDefaultParameterException(
                         sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)",
                         $controller, $action, $p->getName()));
+                }
             }
         }
 
@@ -490,9 +501,10 @@ class Application
 
         // Call Action
         $callAction = call_user_func_array(array($controllerClass, $action), $params);
-        if (!isset($callAction))
+        if (!isset($callAction)) {
             throw new ControllerBadReturnResponseException(
                 sprintf('"%s:%s" must return a response. null given', $controller, $action));
+        }
 
         return $callAction;
     }
@@ -507,13 +519,15 @@ class Application
      */
     public function renderView($filename, array $vars = array())
     {
-        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY}))
+        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_TEMPLATE_KEY, self::RES_APPLICATION_KEY));
+        }
 
-        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY}))
+        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::RES_CACHE_KEY, self::RES_APPLICATION_KEY));
+        }
 
         if (null === $this->template) {
             $templateDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TEMPLATE_KEY};
@@ -534,18 +548,19 @@ class Application
      */
     public function translate($message, $locale = null)
     {
-        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY}))
+        if (!isset($this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::RES_TRANSLATION_KEY, self::RES_APPLICATION_KEY));
+        }
 
-        if (null === $this->translator) {
+        if (null == $this->translator) {
             $this->translator = new Translator($this->fileLoader);
 
             $translationDir = $this->getConfigRealPath() . DIRECTORY_SEPARATOR . $this->getResources()->{self::RES_APPLICATION_KEY}->{self::RES_TRANSLATION_KEY};
             $this->translator->setTranslationDir($translationDir);
         }
 
-        if (null === $locale) {
+        if (null == $locale) {
             if (!$this->hasSession()) {
                 $locale = $this->defaultLocale;
             } else {
