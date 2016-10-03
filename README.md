@@ -1,1 +1,1 @@
-Zanra PHP framework
+Zanra PHP framework vendor
