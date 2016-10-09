@@ -21,54 +21,57 @@ use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
  */
 class ErrorHandler
 {
-    const EXCEPTION = 'exception';
-    const ERROR_EXCEPTION = 'error';
-    const FATAL_ERROR_EXCEPTION = 'fatal';
-
+    /**
+     * @var ErrorHandlerWrapperInterface
+     */
     private static $wrapper;
 
+    /**
+     * Initialize errors wrapping
+     *
+     * @param ErrorHandlerWrapperInterface $wrapper
+     */
     public static function init(ErrorHandlerWrapperInterface $wrapper)
     {
+        ob_start();
+
         self::$wrapper = $wrapper;
 
-        // Exception handler
-        set_exception_handler(function($e) {
-            if (ob_get_length())
-                ob_end_clean();
+        $error_handler = function($errno, $errstr, $errfile, $errline) {
+            // Ignore it if they're not in error_reporting
+            if (!(error_reporting() & $errno)) {
+                return;
+            }
 
-            self::$wrapper->wrap($e, self::EXCEPTION);
-
-            exit(0);
-        });
-
-        // Error handler
-        set_error_handler(function($errno, $errstr, $errfile, $errline) {
             try {
                 throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
             } catch (\Exception $e) {
-                if (ob_get_length())
+                if (ob_get_length()) {
                     ob_end_clean();
+                }
 
-                self::$wrapper->wrap($e, self::ERROR_EXCEPTION);
-
-                exit(0);
+                self::$wrapper->wrap($e, null);
             }
-        });
+        };
+
+        $exception_handler = function($e) {
+            self::$wrapper->wrap($e, null);
+        };
+
+        $fatal_handler = function() use ($error_handler) {
+            $error = error_get_last();
+            if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
+                $error_handler($error['type'], $error['message'], $error['file'], $error['line']);
+            }
+        };
+
+        // Error handler
+        set_error_handler($error_handler);
+
+        // Exception handler
+        set_exception_handler($exception_handler);
 
         // Fatal error handler
-        register_shutdown_function(function() {
-            try {
-                $error = error_get_last();
-                if($error != null)
-                    throw new \ErrorException($error['message'], $error['type'], 0, $error['file'], $error['line']);
-            } catch (\Exception $e) {
-                if (ob_get_length())
-                    ob_end_clean();
-
-                self::$wrapper->wrap($e, self::FATAL_ERROR_EXCEPTION);
-
-                exit(0);
-            }
-        });
+        register_shutdown_function($fatal_handler);
     }
 }
