@@ -21,6 +21,10 @@ use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
  */
 class ErrorHandler
 {
+    const EXCEPTION = 'exception';
+    const ERROR_EXCEPTION = 'error';
+    const FATAL_ERROR_EXCEPTION = 'fatalError';
+
     /**
      * @var ErrorHandlerWrapperInterface
      */
@@ -37,41 +41,42 @@ class ErrorHandler
 
         self::$wrapper = $wrapper;
 
-        $error_handler = function($errno, $errstr, $errfile, $errline) {
-            // Ignore it if they're not in error_reporting
-            if (!(error_reporting() & $errno)) {
-                return;
-            }
-
+        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) {
             try {
-                throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+                throw new \ErrorException($errstr, $code, $errno, $errfile, $errline);
             } catch (\Exception $e) {
                 if (ob_get_length()) {
                     ob_end_clean();
                 }
 
-                self::$wrapper->wrap($e, null);
+                self::$wrapper->wrap($e, $type);
             }
         };
 
-        $exception_handler = function($e) {
-            self::$wrapper->wrap($e, null);
-        };
-
-        $fatal_handler = function() use ($error_handler) {
-            $error = error_get_last();
-            if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
-                $error_handler($error['type'], $error['message'], $error['file'], $error['line']);
-            }
+         // Exception handler
+        $exception_handler = function($e) use ($global_handler) {
+            $global_handler(self::EXCEPTION, E_ERROR, $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
         };
 
         // Error handler
-        set_error_handler($error_handler);
+        $error_handler = function($errno, $errstr, $errfile, $errline) use ($global_handler) {
+            if (!(error_reporting() & $errno)) {
+                return;
+            }
 
-        // Exception handler
-        set_exception_handler($exception_handler);
+            $global_handler(self::ERROR_EXCEPTION, $errno, 0, $errstr, $errfile, $errline);
+        };
 
         // Fatal error handler
+        $fatal_handler = function() use ($error_handler) {
+            $error = error_get_last();
+            if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
+                $global_handler(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
+            }
+        };
+
+        set_error_handler($error_handler);
+        set_exception_handler($exception_handler);
         register_shutdown_function($fatal_handler);
     }
 }
