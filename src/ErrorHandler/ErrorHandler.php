@@ -53,7 +53,7 @@ class ErrorHandler
             }
         };
 
-         // Exception handler
+        // Exception handler
         $exception_handler = function($e) use ($global_handler) {
             $global_handler(self::EXCEPTION, E_ERROR, $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
         };
