@@ -31,15 +31,32 @@ class ErrorHandler
     private static $wrapper;
 
     /**
+     * @var bool
+     */
+    private static $hasLogFile = true;
+
+    /**
+     * @var bool
+     */
+    private static $logsfile = null;
+
+    /**
      * Initialize errors wrapping
      *
      * @param ErrorHandlerWrapperInterface $wrapper
+     * @param string $logsfile
      */
-    public static function init(ErrorHandlerWrapperInterface $wrapper)
+    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsfile = null)
     {
         ob_start();
 
         self::$wrapper = $wrapper;
+        self::$logsfile = $logsfile;
+
+        // if(self::$logsfile != null && !file_exists(self::$logsfile)) {
+            // self::$hasLogFile = false;
+            // die('Requirement: error logs directory not found, [' . self::$logsfile . '] declared in Framework.php');
+        // }
 
         $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) {
             try {
@@ -49,11 +66,15 @@ class ErrorHandler
                     ob_end_clean();
                 }
 
+                // if(self::$hasLogFile) {
+                    // error_log($e->getMessage() . '\n', 3, self::$logsfile);
+                // }
+
                 self::$wrapper->wrap($e, $type);
             }
         };
 
-         // Exception handler
+        // Exception handler
         $exception_handler = function($e) use ($global_handler) {
             $global_handler(self::EXCEPTION, E_ERROR, $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
         };
@@ -68,7 +89,7 @@ class ErrorHandler
         };
 
         // Fatal error handler
-        $fatal_handler = function() use ($error_handler) {
+        $fatal_handler = function() use ($global_handler) {
             $error = error_get_last();
             if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
                 $global_handler(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
