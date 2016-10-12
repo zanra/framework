@@ -336,7 +336,7 @@ class Application
     /**
      * Start the framework MVC engine
      */
-    public function mvcHandle(ErrorHandlerWrapperInterface $errorHandlerWrapper = null)
+    public function mvcHandle(ErrorHandlerWrapperInterface $errorHandlerWrapper)
     {
         if (null !== $this->router) {
             return;
