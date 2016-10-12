@@ -26,30 +26,32 @@ class ErrorHandler
     const FATAL_ERROR_EXCEPTION = 'fatalError';
 
     /**
-     * @var ErrorHandlerWrapperInterface
-     */
-    private static $wrapper;
-
-    /**
      * Initialize errors wrapping
      *
-     * @param ErrorHandlerWrapperInterface $wrapper
+     * @param string $logsDirPath
+     * @param ErrorHandlerWrapperInterface $wrapper can only wrap exception. Errors and fatals are not wrapped
      */
-    public static function init(ErrorHandlerWrapperInterface $wrapper)
+    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDirPath = null)
     {
         ob_start();
 
-        self::$wrapper = $wrapper;
-
-        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) {
+        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) use ($wrapper, $logsDirPath){
             try {
                 throw new \ErrorException($errstr, $code, $errno, $errfile, $errline);
             } catch (\Exception $e) {
                 if (ob_get_length()) {
                     ob_end_clean();
                 }
+                
+                if ($type === self::EXCEPTION) {
+                    $wrapper->wrap($e, $type);
+                } else {
+                    die($e->getMessage());
+                }
 
-                self::$wrapper->wrap($e, $type);
+                if (null !== $logsDirPath) {
+                    error_log($e->getMessage(), 3, $logsDirPath. '/error.log');
+                }
             }
         };
 
@@ -68,7 +70,7 @@ class ErrorHandler
         };
 
         // Fatal error handler
-        $fatal_handler = function() use ($error_handler) {
+        $fatal_handler = function() use ($global_handler) {
             $error = error_get_last();
             if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
                 $global_handler(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
