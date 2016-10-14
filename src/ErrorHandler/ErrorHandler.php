@@ -11,7 +11,7 @@
 
 namespace Zanra\Framework\ErrorHandler;
 
-use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
+use Zanra\Framework\ErrorHandler\Exception\ErrorLogsDirectoryNotFoundException;
 
 /**
  * Zanra ErrorHandler
@@ -28,14 +28,12 @@ class ErrorHandler
     /**
      * Initialize errors wrapping
      *
-     * @param string $logsDirPath
+     * @param string $logsDir
      * @param ErrorHandlerWrapperInterface $wrapper can only wrap exception. Errors and fatals are not wrapped
      */
-    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDirPath = null)
+    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDir = null)
     {
-        ob_start();
-
-        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) use ($wrapper, $logsDirPath){
+        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) use ($wrapper, $logsDir){
             try {
                 throw new \ErrorException($errstr, $code, $errno, $errfile, $errline);
             } catch (\Exception $e) {
@@ -49,8 +47,13 @@ class ErrorHandler
                     die($e->getMessage());
                 }
 
-                if (null !== $logsDirPath) {
-                    error_log($e->getMessage(), 3, $logsDirPath. '/error.log');
+                if (null !== $logsDir) {
+                    if (!is_dir($logsDir)) {
+                        throw new ErrorLogsDirectoryNotFoundException(
+                            sprintf('Error logs directory "%s" not found', $logsDir));
+                    }
+                    
+                    error_log($e->getMessage(), 3, $logsDir. '/error.log');
                 }
             }
         };

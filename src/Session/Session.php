@@ -11,7 +11,6 @@
 
 namespace Zanra\Framework\Session;
 
-use Zanra\Framework\Session\SessionInterface;
 use Zanra\Framework\Session\Exception\SessionStartException;
 use Zanra\Framework\Session\Flash\Flash;
 
@@ -53,9 +52,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session.SessionInterface::start()
+     * @throws SessionStartException
      */
     public function start()
     {
@@ -82,11 +79,6 @@ class Session implements SessionInterface
         $this->started = true;
     }
 
-    /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session.SessionInterface::close()
-     */
     public function close()
     {
         if (!$this->started) {
@@ -100,9 +92,8 @@ class Session implements SessionInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session.SessionInterface::set()
+     * @param string $key
+     * @param object $val
      */
     public function set($key, $val)
     {
@@ -114,9 +105,9 @@ class Session implements SessionInterface
     }
 
     /**
-     * (non-PHPdoc)
+     * @param string $key
      *
-     * @see \Zanra\Framework\Session.SessionInterface::get()
+     * @return object
      */
     public function get($key)
     {
@@ -132,11 +123,6 @@ class Session implements SessionInterface
         return $val;
     }
 
-    /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session.SessionInterface::destroy()
-     */
     public function destroy()
     {
         if (!$this->started) {
@@ -162,9 +148,7 @@ class Session implements SessionInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session.SessionInterface::getFlash()
+     * @return object
      */
     public function getFlash()
     {

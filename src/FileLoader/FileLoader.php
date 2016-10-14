@@ -11,7 +11,6 @@
 
 namespace Zanra\Framework\FileLoader;
 
-use Zanra\Framework\FileLoader\FileLoaderInterface;
 use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
 use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
@@ -29,12 +28,12 @@ class FileLoader implements FileLoaderInterface
     private static $_instance = null;
 
     /**
-     * Constructor
+     * FileLoader constructor.
      */
     private function __Construct() {}
 
     /**
-     * @param string $string
+     * @param $string
      *
      * @return string
      */
@@ -44,7 +43,7 @@ class FileLoader implements FileLoaderInterface
     }
 
     /**
-     * @param string $file
+     * @param $file
      *
      * @return array
      */
@@ -58,7 +57,7 @@ class FileLoader implements FileLoaderInterface
     /**
      * @param array $array
      *
-     * @return object
+     * @return \stdClass
      */
     private function toObject(array $array)
     {
@@ -75,9 +74,12 @@ class FileLoader implements FileLoaderInterface
     }
 
     /**
-     * (non-PHPdoc)
+     * @param string $var
      *
-     * @see \Zanra\Framework\FileLoader.FileLoaderInterface::load()
+     * @return \stdClass
+     *
+     * @throws FileNotFoundException
+     * @throws WrongFileExtensionException
      */
     public function load($var)
     {
@@ -94,7 +96,7 @@ class FileLoader implements FileLoaderInterface
             } elseif (is_array($var)) {
                 $parser = $var;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new WrongFileExtensionException(
                 sprintf('No FileLoader function was found for "%s" extension', $extension));
         }

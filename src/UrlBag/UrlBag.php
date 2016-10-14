@@ -11,7 +11,6 @@
 
 namespace Zanra\Framework\UrlBag;
 
-use Zanra\Framework\UrlBag\UrlBagInterface;
 use Zanra\Framework\UrlBag\Exception\EmptyURLException;
 
 /**
@@ -47,11 +46,13 @@ class UrlBag implements UrlBagInterface
 	 */
 	private $assetPath;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param string $customUrl Used to lunch custom url when in cli mode
-	 */
+    /**
+     * UrlBag constructor.
+     *
+     * @param string $customUrl Used to lunch custom url when in cli mode
+     *
+     * @throws EmptyURLException
+     */
 	public function __construct($customUrl = null)
 	{
 		if (null === $customUrl && 'cli' === php_sapi_name()) {
@@ -78,78 +79,68 @@ class UrlBag implements UrlBagInterface
 	 */
 	private function initializeBag()
 	{
-		$scriptName       = '';
-		$rewriteOn        = false;
+		$scriptName = '';
+		$rewriteOn = false;
 
 		if (php_sapi_name() !== 'cli') {
-			$scriptName     = $_SERVER['SCRIPT_NAME'];
-			$rewriteOn      = !preg_match("#{$scriptName}#", $this->getUrl());
+			$scriptName = $_SERVER['SCRIPT_NAME'];
+			$rewriteOn = !preg_match("#{$scriptName}#", $this->getUrl());
 		}
 
-		$parseUrl         = parse_url($this->url);
+		$parseUrl = parse_url($this->url);
 
-		$info             = pathinfo($scriptName);
+		$info = pathinfo($scriptName);
 
-		$context          = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
+		$context = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
 
-		$scheme           = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
-		$host             = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
-		$port             = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
-		$query            = !empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
+		$scheme = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
+		$host = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
+		$port = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
+		$query = !empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
 
-		$this->path       = !empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
-		$this->assetPath  = (!empty($info['dirname']) && $info['dirname'] != '/') ? $info['dirname'] . '/' : '/';
+		$this->path = !empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
+		$this->assetPath = (!empty($info['dirname']) && $info['dirname'] != '/') ? $info['dirname'] . '/' : '/';
 
-		$this->basePath   = rtrim($this->assetPath, '/') . $context;
-		$this->baseUrl    = "{$scheme}://{$host}{$port}{$this->basePath}";
+		$this->basePath = rtrim($this->assetPath, '/') . $context;
+		$this->baseUrl = "{$scheme}://{$host}{$port}{$this->basePath}";
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see Zanra\Framework\UrlBag.UrlBagInterface::getUrl()
-	 */
-	public function getUrl()
+    /**
+     * @return null|string
+     */
+    public function getUrl()
 	{
 		return $this->url;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see Zanra\Framework\UrlBag.UrlBagInterface::getPath()
-	 */
-	public function getPath()
+    /**
+     * @return string
+     */
+    public function getPath()
 	{
 		return $this->path;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see Zanra\Framework\UrlBag.UrlBagInterface::getAssetPath()
-	 */
-	public function getAssetPath()
+    /**
+     * @return string
+     */
+    public function getAssetPath()
 	{
 		return $this->assetPath;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see Zanra\Framework\UrlBag.UrlBagInterface::getBaseUrl()
-	 */
-	public function getBaseUrl()
+    /**
+     * @return string
+     */
+    public function getBaseUrl()
 	{
 		return $this->baseUrl;
 	}
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see Zanra\Framework\UrlBag.UrlBagInterface::getBasePath()
-	 */
-	public function getBasePath()
+    /**
+     * @return string
+     */
+    public function getBasePath()
 	{
 		return $this->basePath;
 	}

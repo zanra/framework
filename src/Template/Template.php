@@ -11,7 +11,6 @@
 
 namespace Zanra\Framework\Template;
 
-use Zanra\Framework\Template\TemplateInterface;
 use Zanra\Framework\Template\Exception\TemplateDirectoryNotFoundException;
 use Zanra\Framework\Application\Application;
 
@@ -55,19 +54,20 @@ class Template implements TemplateInterface
 
         $this->application = Application::getInstance();
         $this->loader = new \Twig_Loader_Filesystem($templateDir);
-        $this->template = new \Twig_Environment($this->loader, array(
+        $this->template = new \Twig_Environment($this->loader, [
             'cache' => $cacheDir,
             'auto_reload' => true,
             'strict_variables' => true
-        ));
+        ]);
 
         $this->template->addGlobal('app', $this->application);
     }
 
     /**
-     * (non-PHPdoc)
+     * @param string $filename
+     * @param array $vars
      *
-     * @see \Zanra\Framework\Template.TemplateInterface::render()
+     * @return string
      */
     public function render($filename, array $vars = array())
     {

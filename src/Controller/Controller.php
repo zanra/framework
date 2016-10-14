@@ -27,7 +27,7 @@ abstract class Controller
     protected $app;
 
     /**
-     * Constructor.
+     * Controller constructor.
      */
     public function __Construct()
     {
@@ -37,10 +37,10 @@ abstract class Controller
     /**
      * Helper function to forward in a new controller method.
      *
-     * @param string $controller
-     * @param object[] $params
+     * @param $controller
+     * @param array $params
      *
-     * @return string
+     * @return mixed|string
      */
     public function forward($controller, array $params = array())
     {
@@ -50,8 +50,8 @@ abstract class Controller
     /**
      * Helper function to render a view.
      *
-     * @param string $filename
-     * @param object[] $vars
+     * @param $filename
+     * @param array $vars
      *
      * @return string
      */
@@ -63,7 +63,7 @@ abstract class Controller
     /**
      * Redirect to new route
      *
-     * @param string $route
+     * @param $route
      * @param array $params
      */
     public function redirect($route, array $params = array())

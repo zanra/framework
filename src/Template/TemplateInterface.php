@@ -22,7 +22,7 @@ interface TemplateInterface
     /**
      * Render a template view
      *
-     * @param unknown_type $filename
+     * @param string $filename
      * @param array $vars
      */
     public function render($filename, array $vars = array());

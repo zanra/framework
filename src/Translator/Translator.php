@@ -14,6 +14,7 @@ namespace Zanra\Framework\Translator;
 use Zanra\Framework\Translator\TranslatorInterface;
 use Zanra\Framework\Translator\Exception\TranslationFileNotFoundException;
 use Zanra\Framework\Translator\Exception\TranslationEmptyLocaleException;
+use Zanra\Framework\Translator\Exception\TranslationDirectoryNotFoundException;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\FileLoader\FileLoaderInterface;
 
@@ -31,7 +32,7 @@ class Translator implements TranslatorInterface
     private $fileLoader;
 
     /**
-     * @var object
+     * @var array
      */
     private $translations = array();
 
@@ -41,7 +42,7 @@ class Translator implements TranslatorInterface
     private $translationDir;
 
     /**
-     * Constructor
+     * Translator constructor.
      *
      * @param FileLoaderInterface $fileLoader
      */
@@ -51,19 +52,22 @@ class Translator implements TranslatorInterface
     }
 
     /**
-     * (non-PHPdoc)
+     * @param string $translationDir
      *
-     * @see \Zanra\Framework\Translator.TranslatorInterface::setTranslationDir()
+     * @throws TranslationDirectoryNotFoundException
      */
     public function setTranslationDir($translationDir)
     {
+        if (!is_dir($translationDir)) {
+            throw new TranslationDirectoryNotFoundException(
+                sprintf('Translation directory "%s" not found', $translationDir));
+        }
+
         $this->translationDir = $translationDir;
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Translator.TranslatorInterface::getTranslationDir()
+     * @return string
      */
     public function getTranslationDir()
     {
@@ -71,9 +75,13 @@ class Translator implements TranslatorInterface
     }
 
     /**
-     * (non-PHPdoc)
+     * @param string $message
+     * @param null $locale
      *
-     * @see \Zanra\Framework\Translator.TranslatorInterface::translate()
+     * @return string
+     *
+     * @throws TranslationEmptyLocaleException
+     * @throws TranslationFileNotFoundException
      */
     public function translate($message, $locale = null)
     {
@@ -90,11 +98,11 @@ class Translator implements TranslatorInterface
                 sprintf('translation file "%s" not found', $translationFile));
         }
 
-        if (!isset($this->translation[$locale])) {
-            $this->translation[$locale] = $this->fileLoader->load($translationFile);    
+        if (!isset($this->translations[$locale])) {
+            $this->translations[$locale] = $this->fileLoader->load($translationFile);    
         }
         
-        $trans = $this->translation[$locale];
+        $trans = $this->translations[$locale];
 
         return !empty($trans->$message) ? $trans->$message : $message;
     }

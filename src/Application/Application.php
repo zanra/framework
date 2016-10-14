@@ -22,9 +22,6 @@ use Zanra\Framework\Application\Exception\LoadConfigFileException;
 use Zanra\Framework\Application\Exception\FilterNotFoundException;
 use Zanra\Framework\Application\Exception\FilterMethodNotFoundException;
 use Zanra\Framework\Application\Exception\ResourceKeyNotFoundException;
-use Zanra\Framework\Application\Exception\FileNotFoundException;
-use Zanra\Framework\Application\Exception\DirectoryNotFoundException;
-use Zanra\Framework\Application\Exception\DirectoryNotWritableException;
 use Zanra\Framework\Application\Exception\ControllerNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerActionNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParameterException;
@@ -156,7 +153,7 @@ class Application
     private static $_instance = null;
 
     /**
-     * Constructor.
+     * Application constructor.
      */
     private function __Construct()
     {
@@ -188,6 +185,8 @@ class Application
      * this absolute path is used to find resources path variables absolute path
      *
      * @return string
+     *
+     * @throws LoadConfigFileException
      */
     private function getConfigRealPath()
     {
@@ -200,6 +199,9 @@ class Application
 
     /**
      * Load declared filters.
+     *
+     * @throws FilterMethodNotFoundException
+     * @throws FilterNotFoundException
      */
     private function loadFilters()
     {
@@ -225,6 +227,8 @@ class Application
      * Load configuration file
      *
      * @param string $configFile The config file
+     *
+     * @throws ResourceKeyNotFoundException
      */
     public function loadConfig($configFile)
     {
@@ -248,12 +252,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
         
-        $this->cacheDir       = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
-
-        if (!is_dir($this->cacheDir)) {
-            throw new DirectoryNotFoundException(
-                sprintf('Directory "%s" declared in "%s" by key "%s" in [%s] section not found', $this->cacheDir, $configFile, self::CACHE_KEY, self::APPLICATION_SECTION));
-        }
+        $this->cacheDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
 
         // Logs directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
@@ -261,12 +260,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->logsDir        = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY};
-
-        if (!is_dir($this->logsDir)) {
-            throw new DirectoryNotFoundException(
-                sprintf('Directory "%s" declared in "%s" by key "%s" in [%s] section not found', $this->logsDir, $configFile, self::LOGS_KEY, self::APPLICATION_SECTION));
-        }
+        $this->logsDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY};
 
         // Transation directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
@@ -276,25 +270,14 @@ class Application
 
         $this->translationDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY};
 
-        if (!is_dir($this->translationDir)) {
-            throw new DirectoryNotFoundException(
-                sprintf('Directory "%s" declared in "%s" by key "%s" in [%s] section not found', $this->translationDir, $configFile, self::LOGS_KEY, self::TRANSLATION_KEY));
-        }
-
         // Routes file
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION));
         }
 
-        $routesFile     = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY};
-
-        if (!file_exists($routesFile)) {
-            throw new FileNotFoundException(
-                sprintf('File "%s" declared in "%s" by key "%s" in [%s] section not found', $routesFile, $configFile, self::ROUTING_KEY, self::APPLICATION_SECTION));
-        }
-
-        $this->routes         = $this->fileLoader->load($routesFile);
+        $routesFile = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY};
+        $this->routes = $this->fileLoader->load($routesFile);
 
         // Filters file
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
@@ -302,14 +285,8 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION));
         }
 
-        $filtersFile    = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY};
-
-        if (!file_exists($filtersFile)) {
-            throw new FileNotFoundException(
-                sprintf('File "%s" declared in "%s" by key "%s" in [%s] section not found', $filtersFile, $configFile, self::FILTERS_KEY, self::APPLICATION_SECTION));
-        }
-
-        $this->filters        = $this->fileLoader->load($filtersFile);
+        $filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY};
+        $this->filters = $this->fileLoader->load($filtersFile);
 
         // Template directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
@@ -317,12 +294,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->templateDir    = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY};
-
-        if (!is_dir($this->templateDir)) {
-            throw new DirectoryNotFoundException(
-                sprintf('Directory "%s" declared in "%s" by key "%s" in [%s] section not found', $this->templateDir, $configFile, self::TEMPLATE_KEY, self::APPLICATION_SECTION));
-        }
+        $this->templateDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY};
 
         // Default Locale
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
@@ -330,11 +302,16 @@ class Application
                 sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->defaultLocale  = $this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY};
+        $this->defaultLocale = $this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY};
     }
 
     /**
      * Start the framework MVC engine
+     *
+     * @param ErrorHandlerWrapperInterface $errorHandlerWrapper
+     *
+     * @throws LoadConfigFileException
+     * @throws RouteNotFoundException
      */
     public function mvcHandle(ErrorHandlerWrapperInterface $errorHandlerWrapper)
     {
@@ -349,7 +326,7 @@ class Application
                 sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
         }
 
-        $this->router     = new Router($this->getRoutes(), $this->urlBag);
+        $this->router = new Router($this->getRoutes(), $this->urlBag);
 
         // match current request
         if (false === $matches = $this->router->matchRequest()) {
@@ -362,7 +339,7 @@ class Application
         $this->action     = $matches["action"];
         $this->params     = $matches["params"];
 
-        print($this->renderController("{$this->getcontroller()}:{$this->getAction()}", $this->getParams()));
+        print($this->renderController("{$this->getController()}:{$this->getAction()}", $this->getParams()));
     }
 
     /**
@@ -448,7 +425,7 @@ class Application
     /**
      * Get url
      *
-     * @return string
+     * @return null|string
      */
     public function getUrl()
     {
@@ -458,7 +435,7 @@ class Application
     /**
      * Get path
      *
-     * @return string
+     * @return null|string
      */
     public function getPath()
     {
@@ -468,7 +445,7 @@ class Application
     /**
      * Get asset path
      *
-     * @return string
+     * @return null|string
      */
     public function getAssetPath()
     {
@@ -478,7 +455,7 @@ class Application
     /**
      * Get base url
      *
-     * @return string
+     * @return null|string
      */
     public function getBaseUrl()
     {
@@ -488,7 +465,7 @@ class Application
     /**
      * Get base path
      *
-     * @return string
+     * @return null|string
      */
     public function getBasePath()
     {
@@ -501,7 +478,7 @@ class Application
      * @param string $route
      * @param array $params
      *
-     * @return string
+     * @return null|string
      */
     public function url($route, array $params = array())
     {
@@ -514,7 +491,7 @@ class Application
      * @param string $route
      * @param string[] $params
      *
-     * @return string
+     * @return null|string
      */
     public function path($route, array $params = array())
     {
@@ -526,7 +503,7 @@ class Application
 
      * @param string $path
      *
-     * @return string
+     * @return null|string
      */
     public function asset($path)
     {
@@ -536,10 +513,15 @@ class Application
     /**
      * Render a controller
      *
-     * @param string $controller
-     * @param string[] $params
+     * @param $controller
+     * @param array $params
      *
-     * @return string
+     * @return mixed
+     *
+     * @throws ControllerActionMissingDefaultParameterException
+     * @throws ControllerActionNotFoundException
+     * @throws ControllerBadReturnResponseException
+     * @throws ControllerNotFoundException
      */
     public function renderController($controller, array $params = array())
     {
@@ -598,8 +580,8 @@ class Application
     /**
      * Render a template
      *
-     * @param string $filename
-     * @param string[] $vars
+     * @param $filename
+     * @param array $vars
      *
      * @return string
      */
@@ -615,8 +597,8 @@ class Application
     /**
      * Translator
      *
-     * @param string $message
-     * @param string $locale
+     * @param $message
+     * @param null $locale
      *
      * @return string
      */

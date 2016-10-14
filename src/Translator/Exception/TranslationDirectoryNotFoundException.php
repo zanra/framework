@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Application\Exception;
+namespace Zanra\Framework\Translator\Exception;
 
 /**
- * Zanra DirectoryNotFoundException
+ * Zanra TranslationDirectoryNotFoundException
  *
  * @author Targalis
  *
  */
-class DirectoryNotFoundException extends \ErrorException
+class TranslationDirectoryNotFoundException extends \ErrorException
 {
     public function __construct($message = null)
     {

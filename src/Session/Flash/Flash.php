@@ -11,8 +11,6 @@
 
 namespace Zanra\Framework\Session\Flash;
 
-use Zanra\Framework\Session\Flash\FlashInterface;
-
 /**
  * Zanra flash
  *
@@ -32,9 +30,7 @@ class Flash implements FlashInterface
     private $flashes = array();
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session\Flash.FlashInterface::getName()
+     * @return string
      */
     public function getName()
     {
@@ -42,9 +38,7 @@ class Flash implements FlashInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session\Flash.FlashInterface::setName()
+     * @param $name
      */
     public function setName($name)
     {
@@ -52,9 +46,8 @@ class Flash implements FlashInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session\Flash.FlashInterface::add()
+     * @param string $key
+     * @param object $val
      */
     public function add($key, $val)
     {
@@ -62,9 +55,8 @@ class Flash implements FlashInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session\Flash.FlashInterface::get()
+     * @param string $key
+     * @return mixed|null
      */
     public function get($key)
     {
@@ -80,9 +72,7 @@ class Flash implements FlashInterface
     }
 
     /**
-     * (non-PHPdoc)
-     *
-     * @see \Zanra\Framework\Session\Flash.FlashInterface::all()
+     * @return array
      */
     public function all()
     {

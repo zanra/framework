@@ -19,5 +19,11 @@ namespace Zanra\Framework\ErrorHandler;
  */
 interface ErrorHandlerWrapperInterface
 {
+    /**
+     * @param $exception
+     * @param null $type
+     *
+     * @return mixed
+     */
     public function wrap($exception, $type = null);
 }

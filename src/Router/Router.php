@@ -11,7 +11,6 @@
 
 namespace Zanra\Framework\Router;
 
-use Zanra\Framework\Router\RouterInterface;
 use Zanra\Framework\Router\Exception\InvalidParameterException;
 use Zanra\Framework\Router\Exception\RouteNotFoundException;
 use Zanra\Framework\Router\Exception\MissingDefaultParameterException;
@@ -238,12 +237,12 @@ class Router implements RouterInterface
         // check availables slugs default values
         foreach ($slugs as $key => $value) {
             if (trim($value) == '') {
-                if (in_array($key, array_keys($defaults))) {
-                    $slugs[$key] = $defaults[$key];
-                } else {
+                if (!in_array($key, array_keys($defaults))) {
                     throw new MissingDefaultParameterException(
                         sprintf('missing slug "%s" default value', $key));
                 }
+
+                $slugs[$key] = $defaults[$key];
             }
         }
 
@@ -255,10 +254,10 @@ class Router implements RouterInterface
     }
 
     /**
-     * @param array $delimiters
-     * @param array $values
+     * @param $delimiters
+     * @param $values
      *
-     * @return array
+     * @return bool|string
      */
     private function buildUrl($delimiters, $values)
     {
@@ -297,15 +296,15 @@ class Router implements RouterInterface
      */
     public function matchRequest()
     {
-        $url         = $this->getUrlWithoutQueryString();
+        $url = $this->getUrlWithoutQueryString();
 
-        $rootUrl     = $this->urlBag->getBaseUrl() . '/';
+        $rootUrl = $this->urlBag->getBaseUrl() . '/';
 
         // Search $contextUrl and if not found
         // search contextUrl with "/" to match
         // empty parameters;
 
-        $testUrls    = array($url);
+        $testUrls = array($url);
         if ($url !== $rootUrl) {
             array_push($testUrls, "{$url}/");
         }
@@ -320,21 +319,21 @@ class Router implements RouterInterface
                     continue;
                 }
 
-                $delimiters       = $this->getDelimiters($routePattern);
-                $uriParams        = $this->extractValues($testUrl, $delimiters);
-                $buildUrl         = $this->buildUrl($delimiters, $uriParams);
+                $delimiters = $this->getDelimiters($routePattern);
+                $uriParams = $this->extractValues($testUrl, $delimiters);
+                $buildUrl = $this->buildUrl($delimiters, $uriParams);
 
                 if ($buildUrl == $testUrl) {
 
-                    $defaults       = $this->getRouteParams($route);
+                    $defaults = $this->getRouteParams($route);
 
-                    $uriParams      = $this->decodeParams($uriParams);
+                    $uriParams = $this->decodeParams($uriParams);
 
-                    $params         = $this->getSlugs($routePattern);
-                    $params         = $this->forceArrayCombine($params, $uriParams);
-                    $params         = $this->setSlugDefaultValues($params, $defaults);
+                    $params = $this->getSlugs($routePattern);
+                    $params = $this->forceArrayCombine($params, $uriParams);
+                    $params = $this->setSlugDefaultValues($params, $defaults);
 
-                    $controller     = explode(':', $this->getRouteController($route));
+                    $controller = explode(':', $this->getRouteController($route));
 
                     return array(
                         "route"       => $routename,
@@ -359,37 +358,35 @@ class Router implements RouterInterface
     {
         $url = null;
 
-        if (property_exists($this->routes, $routename)) {
-
-            $route        = $this->routes->$routename;
-            $routePattern = $this->getRoutePattern($route);
-            $delimiters   = $this->getDelimiters($routePattern);
-            $slugs        = $this->getSlugs($routePattern);
-
-            // check if $params key is defined in pattern
-            foreach ($params as $key => $val) {
-                if (!in_array($key, array_keys($slugs))) {
-                    throw new InvalidParameterException(
-                       sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
-                }
-            }
-
-            $defaults     = $this->getRouteParams($route);
-
-            $params       = $this->encodeParams($params);
-
-            $slugs        = array_merge($slugs, $params);
-            $slugs        = $this->setSlugDefaultValues($slugs, $defaults, false);
-            $url          = $this->buildUrl($delimiters, array_values($slugs));
-
-
-            if (!preg_match("#/$#", $routePattern)) {
-                $url = preg_replace("#/$#", "", $url);
-            }
-
-        } else {
+        if (!property_exists($this->routes, $routename)) {
             throw new RouteNotFoundException(
                 sprintf('unable to find Route "%s"', $routename));
+        }
+
+        $route = $this->routes->$routename;
+        $routePattern = $this->getRoutePattern($route);
+        $delimiters = $this->getDelimiters($routePattern);
+        $slugs = $this->getSlugs($routePattern);
+
+        // check if $params key is defined in pattern
+        foreach ($params as $key => $val) {
+            if (!in_array($key, array_keys($slugs))) {
+                throw new InvalidParameterException(
+                   sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
+            }
+        }
+
+        $defaults = $this->getRouteParams($route);
+
+        $params = $this->encodeParams($params);
+
+        $slugs = array_merge($slugs, $params);
+        $slugs = $this->setSlugDefaultValues($slugs, $defaults, false);
+        $url = $this->buildUrl($delimiters, array_values($slugs));
+
+
+        if (!preg_match("#/$#", $routePattern)) {
+            $url = preg_replace("#/$#", "", $url);
         }
 
         return $url;

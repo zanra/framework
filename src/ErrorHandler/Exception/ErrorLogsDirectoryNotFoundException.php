@@ -9,15 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Application\Exception;
+namespace Zanra\Framework\ErrorHandler\Exception;
 
 /**
- * Zanra DirectoryNotWritableException
+ * Zanra ErrorLogsDirectoryNotFoundException
  *
  * @author Targalis
  *
  */
-class DirectoryNotWritableException extends \ErrorException
+class ErrorLogsDirectoryNotFoundException extends \ErrorException
 {
     public function __construct($message = null)
     {
