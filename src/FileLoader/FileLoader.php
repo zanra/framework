@@ -15,7 +15,7 @@ use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
 use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
 /**
- * Zanra fileloader
+ * Zanra FileLoader
  *
  * @author Targalis
  *

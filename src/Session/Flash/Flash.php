@@ -12,7 +12,7 @@
 namespace Zanra\Framework\Session\Flash;
 
 /**
- * Zanra flash
+ * Zanra Flash
  *
  * @author Targalis
  *

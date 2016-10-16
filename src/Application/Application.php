@@ -251,7 +251,7 @@ class Application
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
-        
+
         $this->cacheDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
 
         // Logs directory

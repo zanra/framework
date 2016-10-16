@@ -40,7 +40,7 @@ class ErrorHandler
                 if (ob_get_length()) {
                     ob_end_clean();
                 }
-                
+
                 if ($type === self::EXCEPTION) {
                     $wrapper->wrap($e, $type);
                 } else {
@@ -52,7 +52,7 @@ class ErrorHandler
                         throw new ErrorLogsDirectoryNotFoundException(
                             sprintf('Error logs directory "%s" not found', $logsDir));
                     }
-                    
+
                     error_log($e->getMessage(), 3, $logsDir. '/error.log');
                 }
             }

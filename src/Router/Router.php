@@ -17,7 +17,7 @@ use Zanra\Framework\Router\Exception\MissingDefaultParameterException;
 use Zanra\Framework\UrlBag\UrlBagInterface;
 
 /**
- * Zanra router
+ * Zanra Router
  *
  * @author Targalis
  *
