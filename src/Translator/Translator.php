@@ -90,6 +90,7 @@ class Translator implements TranslatorInterface
                 sprintf('translation locale can\'t be empty'));
         }
 
+        $message = (string) $message;
         $locale = strtolower($locale);
         $translationFile = "{$this->getTranslationDir()}/messages.{$locale}.ini";
 

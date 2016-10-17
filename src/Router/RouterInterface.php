@@ -11,6 +11,7 @@
 
 namespace Zanra\Framework\Router;
 
+use Zanra\Framework\UrlBag\UrlBagInterface;
 /**
  * Zanra RouterInterface
  *
@@ -22,7 +23,7 @@ interface RouterInterface
     /**
      * @return array|bool
      */
-    public function matchRequest();
+    public function matchRequest(UrlBagInterface $urlBag);
 
     /**
      * @param array $routename

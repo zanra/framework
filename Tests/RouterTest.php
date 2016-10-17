@@ -21,21 +21,51 @@ use Zanra\Framework\FileLoader\FileLoader;
  */
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRouteFoundException()
+    protected $fileLoader;
+    
+    protected $routes;
+
+    protected function setUp()
     {
-        $loader = FileLoader::getInstance();
-        $routes = $loader->load(__DIR__ . "/../Tests/Mocks/routes.ini");
-        $urlBag = new UrlBag("http://127.0.0.1");
-        $router = new Router($routes, $urlBag);
-        $this->assertInternalType('array',$router->matchRequest());
+        $this->fileLoader = FileLoader::getInstance();
+        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini"); 
+        $this->router = new Router($routes);
     }
 
+    public function testMatchRequest()
+    {
+        $urlBag = new UrlBag("http://127.0.0.1");
+        $this->assertInternalType('array', $this->router->matchRequest($urlBag));
+    }
+
+    public function testMatchRequestFalse()
+    {
+        $urlBag = new UrlBag("http://127.0.0.1/route/not/found/test/case");
+        $this->assertFalse($this->router->matchRequest($urlBag));
+    }
+
+    /**
+     * @expectedException Zanra\Framework\Router\Exception\RouteNotFoundException
+     */
     public function testRouteNotFoundException()
     {
-        $loader = FileLoader::getInstance();
-        $routes = $loader->load(__DIR__ . "/../Tests/Mocks/routes.ini");
-        $urlBag = new UrlBag("http://127.0.0.1/route/not/found/test/case");
-        $router = new Router($routes, $urlBag);
-        $this->assertFalse($router->matchRequest());
+        $params = [];
+        $url = $this->router->generateUrl("routeNotFound", $params);
+    }
+
+    /**
+     * @expectedException Zanra\Framework\Router\Exception\InvalidParameterException
+     */
+    public function testInvalidParameterException()
+    {
+        $params = ['undefinedKey' => 'val'];
+        $url = $this->router->generateUrl("home", $params);
+    }
+
+    public function testGenerateUrl()
+    {
+        $params = [];
+        $url = $this->router->generateUrl("home", $params);
+        $this->assertTrue(is_string($url));
     }
 }

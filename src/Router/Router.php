@@ -38,12 +38,10 @@ class Router implements RouterInterface
      * Constructor
      *
      * @param RouterInterface $routes
-     * @param UrlBagInterface $urlBag
      */
-    public function __construct(\stdClass $routes, UrlBagInterface $urlBag)
+    public function __construct(\stdClass $routes)
     {
         $this->routes  = $routes;
-        $this->urlBag  = $urlBag;
     }
 
     /**
@@ -281,10 +279,8 @@ class Router implements RouterInterface
     /**
      * @return string
      */
-    private function getUrlWithoutQueryString()
+    private function getUrlWithoutQueryString($url)
     {
-        $url = $this->urlBag->getUrl();
-
         $urlWithoutQuery = strstr($url, '?', true);
         $url = (false === $urlWithoutQuery) ? $url : $urlWithoutQuery;
 
@@ -292,13 +288,15 @@ class Router implements RouterInterface
     }
 
     /**
+     * @param UrlBagInterface $urlBag
+     *
      * @return array|bool
      */
-    public function matchRequest()
+    public function matchRequest(UrlBagInterface $urlBag)
     {
-        $url = $this->getUrlWithoutQueryString();
+        $url = $this->getUrlWithoutQueryString($urlBag->getUrl());
 
-        $rootUrl = $this->urlBag->getBaseUrl() . '/';
+        $rootUrl = $urlBag->getBaseUrl() . '/';
 
         // Search $contextUrl and if not found
         // search contextUrl with "/" to match
@@ -313,7 +311,7 @@ class Router implements RouterInterface
 
             foreach ($this->routes as $routename => $route) {
 
-                $routePattern = $this->urlBag->getBaseUrl() . $this->getRoutePattern($route);
+                $routePattern = $urlBag->getBaseUrl() . $this->getRoutePattern($route);
 
                 if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $url) && $url != $rootUrl) {
                     continue;
@@ -356,8 +354,6 @@ class Router implements RouterInterface
      */
     public function generateUrl($routename, array $params = array())
     {
-        $url = null;
-
         if (!property_exists($this->routes, $routename)) {
             throw new RouteNotFoundException(
                 sprintf('unable to find Route "%s"', $routename));

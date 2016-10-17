@@ -93,10 +93,12 @@ class FileLoader implements FileLoaderInterface
 
             $extension = $this->getExtension($var);
 
-            if(false === $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var))) {
+            if (false === method_exists($this, "{$extension}FileParser")) {
                 throw new WrongFileExtensionException(
                     sprintf('No FileLoader function was found for "%s" extension', $extension));
             }
+
+            $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
 
         } elseif (is_array($var)) {
             $parser = $var;
