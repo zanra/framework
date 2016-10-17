@@ -12,6 +12,7 @@
 namespace Zanra\Framework\UrlBag;
 
 use Zanra\Framework\UrlBag\Exception\EmptyURLException;
+use Zanra\Framework\UrlBag\Exception\BadURLFormatException;
 
 /**
  * Zanra UrlBag
@@ -69,6 +70,11 @@ class UrlBag implements UrlBagInterface
             $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
         } else {
             $this->url = $customUrl;
+        }
+
+        if (!filter_var($this->url, FILTER_VALIDATE_URL)) {
+            throw new BadURLFormatException(
+                sprintf('%s not a valid url.', $this->url));
         }
 
         $this->initializeBag();
