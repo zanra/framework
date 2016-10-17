@@ -326,10 +326,10 @@ class Application
                 sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
         }
 
-        $this->router = new Router($this->getRoutes(), $this->urlBag);
+        $this->router = new Router($this->getRoutes());
 
         // match current request
-        if (false === $matches = $this->router->matchRequest()) {
+        if (false === $matches = $this->router->matchRequest($this->urlBag)) {
             throw new RouteNotFoundException(
                 sprintf('No route found for "%s"', $this->urlBag->getUrl()));
         }
