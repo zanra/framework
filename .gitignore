@@ -1,1 +1,5 @@
-vendor/composer.lockcomposer.pharphpunit.xml
+/mvc/config/cache/
+/mvc/config/logs/
+/vendor/
+composer.lock
+phpunit.xml
