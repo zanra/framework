@@ -49,8 +49,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testRouteNotFoundException()
     {
-        $params = [];
-        $url = $this->router->generateUrl("routeNotFound", $params);
+        $url = $this->router->generateUrl("routeNotFound", array());
     }
 
     /**
@@ -58,14 +57,13 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidParameterException()
     {
-        $params = ['undefinedKey' => 'val'];
+        $params = array('undefinedKey' => 'val');
         $url = $this->router->generateUrl("home", $params);
     }
 
     public function testGenerateUrl()
     {
-        $params = [];
-        $url = $this->router->generateUrl("home", $params);
+        $url = $this->router->generateUrl("home", array());
         $this->assertTrue(is_string($url));
     }
 }
