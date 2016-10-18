@@ -43,7 +43,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslationEmptyLocaleException()
     {
-        $this->translator->translate('already');
+        $this->translator->translate('already', null);
     }
 
     /**
