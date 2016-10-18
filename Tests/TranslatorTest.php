@@ -21,7 +21,7 @@ use Zanra\Framework\FileLoader\FileLoader;
 class TranslatorTest extends \PHPUnit_Framework_TestCase
 {
     protected $fileLoader;
-    
+
     protected $translator;
 
     protected function setUp()

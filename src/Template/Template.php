@@ -47,18 +47,18 @@ class Template implements TemplateInterface
      */
     public function __Construct($templateDir, $cacheDir = false)
     {
-        if (false === realpath($templateDir)) {
+        if (realpath($templateDir) === false) {
             throw new TemplateDirectoryNotFoundException(
                 sprintf('template directory not found in "%s"', $templateDir));
         }
 
         $this->application = Application::getInstance();
         $this->loader = new \Twig_Loader_Filesystem($templateDir);
-        $this->template = new \Twig_Environment($this->loader, [
+        $this->template = new \Twig_Environment($this->loader, array(
             'cache' => $cacheDir,
             'auto_reload' => true,
             'strict_variables' => true
-        ]);
+        ));
 
         $this->template->addGlobal('app', $this->application);
     }

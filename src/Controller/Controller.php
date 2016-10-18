@@ -22,7 +22,7 @@ use Zanra\Framework\Application\Application;
 abstract class Controller
 {
     /**
-     * @var \Zanra\Framework\Application\Application
+     * @var Application
      */
     protected $app;
 
@@ -68,7 +68,7 @@ abstract class Controller
      */
     public function redirect($route, array $params = array())
     {
-        \header('Location: ' . $this->app->path($route, $params));
+        \header('Location: ' .$this->app->path($route, $params));
         exit();
     }
 }

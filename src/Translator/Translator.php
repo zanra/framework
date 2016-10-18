@@ -83,9 +83,9 @@ class Translator implements TranslatorInterface
      * @throws TranslationEmptyLocaleException
      * @throws TranslationFileNotFoundException
      */
-    public function translate($message, $locale = null)
+    public function translate($message, $locale)
     {
-        if (null == $locale) {
+        if ($locale === null) {
             throw new TranslationEmptyLocaleException(
                 sprintf('translation locale can\'t be empty'));
         }

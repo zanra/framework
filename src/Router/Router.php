@@ -282,7 +282,7 @@ class Router implements RouterInterface
     private function getUrlWithoutQueryString($url)
     {
         $urlWithoutQuery = strstr($url, '?', true);
-        $url = (false === $urlWithoutQuery) ? $url : $urlWithoutQuery;
+        $url = ($urlWithoutQuery === false) ? $url : $urlWithoutQuery;
 
         return $url;
     }
@@ -311,7 +311,7 @@ class Router implements RouterInterface
 
             foreach ($this->routes as $routename => $route) {
 
-                $routePattern = $urlBag->getBaseUrl() . $this->getRoutePattern($route);
+                $routePattern = $urlBag->getBaseUrl() .$this->getRoutePattern($route);
 
                 if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $url) && $url != $rootUrl) {
                     continue;
