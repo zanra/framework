@@ -6,3 +6,5 @@ php:
   - '7.0'
   - hhvm
   - nightly
+before_install:
+  - php /home/travis/.phpenv/versions/5.3.26/bin/composer.phar update
