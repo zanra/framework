@@ -181,23 +181,6 @@ class Application
     }
 
     /**
-     * Get configuration absolute path.
-     * this absolute path is used to find resources path variables absolute path
-     *
-     * @return string
-     *
-     * @throws LoadConfigFileException
-     */
-    private function getConfigRealPath()
-    {
-        if (false === $this->configLoaded)
-            throw new LoadConfigFileException(
-                sprintf('Please call "%s"', __CLASS__ . "::loadConfig"));
-
-        return $this->configRealPath;
-    }
-
-    /**
      * Load declared filters.
      *
      * @throws FilterMethodNotFoundException
