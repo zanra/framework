@@ -99,13 +99,17 @@ class UrlBag implements UrlBagInterface
 
         $context = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
 
+        /* Normalize windows and *nix directory name by using "/" */
+        /* ex: windows directory name can be "\" and *nix directory name is "/" */
+        $dirname = str_replace("\\", '/', $info['dirname']);
+
         $scheme = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
         $host = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
         $port = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
         $query = !empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
 
         $this->path = !empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
-        $this->assetPath = (!empty($info['dirname']) && $info['dirname'] != '/') ? $info['dirname'] . '/' : '/';
+        $this->assetPath = (!empty($dirname) && $dirname != '/') ? $dirname . '/' : '/';
 
         $this->basePath = rtrim($this->assetPath, '/') . $context;
         $this->baseUrl = "{$scheme}://{$host}{$port}{$this->basePath}";
