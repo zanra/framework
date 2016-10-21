@@ -56,7 +56,7 @@ class ErrorHandler
         };
 
         // Convert error and fatal to errorException
-        $toErrorException = function($type, $errno, $code, $errstr, $errfile, $errline) use ($render) {
+        $toErrorException = function($type, $errno, $code, $errstr, $errfile, $errline) use ($exception_render) {
             try {
                 throw new \ErrorException($errstr, $code, $errno, $errfile, $errline);
             } catch (\Exception $e) {
@@ -65,12 +65,12 @@ class ErrorHandler
         };
 
         // Exception handler
-        $exception_handler = function($e) use ($render) {
+        $exception_handler = function($e) use ($exception_render) {
             $exception_render(self::EXCEPTION, $e);
         };
 
         // Error handler
-        $error_handler = function($errno, $errstr, $errfile, $errline) use ($global_handler) {
+        $error_handler = function($errno, $errstr, $errfile, $errline) use ($toErrorException) {
             if (!(error_reporting() & $errno)) {
                 return;
             }
@@ -79,7 +79,7 @@ class ErrorHandler
         };
 
         // Fatal error handler
-        $fatal_handler = function() use ($global_handler) {
+        $fatal_handler = function() use ($toErrorException) {
             $error = error_get_last();
             if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
                 $toErrorException(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
