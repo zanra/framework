@@ -33,34 +33,40 @@ class ErrorHandler
      */
     public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDir = null)
     {
-        $global_handler = function($type, $errno, $code, $errstr, $errfile, $errline) use ($wrapper, $logsDir){
+        // Exception render
+        $exception_render = function($type, $exception) use ($wrapper, $logsDir) {
+            if (ob_get_length()) {
+                ob_end_clean();
+            }
+
+            if ($type === self::EXCEPTION) {
+                $wrapper->wrap($exception, $type);
+            } else {
+                die($exception->getMessage());
+            }
+
+            if (null !== $logsDir) {
+                if (!is_dir($logsDir)) {
+                    throw new ErrorLogsDirectoryNotFoundException(
+                        sprintf('Error logs directory "%s" not found', $logsDir));
+                }
+
+                error_log($exception->getMessage(), 3, $logsDir. '/error.log');
+            }
+        };
+
+        // Convert error and fatal to errorException
+        $toErrorException = function($type, $errno, $code, $errstr, $errfile, $errline) use ($render) {
             try {
                 throw new \ErrorException($errstr, $code, $errno, $errfile, $errline);
             } catch (\Exception $e) {
-                if (ob_get_length()) {
-                    ob_end_clean();
-                }
-
-                if ($type === self::EXCEPTION) {
-                    $wrapper->wrap($e, $type);
-                } else {
-                    die($e->getMessage());
-                }
-
-                if (null !== $logsDir) {
-                    if (!is_dir($logsDir)) {
-                        throw new ErrorLogsDirectoryNotFoundException(
-                            sprintf('Error logs directory "%s" not found', $logsDir));
-                    }
-
-                    error_log($e->getMessage(), 3, $logsDir. '/error.log');
-                }
+                $exception_render($type, $e);
             }
         };
 
         // Exception handler
-        $exception_handler = function($e) use ($global_handler) {
-            $global_handler(self::EXCEPTION, E_ERROR, $e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+        $exception_handler = function($e) use ($render) {
+            $exception_render(self::EXCEPTION, $e);
         };
 
         // Error handler
@@ -69,14 +75,14 @@ class ErrorHandler
                 return;
             }
 
-            $global_handler(self::ERROR_EXCEPTION, $errno, 0, $errstr, $errfile, $errline);
+            $toErrorException(self::ERROR_EXCEPTION, $errno, 0, $errstr, $errfile, $errline);
         };
 
         // Fatal error handler
         $fatal_handler = function() use ($global_handler) {
             $error = error_get_last();
             if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
-                $global_handler(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
+                $toErrorException(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
             }
         };
 
