@@ -42,7 +42,11 @@ class ErrorHandler
             if ($type === self::EXCEPTION) {
                 $wrapper->wrap($exception, $type);
             } else {
-                die($exception->getMessage());
+                echo "<pre>";
+                print_r($exception);
+                echo "</pre>";
+                
+                die();
             }
 
             if (null !== $logsDir) {
