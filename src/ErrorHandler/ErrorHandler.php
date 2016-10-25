@@ -39,14 +39,17 @@ class ErrorHandler
                 ob_end_clean();
             }
 
+            $code = $exception->getCode();
+            $message = $exception->getMessage();
+            $file = $exception->getFile();
+            $line = $exception->getLine();
+
+            $errorString = sprintf("%s %s : %s in %s on line %s", $type, $code, $message, $file, $line);
+
             if ($type === self::EXCEPTION) {
                 $wrapper->wrap($exception, $type);
             } else {
-                echo "<pre>";
-                print_r($exception);
-                echo "</pre>";
-                
-                die();
+                die($errorString);
             }
 
             if (null !== $logsDir) {
@@ -55,7 +58,7 @@ class ErrorHandler
                         sprintf('Error logs directory "%s" not found', $logsDir));
                 }
 
-                error_log($exception->getMessage(), 3, $logsDir. '/error.log');
+                error_log($errorString. "\n", 3, $logsDir. '/error.log');
             }
         };
 
