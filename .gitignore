@@ -1,5 +1,5 @@
-/mvc/config/cache/
-/mvc/config/logs/
+/tests/config/cache/
+/tests/config/logs/
 /vendor/
 composer.lock
 phpunit.xml
