@@ -9,7 +9,7 @@
 
     <testsuites>
         <testsuite name="Zanra framework vendor Test Suite">
-            <directory>./Tests/</directory>
+            <directory>./tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>

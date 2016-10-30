@@ -314,7 +314,7 @@ class Application
         // match current request
         if (false === $matches = $this->router->matchRequest($this->urlBag)) {
             throw new RouteNotFoundException(
-                sprintf('No route found for "%s"', $this->urlBag->getUrl()));
+                sprintf('No route found for "%s"', $this->getUrl()));
         }
 
         $this->route      = $matches["route"];

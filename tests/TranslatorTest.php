@@ -51,13 +51,13 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslationFileNotFoundException()
     {
-        $this->translator->setTranslationDir(__DIR__ . "/../Tests/Mocks");
+        $this->translator->setTranslationDir(__DIR__ . "/Mocks");
         $this->translator->translate('welcome', 'en');
     }
 
     public function testTranslate()
     {
-        $this->translator->setTranslationDir(__DIR__ . "/../Tests/Mocks");
+        $this->translator->setTranslationDir(__DIR__ . "/Mocks");
         $trans = $this->translator->translate('welcome', 'fr');
 
         $this->assertEquals("bienvenue", $trans);

@@ -31,7 +31,7 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testFileNotFoundException()
     {
-        $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/no_routes.ini"); 
+        $this->fileLoader->load(__DIR__ . "/Mocks/no_routes.ini"); 
     }
 
     /**
@@ -39,12 +39,12 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testWrongFileExtensionException()
     {
-        $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.no");
+        $this->fileLoader->load(__DIR__ . "/Mocks/routes.no");
     }
 
     public function testLoad()
     {
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini");
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/routes.ini");
         $this->assertNotEmpty($routes);
         $this->assertInstanceOf('stdClass', $routes);
     }

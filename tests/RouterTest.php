@@ -33,7 +33,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testMatchRequest()
     {
         $urlBag = new UrlBag();
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini"); 
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/routes.ini"); 
         $router = new Router($routes);
 
         $this->assertInternalType('array', $router->matchRequest($urlBag));
@@ -42,7 +42,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function testMatchRequestFalse()
     {
         $urlBag = new UrlBag();
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/no_pattern.ini"); 
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/no_pattern.ini"); 
         $router = new Router($routes);
 
         $this->assertFalse($router->matchRequest($urlBag));
@@ -53,7 +53,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testRouteNotFoundException()
     {
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini"); 
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/routes.ini"); 
         $router = new Router($routes);
         $url = $router->generateUrl("routeNotFound", array());
     }
@@ -63,7 +63,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidParameterException()
     {
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini"); 
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/routes.ini"); 
         $router = new Router($routes);
         $params = array('undefinedKey' => 'val');
         $url = $router->generateUrl("home", $params);
@@ -71,7 +71,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateUrl()
     {
-        $routes = $this->fileLoader->load(__DIR__ . "/../Tests/Mocks/routes.ini"); 
+        $routes = $this->fileLoader->load(__DIR__ . "/Mocks/routes.ini"); 
         $router = new Router($routes);
         $url = $router->generateUrl("home", array());
 
