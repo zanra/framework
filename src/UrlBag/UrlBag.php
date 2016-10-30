@@ -54,27 +54,17 @@ class UrlBag implements UrlBagInterface
      *
      * @throws EmptyURLException
      */
-    public function __construct($customUrl = null)
+    public function __construct()
     {
-        if (null === $customUrl && 'cli' === php_sapi_name()) {
-            throw new EmptyURLException(
-                sprintf('url can\'t be empty in CLI mode. Please Initialize the constructor'));
-        }
+        $this->url = '';
 
-        if (php_sapi_name() !== 'cli' && null === $customUrl) {
+        if (php_sapi_name() !== 'cli') {
             $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
             $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
             $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
             $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
 
             $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
-        } else {
-            $this->url = $customUrl;
-        }
-
-        if (!filter_var($this->url, FILTER_VALIDATE_URL)) {
-            throw new BadURLFormatException(
-                sprintf('%s not a valid url.', $this->url));
         }
 
         $this->initializeBag();
@@ -100,7 +90,7 @@ class UrlBag implements UrlBagInterface
 
         $context = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
 
-        $scheme = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}" : '';
+        $scheme = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}://" : '';
         $host = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
         $port = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
         $query = !empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
@@ -117,7 +107,7 @@ class UrlBag implements UrlBagInterface
         $this->assetPath = $dirname != '/' ? $dirname . '/' : $dirname;
 
         $this->basePath = rtrim($this->assetPath, '/') . $context;
-        $this->baseUrl = "{$scheme}://{$host}{$port}{$this->basePath}";
+        $this->baseUrl = "{$scheme}{$host}{$port}{$this->basePath}";
     }
 
     /**
