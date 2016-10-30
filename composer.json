@@ -24,5 +24,10 @@
             "Zanra\\Framework\\": "src",
             "": "tests"
         }
+    },
+    "autoload": {
+        "psr-4": {
+            "": "tests"
+        }
     }
 }
