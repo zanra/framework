@@ -21,8 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Zanra\\Framework\\": "src",
-            "": "tests"
+            "Zanra\\Framework\\": "src"
         }
     },
     "autoload": {
