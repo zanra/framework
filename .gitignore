@@ -1,5 +1,5 @@
-/tests/config/cache/
-/tests/config/logs/
+/tests/fixtures/cache/
+/tests/fixtures/logs/
 /vendor/
 composer.lock
 phpunit.xml

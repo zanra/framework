@@ -155,12 +155,24 @@ class Application
     /**
      * Application constructor.
      */
-    private function __Construct()
+    protected function __Construct()
     {
         $this->urlBag     = new UrlBag();
         $this->session    = new Session();
         $this->fileLoader = FileLoader::getInstance();
     }
+
+    /**
+     * Private clone method to prevent cloning of the instance of the
+     * *Singleton* instance.
+     */
+    private function __clone() {}
+
+    /**
+     * Private unserialize method to prevent unserializing of the *Singleton*
+     * instance.
+     */
+    private function __wakeup() {}
 
     /**
      * Check if a php session has been started.

@@ -36,7 +36,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadConfig()
     {
-        $this->application->loadConfig(__DIR__ . "/Mocks/resources.ini");
+        $this->application->loadConfig(__DIR__ . "/fixtures/resources.ini");
         $this->application->mvcHandle(new ErrorWrapperTest());
     }
 }
