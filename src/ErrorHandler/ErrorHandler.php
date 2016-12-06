@@ -28,13 +28,14 @@ class ErrorHandler
     /**
      * Initialize errors wrapping
      *
-     * @param string $logsDir
+     * @param string $logDir
      * @param ErrorHandlerWrapperInterface $wrapper can only wrap exception. Errors and fatals are not wrapped
      */
-    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDir = null)
+    public static function init(ErrorHandlerWrapperInterface $wrapper, $logDir = null)
     {
         // Exception render
-        $exception_render = function($type, $exception) use ($wrapper, $logsDir) {
+        $exception_render = function($type, $exception) use ($wrapper, $logDir) {
+
             if (ob_get_length()) {
                 ob_end_clean();
             }
@@ -44,21 +45,25 @@ class ErrorHandler
             $file = $exception->getFile();
             $line = $exception->getLine();
 
-            $errorString = sprintf("%s %s : %s in %s on line %s", $type, $code, $message, $file, $line);
+            $code = ($code === 0) ? 500 : $code;
 
-            if ($type === self::EXCEPTION) {
+            http_response_code($code);
+
+            if ($type === self::EXCEPTION) {    
                 $wrapper->wrap($exception, $type);
             } else {
-                die($errorString);
+                die($exception);
             }
 
-            if (null !== $logsDir) {
-                if (!is_dir($logsDir)) {
+            if (null !== $logDir) {
+                if (!is_dir($logDir)) {
                     throw new ErrorLogsDirectoryNotFoundException(
-                        sprintf('Error logs directory "%s" not found', $logsDir));
+                        sprintf('Error logs directory "%s" not found', $logDir));
                 }
 
-                error_log($errorString. "\n", 3, $logsDir. '/error.log');
+                $logFile = date("Y-m-d"). '.log';
+                $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
+                error_log($errorLog. "\n", 3, $logDir. '/' .$logFile);
             }
         };
 
