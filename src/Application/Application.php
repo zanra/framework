@@ -241,13 +241,14 @@ class Application
                 sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION));
         }
 
-        // Cache directory
+        // Cache directory 
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
-
-        $this->cacheDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
+        
+        $cacheDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
+        $this->cacheDir = empty($cacheDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $cacheDirKey;
 
         // Logs directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
@@ -255,7 +256,8 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->logsDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY};
+        $logsDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY};
+        $this->logsDir = empty($logsDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
 
         // Transation directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
@@ -263,7 +265,8 @@ class Application
                 sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->translationDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY};
+        $translationDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY};
+        $this->translationDir = empty($translationDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $translationDirKey;
 
         // Routes file
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
@@ -271,7 +274,8 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION));
         }
 
-        $routesFile = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY};
+        $routeFileKey = $this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY};
+        $routesFile = empty($routeFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
         $this->routes = $this->fileLoader->load($routesFile);
 
         // Filters file
@@ -280,7 +284,8 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION));
         }
 
-        $filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY};
+        $filterFileKey = $this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY};
+        $filtersFile = empty($filterFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
         $this->filters = $this->fileLoader->load($filtersFile);
 
         // Template directory
@@ -289,7 +294,8 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->templateDir = $this->configRealPath . DIRECTORY_SEPARATOR . $this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY};
+        $templateDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY};
+        $this->templateDir = empty($templateDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
 
         // Default Locale
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
