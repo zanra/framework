@@ -29,5 +29,5 @@ interface RouterInterface
      * @param array $routename
      * @param array $parameters
      */
-    public function generateUrl($routename, array $parameters = array());
+    public function generateUri($routename, array $parameters = array());
 }

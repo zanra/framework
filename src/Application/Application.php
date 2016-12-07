@@ -247,7 +247,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
         
-        $cacheDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY};
+        $cacheDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY});
         $this->cacheDir = empty($cacheDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $cacheDirKey;
 
         // Logs directory
@@ -256,7 +256,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION));
         }
 
-        $logsDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY};
+        $logsDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY});
         $this->logsDir = empty($logsDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
 
         // Transation directory
@@ -265,7 +265,7 @@ class Application
                 sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION));
         }
 
-        $translationDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY};
+        $translationDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY});
         $this->translationDir = empty($translationDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $translationDirKey;
 
         // Routes file
@@ -274,7 +274,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION));
         }
 
-        $routeFileKey = $this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY};
+        $routeFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY});
         $routesFile = empty($routeFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
         $this->routes = $this->fileLoader->load($routesFile);
 
@@ -284,7 +284,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION));
         }
 
-        $filterFileKey = $this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY};
+        $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
         $filtersFile = empty($filterFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
         $this->filters = $this->fileLoader->load($filtersFile);
 
@@ -294,7 +294,7 @@ class Application
                 sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION));
         }
 
-        $templateDirKey = $this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY};
+        $templateDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY});
         $this->templateDir = empty($templateDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
 
         // Default Locale
@@ -303,7 +303,7 @@ class Application
                 sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION));
         }
 
-        $this->defaultLocale = $this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY};
+        $this->defaultLocale = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY});
     }
 
     /**
@@ -483,7 +483,7 @@ class Application
      */
     public function url($route, array $params = array())
     {
-        return $this->urlBag->getBaseUrl() . $this->router->generateUrl($route, $params);
+        return $this->urlBag->getBaseUrl() . $this->router->generateUri($route, $params);
     }
 
     /**
@@ -496,7 +496,7 @@ class Application
      */
     public function path($route, array $params = array())
     {
-        return $this->urlBag->getBasePath() . $this->router->generateUrl($route, $params);
+        return $this->urlBag->getBasePath() . $this->router->generateUri($route, $params);
     }
 
     /**

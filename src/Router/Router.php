@@ -134,19 +134,19 @@ class Router implements RouterInterface
     }
 
     /**
-     * @param string $url
+     * @param string $uri
      * @param array $delimiters
      *
      * @return array
      */
-    private function extractValues($url, $delimiters)
+    private function extractValues($uri, $delimiters)
     {
         $flag = 0;
         $vars = array();
 
         $delimiter = preg_quote($delimiters[0]);
 
-        $url = preg_replace("#^{$delimiter}#", '', $url);
+        $uri = preg_replace("#^{$delimiter}#", '', $uri);
         for ($i = 1; $i < count($delimiters); $i++) {
 
             $delimiter = preg_quote($delimiters[$i]);
@@ -159,7 +159,7 @@ class Router implements RouterInterface
 
                 // if we are on last delimiter and is empty
                 if (($i == count($delimiters)-1) && trim($delimiter) == '') {
-                    $value = $url;
+                    $value = $uri;
                 }
 
                 // if temp flag is not empty
@@ -179,7 +179,7 @@ class Router implements RouterInterface
                 }
 
                 $valueQuoted = preg_quote($value);
-                $url = preg_replace("#^{$valueQuoted}{$delimiter}#", '', $url);
+                $uri = preg_replace("#^{$valueQuoted}{$delimiter}#", '', $uri);
             } else {
                 $flag++;
             }
@@ -257,9 +257,9 @@ class Router implements RouterInterface
      *
      * @return bool|string
      */
-    private function buildUrl($delimiters, $values)
+    private function buildUri($delimiters, $values)
     {
-        $url = '';
+        $uri = '';
         $values[] = '';
 
         for ($i = 0; $i < count($delimiters); $i++) {
@@ -270,21 +270,21 @@ class Router implements RouterInterface
                 return false;
             }
 
-            $url .= "{$delimiters[$i]}{$values[$i]}";
+            $uri .= "{$delimiters[$i]}{$values[$i]}";
         }
 
-        return $url;
+        return $uri;
     }
 
     /**
      * @return string
      */
-    private function getUrlWithoutQueryString($url)
+    private function getUriWithoutQueryString($uri)
     {
-        $urlWithoutQuery = strstr($url, '?', true);
-        $url = ($urlWithoutQuery === false) ? $url : $urlWithoutQuery;
+        $uriWithoutQuery = strstr($uri, '?', true);
+        $uri = ($uriWithoutQuery === false) ? $uri : $uriWithoutQuery;
 
-        return $url;
+        return $uri;
     }
 
     /**
@@ -294,34 +294,34 @@ class Router implements RouterInterface
      */
     public function matchRequest(UrlBagInterface $urlBag)
     {
-        $url = $this->getUrlWithoutQueryString($urlBag->getUrl());
+        $uri = $this->getUriWithoutQueryString($urlBag->getPath());
 
-        $rootUrl = $urlBag->getBaseUrl() . '/';
+        $rootUri = $urlBag->getBasePath() . '/';
 
         // Search $contextUrl and if not found
         // search contextUrl with "/" to match
         // empty parameters;
 
-        $testUrls = array($url);
-        if ($url !== $rootUrl) {
-            array_push($testUrls, "{$url}/");
+        $testUris = array($uri);
+        if ($uri !== $rootUri) {
+            array_push($testUris, "{$uri}/");
         }
 
-        foreach ($testUrls as $testUrl) {
+        foreach ($testUris as $testUri) {
 
             foreach ($this->routes as $routename => $route) {
 
-                $routePattern = $urlBag->getBaseUrl() .$this->getRoutePattern($route);
+                $routePattern = $urlBag->getBasePath() .$this->getRoutePattern($route);
 
-                if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $url) && $url != $rootUrl) {
+                if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $uri) && $uri != $rootUri) {
                     continue;
                 }
 
                 $delimiters = $this->getDelimiters($routePattern);
-                $uriParams = $this->extractValues($testUrl, $delimiters);
-                $buildUrl = $this->buildUrl($delimiters, $uriParams);
+                $uriParams = $this->extractValues($testUri, $delimiters);
+                $buildUri = $this->buildUri($delimiters, $uriParams);
 
-                if ($buildUrl == $testUrl) {
+                if ($buildUri == $testUri) {
 
                     $defaults = $this->getRouteParams($route);
 
@@ -352,7 +352,7 @@ class Router implements RouterInterface
      *
      * @return string
      */
-    public function generateUrl($routename, array $params = array())
+    public function generateUri($routename, array $params = array())
     {
         if (!property_exists($this->routes, $routename)) {
             throw new RouteNotFoundException(
@@ -378,13 +378,13 @@ class Router implements RouterInterface
 
         $slugs = array_merge($slugs, $params);
         $slugs = $this->setSlugDefaultValues($slugs, $defaults, false);
-        $url = $this->buildUrl($delimiters, array_values($slugs));
+        $uri = $this->buildUri($delimiters, array_values($slugs));
 
 
         if (!preg_match("#/$#", $routePattern)) {
-            $url = preg_replace("#/$#", "", $url);
+            $uri = preg_replace("#/$#", "", $uri);
         }
 
-        return $url;
+        return $uri;
     }
 }

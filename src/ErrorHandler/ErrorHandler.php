@@ -31,10 +31,10 @@ class ErrorHandler
      * @param string $logDir
      * @param ErrorHandlerWrapperInterface $wrapper can only wrap exception. Errors and fatals are not wrapped
      */
-    public static function init(ErrorHandlerWrapperInterface $wrapper, $logDir = null)
+    public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDir = null)
     {
         // Exception render
-        $exception_render = function($type, $exception) use ($wrapper, $logDir) {
+        $exception_render = function($type, $exception) use ($wrapper, $logsDir) {
 
             if (ob_get_length()) {
                 ob_end_clean();
@@ -55,15 +55,15 @@ class ErrorHandler
                 die($exception);
             }
 
-            if (null !== $logDir) {
-                if (!is_dir($logDir)) {
+            if (null !== $logsDir) {
+                if (!is_dir($logsDir)) {
                     throw new ErrorLogsDirectoryNotFoundException(
-                        sprintf('Error logs directory "%s" not found', $logDir));
+                        sprintf('Error logs directory "%s" not found', $logsDir));
                 }
 
-                $logFile = date("Y-m-d"). '.log';
+                $logsFile = date("Y-m-d"). '.log';
                 $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
-                error_log($errorLog. "\n", 3, $logDir. '/' .$logFile);
+                error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
             }
         };
 
