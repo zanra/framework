@@ -59,12 +59,23 @@ class UrlBag implements UrlBagInterface
         $this->url = '';
 
         if (php_sapi_name() !== 'cli') {
-            $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? 's' : '';
-            $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
-            $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
-            $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
 
-            $this->url = $protocol . "://" . $_SERVER['SERVER_NAME'] . $serverPort . $_SERVER['REQUEST_URI'];
+            $isSecure = false;
+        
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+                $isSecure = true;
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' 
+                || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+                $isSecure = true;
+            }
+
+            $protocol = $isSecure ? 'https' : 'http';
+            $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
+            $hostName = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['HTTP_HOST'];
+            $serverName = isset($_SERVER['HTTP_X_FORWARDED_SERVER']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['SERVER_NAME'];
+            $requestUri = $_SERVER['REQUEST_URI'];
+
+            $this->url = $protocol . "://" . $serverName . $serverPort . $requestUri;
         }
 
         $this->initializeBag();
