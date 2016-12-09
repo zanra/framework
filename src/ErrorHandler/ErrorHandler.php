@@ -26,9 +26,9 @@ class ErrorHandler
     const FATAL_ERROR_EXCEPTION = 'fatalError';
 
     /**
-     * Initialize errors wrapping
+     * Initialize errors wrapper
      *
-     * @param string $logDir
+     * @param string $logsDir
      * @param ErrorHandlerWrapperInterface $wrapper can only wrap exception. Errors and fatals are not wrapped
      */
     public static function init(ErrorHandlerWrapperInterface $wrapper, $logsDir = null)
@@ -39,32 +39,40 @@ class ErrorHandler
             if (ob_get_length()) {
                 ob_end_clean();
             }
+			
+			try {
+				if (null !== $logsDir) {
+					if (!is_dir($logsDir)) {
+						throw new ErrorLogsDirectoryNotFoundException(
+							sprintf('Error logs directory "%s" not found', $logsDir));
+					}
 
-            $code = $exception->getCode();
-            $message = $exception->getMessage();
-            $file = $exception->getFile();
-            $line = $exception->getLine();
-
+					$logsFile = date("Y-m-d"). '.log';
+					$errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
+					error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
+				}
+				
+			} catch (\Exception $e) {
+				if (ob_get_length()) {
+					ob_end_clean();
+				}
+		
+				$code = $e->getCode();
+				$code = ($code === 0) ? 500 : $code;
+				
+				http_response_code($code);
+				$wrapper->wrap($e, $type);
+				
+				exit;
+			}
+			
+			$code = $exception->getCode();
             $code = ($code === 0) ? 500 : $code;
-
-            http_response_code($code);
-
-            if ($type === self::EXCEPTION) {    
-                $wrapper->wrap($exception, $type);
-            } else {
-                die($exception);
-            }
-
-            if (null !== $logsDir) {
-                if (!is_dir($logsDir)) {
-                    throw new ErrorLogsDirectoryNotFoundException(
-                        sprintf('Error logs directory "%s" not found', $logsDir));
-                }
-
-                $logsFile = date("Y-m-d"). '.log';
-                $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
-                error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
-            }
+			
+			http_response_code($code);
+			$wrapper->wrap($exception, $type);
+			
+			exit;
         };
 
         // Convert error and fatal to errorException
