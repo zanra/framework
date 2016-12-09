@@ -55,7 +55,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     {
         $routes = $this->fileLoader->load(__DIR__ . "/fixtures/routes.ini"); 
         $router = new Router($routes);
-        $url = $router->generateUrl("routeNotFound", array());
+        $url = $router->generateUri("routeNotFound", array());
     }
 
     /**
@@ -66,14 +66,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $routes = $this->fileLoader->load(__DIR__ . "/fixtures/routes.ini"); 
         $router = new Router($routes);
         $params = array('undefinedKey' => 'val');
-        $url = $router->generateUrl("home", $params);
+        $url = $router->generateUri("home", $params);
     }
 
     public function testGenerateUrl()
     {
         $routes = $this->fileLoader->load(__DIR__ . "/fixtures/routes.ini"); 
         $router = new Router($routes);
-        $url = $router->generateUrl("home", array());
+        $url = $router->generateUri("home", array());
 
         $this->assertTrue(is_string($url));
     }
