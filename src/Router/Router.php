@@ -154,7 +154,7 @@ class Router implements RouterInterface
             // if delimiter is not empty or is the latest
             if (trim($delimiter) != '' || ($i == count($delimiters)-1)) {
 
-                $splits = preg_split("#{$delimiter}#", $url, 2);
+                $splits = preg_split("#{$delimiter}#", $uri, 2);
                 $value = $splits[0];
 
                 // if we are on last delimiter and is empty
