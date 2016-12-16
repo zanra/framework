@@ -39,5 +39,5 @@ interface TranslatorInterface
      *
      * @return string
      */
-    public function translate($message, $locale);
+    public function translate($message, array $params = array(), $locale = null);
 }

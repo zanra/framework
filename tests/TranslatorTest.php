@@ -43,7 +43,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslationEmptyLocaleException()
     {
-        $this->translator->translate('already', null);
+        $this->translator->translate('already', array(), null);
     }
 
     /**
@@ -52,13 +52,19 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     public function testTranslationFileNotFoundException()
     {
         $this->translator->setTranslationDir(__DIR__ . "/fixtures");
-        $this->translator->translate('welcome', 'en');
+        $this->translator->translate('welcome', array(), 'en');
+    }
+
+    public function testTranslateWithVar()
+    {
+        $this->translator->setTranslationDir(__DIR__ . "/fixtures");
+        $this->translator->translate('test_text', array('vendor_name' => 'phpunit'), 'fr');
     }
 
     public function testTranslate()
     {
         $this->translator->setTranslationDir(__DIR__ . "/fixtures");
-        $trans = $this->translator->translate('welcome', 'fr');
+        $trans = $this->translator->translate('welcome', array(), 'fr');
 
         $this->assertEquals("bienvenue", $trans);
     }

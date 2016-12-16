@@ -83,7 +83,7 @@ class Translator implements TranslatorInterface
      * @throws TranslationEmptyLocaleException
      * @throws TranslationFileNotFoundException
      */
-    public function translate($message, $locale)
+    public function translate($message, array $params = array(), $locale = null)
     {
         if ($locale === null) {
             throw new TranslationEmptyLocaleException(
@@ -105,6 +105,13 @@ class Translator implements TranslatorInterface
         
         $trans = $this->translations[$locale];
 
-        return !empty($trans->$message) ? $trans->$message : $message;
+        if (!empty($trans->$message)) {
+            $message = $trans->$message;
+            foreach ($params as $key => $value) {
+                $message = preg_replace("#\{$key\}#", $value, $message);
+            }
+        }
+
+        return $message;
     }
 }

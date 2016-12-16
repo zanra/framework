@@ -603,7 +603,7 @@ class Application
      *
      * @return string
      */
-    public function translate($message, $locale = null)
+    public function translate($message, array $params = array(), $locale = null)
     {
         if (null == $this->translator) {
             $this->translator = new Translator($this->fileLoader);
@@ -619,7 +619,7 @@ class Application
             }
         }
 
-        return $this->translator->translate($message, $locale);
+        return $this->translator->translate($message, $params, $locale);
     }
 
     /**
