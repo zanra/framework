@@ -232,7 +232,7 @@ class Application
         }
 
         $this->configLoaded   = true;
-        $this->configRealPath = dirname($configFile);
+        $this->configRealPath = realpath(dirname($configFile));
         $this->resources      = $this->fileLoader->load($configFile);
 
         // Application
@@ -250,6 +250,10 @@ class Application
         $cacheDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY});
         $this->cacheDir = empty($cacheDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $cacheDirKey;
 
+        if ($this->cacheDir != null && realpath($cacheDirKey)) {
+            $this->cacheDir = $cacheDirKey;
+        }
+
         // Logs directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
             throw new ResourceKeyNotFoundException(
@@ -258,6 +262,10 @@ class Application
 
         $logsDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY});
         $this->logsDir = empty($logsDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
+
+        if ($this->logsDir != null && realpath($logsDirKey)) {
+            $this->logsDir = $logsDirKey;
+        }
 
         // Transation directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
@@ -268,6 +276,10 @@ class Application
         $translationDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY});
         $this->translationDir = empty($translationDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $translationDirKey;
 
+        if ($this->translationDir != null && realpath($translationDirKey)) {
+            $this->translationDir = $translationDirKey;
+        }
+
         // Routes file
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
@@ -276,7 +288,13 @@ class Application
 
         $routeFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY});
         $routesFile = empty($routeFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
+
+        if ($routesFile != null && realpath($routeFileKey)) {
+            $routesFile = $routeFileKey;
+        }
+
         $this->routes = $this->fileLoader->load($routesFile);
+
 
         // Filters file
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
@@ -286,6 +304,11 @@ class Application
 
         $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
         $filtersFile = empty($filterFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
+        
+        if ($filtersFile != null && realpath($filterFileKey)) {
+            $filtersFile = $filterFileKey;
+        }
+
         $this->filters = $this->fileLoader->load($filtersFile);
 
         // Template directory
@@ -297,6 +320,10 @@ class Application
         $templateDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY});
         $this->templateDir = empty($templateDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
 
+        if ($this->templateDir != null && realpath($templateDirKey)) {
+            $this->templateDir = $templateDirKey;
+        }
+        
         // Default Locale
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
