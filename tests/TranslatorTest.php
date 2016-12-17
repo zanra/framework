@@ -58,7 +58,9 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
     public function testTranslateWithVar()
     {
         $this->translator->setTranslationDir(__DIR__ . "/fixtures");
-        $this->translator->translate('test_text', array('vendor_name' => 'phpunit'), 'fr');
+        $trans = $this->translator->translate('test_text', array('vendor_name' => 'phpunit'), 'fr');
+
+        $this->assertEquals("utilisation de phpunit pour test unitaire", $trans);
     }
 
     public function testTranslate()

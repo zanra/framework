@@ -193,6 +193,24 @@ class Application
     }
 
     /**
+     * Check if given $path is relative
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    private function isRelativePath($path)
+    {
+        $isRelative = false;
+
+        if (preg_match("#^\.#", $path) || !preg_match("#^~|:/|:\\\#", $path)) {
+            $isRelative = true;
+        }
+
+        return $isRelative;
+    }
+
+    /**
      * Load declared filters.
      *
      * @throws FilterMethodNotFoundException
@@ -248,10 +266,10 @@ class Application
         }
         
         $cacheDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY});
-        $this->cacheDir = empty($cacheDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $cacheDirKey;
+        $this->cacheDir = empty($cacheDirKey) ? null : $cacheDirKey;
 
-        if ($this->cacheDir != null && realpath($cacheDirKey)) {
-            $this->cacheDir = $cacheDirKey;
+        if ($this->cacheDir != null && $this->isRelativePath($this->cacheDir)) {
+            $this->cacheDir = $this->configRealPath . DIRECTORY_SEPARATOR . $cacheDirKey;
         }
 
         // Logs directory
@@ -261,10 +279,10 @@ class Application
         }
 
         $logsDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY});
-        $this->logsDir = empty($logsDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
+        $this->logsDir = empty($logsDirKey) ? null : $logsDirKey;
 
-        if ($this->logsDir != null && realpath($logsDirKey)) {
-            $this->logsDir = $logsDirKey;
+        if ($this->logsDir != null && $this->isRelativePath($this->logsDir)) {
+            $this->logsDir = $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
         }
 
         // Transation directory
@@ -274,10 +292,10 @@ class Application
         }
 
         $translationDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY});
-        $this->translationDir = empty($translationDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $translationDirKey;
+        $this->translationDir = empty($translationDirKey) ? null : $translationDirKey;
 
-        if ($this->translationDir != null && realpath($translationDirKey)) {
-            $this->translationDir = $translationDirKey;
+        if ($this->translationDir != null && $this->isRelativePath($this->translationDir)) {
+            $this->translationDir = $this->configRealPath . DIRECTORY_SEPARATOR . $translationDirKey;
         }
 
         // Routes file
@@ -287,10 +305,10 @@ class Application
         }
 
         $routeFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY});
-        $routesFile = empty($routeFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
+        $routesFile = empty($routeFileKey) ? null : $routeFileKey;
 
-        if ($routesFile != null && realpath($routeFileKey)) {
-            $routesFile = $routeFileKey;
+        if ($routesFile != null && $this->isRelativePath($routesFile)) {
+            $routesFile = $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
         }
 
         $this->routes = $this->fileLoader->load($routesFile);
@@ -303,10 +321,10 @@ class Application
         }
 
         $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
-        $filtersFile = empty($filterFileKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
+        $filtersFile = empty($filterFileKey) ? null : $filterFileKey;
         
-        if ($filtersFile != null && realpath($filterFileKey)) {
-            $filtersFile = $filterFileKey;
+        if ($filtersFile != null && $this->isRelativePath($filtersFile)) {
+            $filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
         }
 
         $this->filters = $this->fileLoader->load($filtersFile);
@@ -318,10 +336,10 @@ class Application
         }
 
         $templateDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY});
-        $this->templateDir = empty($templateDirKey) ? null : $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
+        $this->templateDir = empty($templateDirKey) ? null : $templateDirKey;
 
-        if ($this->templateDir != null && realpath($templateDirKey)) {
-            $this->templateDir = $templateDirKey;
+        if ($this->templateDir != null && $this->isRelativePath($this->templateDir)) {
+            $this->templateDir = $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
         }
         
         // Default Locale
