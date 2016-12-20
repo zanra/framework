@@ -203,7 +203,7 @@ class Application
     {
         $isRelative = false;
 
-        if (preg_match("#^\.#", $path) || !preg_match("#^~|:/|:\\\#", $path)) {
+        if (!preg_match("#^/|[a-zA-Z]:\\\#", $path)) {
             $isRelative = true;
         }
 
@@ -218,7 +218,7 @@ class Application
      */
     private function loadFilters()
     {
-        foreach ($this->getFilters() as $class => $method) {
+        foreach ($this->getFilters() as $method => $class) {
             $filterNamespaceClass = "\\Filter\\{$class}Filter";
             $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
 
@@ -259,12 +259,12 @@ class Application
                 sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION));
         }
 
-        // Cache directory 
+        // Cache directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
-        
+
         $cacheDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY});
         $this->cacheDir = empty($cacheDirKey) ? null : $cacheDirKey;
 
@@ -322,7 +322,7 @@ class Application
 
         $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
         $filtersFile = empty($filterFileKey) ? null : $filterFileKey;
-        
+
         if ($filtersFile != null && $this->isRelativePath($filtersFile)) {
             $filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
         }
@@ -341,7 +341,7 @@ class Application
         if ($this->templateDir != null && $this->isRelativePath($this->templateDir)) {
             $this->templateDir = $this->configRealPath . DIRECTORY_SEPARATOR . $templateDirKey;
         }
-        
+
         // Default Locale
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
