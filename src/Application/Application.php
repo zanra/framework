@@ -232,7 +232,7 @@ class Application
     {
         foreach ($this->getFilters() as $filter) {
 
-            $part = explode('.', $classMethod);
+            $part = explode('.', $filter);
 
             if (empty($part[0]) || empty($part[1])) {
                 throw new FilterBadFormatException(
