@@ -51,13 +51,13 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testTranslationFileNotFoundException()
     {
-        $this->translator->setTranslationDir(__DIR__ . "/fixtures");
-        $this->translator->translate('welcome', array(), 'en');
+        $this->translator->setTranslationDir(__DIR__ . "/fixtures/translation");
+        $this->translator->translate('welcome', array(), 'es');
     }
 
     public function testTranslateWithVar()
     {
-        $this->translator->setTranslationDir(__DIR__ . "/fixtures");
+        $this->translator->setTranslationDir(__DIR__ . "/fixtures/translation");
         $trans = $this->translator->translate('test_text', array('vendor_name' => 'phpunit'), 'fr');
 
         $this->assertEquals("utilisation de phpunit pour test unitaire", $trans);
@@ -65,7 +65,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
 
     public function testTranslate()
     {
-        $this->translator->setTranslationDir(__DIR__ . "/fixtures");
+        $this->translator->setTranslationDir(__DIR__ . "/fixtures/translation");
         $trans = $this->translator->translate('welcome', array(), 'fr');
 
         $this->assertEquals("bienvenue", $trans);

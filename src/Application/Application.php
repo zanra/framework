@@ -21,6 +21,8 @@ use Zanra\Framework\Translator\Translator;
 use Zanra\Framework\Application\Exception\LoadConfigFileException;
 use Zanra\Framework\Application\Exception\FilterNotFoundException;
 use Zanra\Framework\Application\Exception\FilterMethodNotFoundException;
+use Zanra\Framework\Application\Exception\FilterBadFormatException;
+use Zanra\Framework\Application\Exception\RouteBadFormatException;
 use Zanra\Framework\Application\Exception\ResourceKeyNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerActionNotFoundException;
@@ -128,6 +130,16 @@ class Application
     private $configRealPath = null;
 
     /**
+     * @var string
+     */
+    private $routesFile = null;
+
+    /**
+     * @var string
+     */
+    private $filtersFile = null;
+
+    /**
      * @var Translator
      */
     private $translator;
@@ -203,7 +215,7 @@ class Application
     {
         $isRelative = false;
 
-        if (!preg_match("#^/|[a-zA-Z]:\\\#", $path)) {
+        if (!preg_match("#^/|[a-zA-Z]:(\\\|/)#", $path)) {
             $isRelative = true;
         }
 
@@ -218,7 +230,18 @@ class Application
      */
     private function loadFilters()
     {
-        foreach ($this->getFilters() as $method => $class) {
+        foreach ($this->getFilters() as $filter) {
+
+            $part = explode('.', $classMethod);
+
+            if (empty($part[0]) || empty($part[1])) {
+                throw new FilterBadFormatException(
+                    sprintf('Filters declaration bad well formed. For a ClassFilter use Class.Method in %s', $this->filtersFile));
+            }
+
+            $class = $part[0];
+            $method = $part[1];
+
             $filterNamespaceClass = "\\Filter\\{$class}Filter";
             $filterClass = class_exists($filterNamespaceClass) ? new $filterNamespaceClass() : null;
 
@@ -229,7 +252,7 @@ class Application
 
             if (!method_exists($filterClass, $method)) {
                 throw new FilterMethodNotFoundException(
-                    sprintf('"Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
+                    sprintf('Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
             }
 
             call_user_func_array(array($filterClass, $method), array($this));
@@ -305,13 +328,13 @@ class Application
         }
 
         $routeFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY});
-        $routesFile = empty($routeFileKey) ? null : $routeFileKey;
+        $this->routesFile = empty($routeFileKey) ? null : $routeFileKey;
 
-        if ($routesFile != null && $this->isRelativePath($routesFile)) {
-            $routesFile = $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
+        if ($this->routesFile != null && $this->isRelativePath($this->routesFile)) {
+            $this->routesFile = $this->configRealPath . DIRECTORY_SEPARATOR . $routeFileKey;
         }
 
-        $this->routes = $this->fileLoader->load($routesFile);
+        $this->routes = $this->fileLoader->load($this->routesFile);
 
 
         // Filters file
@@ -321,13 +344,13 @@ class Application
         }
 
         $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
-        $filtersFile = empty($filterFileKey) ? null : $filterFileKey;
+        $this->filtersFile = empty($filterFileKey) ? null : $filterFileKey;
 
-        if ($filtersFile != null && $this->isRelativePath($filtersFile)) {
-            $filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
+        if ($this->filtersFile != null && $this->isRelativePath($this->filtersFile)) {
+            $this->filtersFile = $this->configRealPath . DIRECTORY_SEPARATOR . $filterFileKey;
         }
 
-        $this->filters = $this->fileLoader->load($filtersFile);
+        $this->filters = $this->fileLoader->load($this->filtersFile);
 
         // Template directory
         if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
@@ -378,6 +401,11 @@ class Application
         if (false === $matches = $this->router->matchRequest($this->urlBag)) {
             throw new RouteNotFoundException(
                 sprintf('No route found for "%s"', $this->getUrl()));
+        }
+
+        if (empty($matches["controller"]) || empty($matches["action"])) {
+            throw new RouteBadFormatException(
+                sprintf('Routing declaration bad well formed. For a ClassController use Class:Method in %s', $this->routesFile));
         }
 
         $this->route      = $matches["route"];
@@ -644,18 +672,58 @@ class Application
      * Translator
      *
      * @param $message
-     * @param null $locale
+     * @param mixed $params|$locale
      *
      * @return string
      */
-    public function translate($message, array $params = array(), $locale = null)
+    public function translate($message)
     {
         if (null == $this->translator) {
             $this->translator = new Translator($this->fileLoader);
             $this->translator->setTranslationDir($this->translationDir);
         }
 
-        if (null == $locale) {
+        $args = func_get_args();
+
+        $params = array();
+        $locale = null;
+
+        $message = array_shift($args);
+
+        $argv = count($args);
+
+        if ($argv > 2) {
+            trigger_error( __METHOD__ ." expects at least 2 parameters, {$argv} given", E_USER_WARNING);
+        }
+
+        $firstArg = isset($args[0]) ? $args[0] : null;
+        $secondArg = isset($args[1]) ? $args[1] : null;
+
+        if ($firstArg !== null) {
+
+            $gettype = gettype($firstArg);
+            if ($gettype != 'array' && !empty($secondArg)) {
+                trigger_error(__METHOD__ ." expects parameter 1 to be array, {$gettype} given", E_USER_WARNING);
+            }
+
+            if (is_array($firstArg)) {
+                $params = $firstArg;
+            } else {
+                $locale = $firstArg;
+            }
+        }
+
+        if ($locale === null && $secondArg !== null) {
+
+            $gettype = gettype($secondArg);
+            if ($gettype != 'string') {
+                trigger_error(__METHOD__ ." expects parameter 1 to be string, {$gettype} given", E_USER_WARNING);
+            }
+
+            $locale = $secondArg;
+        }
+
+        if ($locale == null) {
             if (!$this->hasSession()) {
                 $locale = $this->defaultLocale;
             } else {

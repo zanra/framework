@@ -100,9 +100,9 @@ class Translator implements TranslatorInterface
         }
 
         if (!isset($this->translations[$locale])) {
-            $this->translations[$locale] = $this->fileLoader->load($translationFile);    
+            $this->translations[$locale] = $this->fileLoader->load($translationFile);
         }
-        
+
         $trans = $this->translations[$locale];
 
         if (!empty($trans->$message)) {

@@ -39,4 +39,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->loadConfig(__DIR__ . "/fixtures/resources.ini");
         $this->application->mvcHandle(new ErrorWrapperTest());
     }
+
+    public function testTranslate()
+    {
+        $trans = $this->application->translate('welcome');
+
+        $this->assertEquals("bienvenue", $trans);
+    }
 }
