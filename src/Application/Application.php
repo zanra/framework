@@ -48,6 +48,8 @@ class Application
     const CACHE_KEY = "cache.dir";
     const LOGS_KEY = "logs.dir";
     const SESSION_LOCALE_KEY = "_locale";
+    const FILTER_BEFORE = "before";
+    const FILTER_AFTER = "after";
 
     /**
      * @var string
@@ -155,11 +157,6 @@ class Application
     private $configLoaded  = false;
 
     /**
-     * @var bool
-     */
-    private $filtersLoaded = false;
-
-    /**
      * @var Application
      */
     private static $_instance = null;
@@ -225,12 +222,25 @@ class Application
     /**
      * Load declared filters.
      *
+     * @param string $execute [before, after]
+     *
      * @throws FilterMethodNotFoundException
      * @throws FilterNotFoundException
      */
-    private function loadFilters()
+    private function loadFilters($execute)
     {
-        foreach ($this->getFilters() as $filter) {
+        foreach ($this->getFilters() as $filter => $filterExecute) {
+
+            $filterExecute = trim($filterExecute);
+
+            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
+                throw new FilterBadFormatException(
+                    sprintf('Filters declaration bad well formed in %s. Only value "before" and "after" allowed. Called', $this->filtersFile));
+            }
+
+            if ($filterExecute != $execute) {
+                continue;
+            }
 
             $part = explode('.', $filter);
 
@@ -252,7 +262,8 @@ class Application
 
             if (!method_exists($filterClass, $method)) {
                 throw new FilterMethodNotFoundException(
-                    sprintf('Unable to find Method "%s" in "%s" scope', $method, $filterNamespaceClass));
+                    sprintf('Unable to find Method "%s" for "%s" Class, defined in %s and called',
+                    $method, $filterNamespaceClass, $this->filtersFile));
             }
 
             call_user_func_array(array($filterClass, $method), array($this));
@@ -413,7 +424,14 @@ class Application
         $this->action     = $matches["action"];
         $this->params     = $matches["params"];
 
+        // before filters
+        $this->loadFilters(self::FILTER_BEFORE);
+
+        // call controller
         print($this->renderController("{$this->getController()}:{$this->getAction()}", $this->getParams()));
+
+        // after filters
+        $this->loadFilters(self::FILTER_AFTER);
     }
 
     /**
@@ -494,6 +512,20 @@ class Application
     public function getSession()
     {
         return $this->session;
+    }
+
+    /**
+     * Get template
+     *
+     * @return Template
+     */
+    public function getTemplate()
+    {
+        if (null === $this->template) {
+            $this->template = new Template($this->templateDir, $this->cacheDir);
+        }
+
+        return $this->template;
     }
 
     /**
@@ -599,11 +631,6 @@ class Application
      */
     public function renderController($controller, array $params = array())
     {
-        if (false === $this->filtersLoaded) {
-            $this->loadFilters();
-            $this->filtersLoaded = true;
-        }
-
         $parts = explode(':', $controller);
 
         $controller = "\\Controller\\{$parts[0]}Controller";
@@ -661,11 +688,7 @@ class Application
      */
     public function renderView($filename, array $vars = array())
     {
-        if (null === $this->template) {
-            $this->template = new Template($this->templateDir, $this->cacheDir);
-        }
-
-        return $this->template->render($filename, $vars);
+        return $this->getTemplate()->render($filename, $vars);
     }
 
     /**

@@ -34,9 +34,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->mvcHandle(new ErrorWrapperTest());
     }
 
-    public function testLoadConfig()
+    /**
+     * @expectedException Zanra\Framework\Application\Exception\FilterBadFormatException
+     */
+    public function testLoadConfigWithBadFiltersFileFormat()
     {
-        $this->application->loadConfig(__DIR__ . "/fixtures/resources.ini");
+        $this->application->loadConfig(__DIR__ . "/fixtures/bad_resources.ini");
         $this->application->mvcHandle(new ErrorWrapperTest());
     }
 
