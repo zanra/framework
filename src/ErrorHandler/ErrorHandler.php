@@ -39,39 +39,29 @@ class ErrorHandler
             if (ob_get_length()) {
                 ob_end_clean();
             }
-            
+
             try {
                 if (null !== $logsDir) {
                     if (!is_dir($logsDir)) {
                         throw new ErrorLogsDirectoryNotFoundException(
                             sprintf('Error logs directory "%s" not found', $logsDir));
                     }
-                    
+
                     $logsFile = date("Y-m-d"). '.log';
                     $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
                     error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
                 }
-                
-            } catch (\Exception $e) {
-                if (ob_get_length()) {
-                    ob_end_clean();
-                }
 
-                $code = $e->getCode();
-                $code = ($code === 0) ? 500 : $code;
-                
-                http_response_code($code);
-                $wrapper->wrap($e, $type);
-                
-                exit;
+            } catch (\Exception $e) {
+                $exception = $e;
             }
-            
+
             $code = $exception->getCode();
             $code = ($code === 0) ? 500 : $code;
-            
+
             http_response_code($code);
             $wrapper->wrap($exception, $type);
-            
+
             exit;
         };
 
