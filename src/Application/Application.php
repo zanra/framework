@@ -515,12 +515,23 @@ class Application
     }
 
     /**
+     * Set template
+     *
+     * @param TemplateInterface $template
+     */
+    public function setTemplate(\Zanra\Framework\Template\TemplateInterface $template)
+    {
+        $this->template = $template;
+    }
+
+    /**
      * Get template
      *
      * @return Template
      */
     public function getTemplate()
     {
+        // Use Framework default template
         if (null === $this->template) {
             $this->template = new Template($this->templateDir, $this->cacheDir);
         }

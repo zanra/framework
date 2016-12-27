@@ -30,7 +30,7 @@ class Template implements TemplateInterface
     /**
      * @var Twig_Environment
      */
-    private $template;
+    private $engine;
 
     /**
      * @var Application
@@ -54,13 +54,23 @@ class Template implements TemplateInterface
 
         $this->application = Application::getInstance();
         $this->loader = new \Twig_Loader_Filesystem($templateDir);
-        $this->template = new \Twig_Environment($this->loader, array(
+        $this->engine = new \Twig_Environment($this->loader, array(
             'cache' => $cacheDir,
             'auto_reload' => true,
             'strict_variables' => true
         ));
 
-        $this->template->addGlobal('app', $this->application);
+        $this->engine->addGlobal('app', $this->application);
+    }
+
+    /**
+     * getEngine
+     *
+     * @return Twig_Environment
+     */
+    public function getEngine()
+    {
+        return $this->engine;
     }
 
     /**
@@ -71,6 +81,6 @@ class Template implements TemplateInterface
      */
     public function render($filename, array $vars = array())
     {
-        return $this->template->render($filename, $vars);
+        return $this->getEngine()->render($filename, $vars);
     }
 }
