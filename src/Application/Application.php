@@ -51,7 +51,7 @@ class Application
     const SESSION_LOCALE_KEY = "_locale";
     const FILTER_APPLICATION = "application";
     const FILTER_CONTROLLER = "controller";
-	const FILTER_VIEW = "view";
+    const FILTER_VIEW = "view";
 
     /**
      * @var string
@@ -235,7 +235,7 @@ class Application
 
             $filterExecute = trim($filterExecute);
 
-            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
+            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_APPLICATION, self::FILTER_CONTROLLER, self::FILTER_VIEW))) {
                 throw new FilterBadFormatException(
                     sprintf('Filters declaration bad well formed in %s. Only value "application, controller" and "view" allowed. Called', $this->filtersFile));
             }
@@ -534,8 +534,8 @@ class Application
     public function getTemplate()
     {
         if (null === $this->template) {
-			// after filters
-			$this->loadFilters(self::FILTER_CONTROLLER);
+            // after filters
+            $this->loadFilters(self::FILTER_CONTROLLER);
             $this->template = new Template($this->templateDir, $this->cacheDir);
         }
 
