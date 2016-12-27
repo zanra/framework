@@ -30,6 +30,7 @@ use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParamete
 use Zanra\Framework\Application\Exception\ControllerBadReturnResponseException;
 use Zanra\Framework\ErrorHandler\ErrorHandler;
 use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
+use \Zanra\Framework\Template\TemplateInterface;
 
 /**
  * Zanra Application
@@ -48,8 +49,9 @@ class Application
     const CACHE_KEY = "cache.dir";
     const LOGS_KEY = "logs.dir";
     const SESSION_LOCALE_KEY = "_locale";
-    const FILTER_BEFORE = "before";
-    const FILTER_AFTER = "after";
+    const FILTER_APPLICATION = "application";
+    const FILTER_CONTROLLER = "controller";
+	const FILTER_VIEW = "view";
 
     /**
      * @var string
@@ -235,7 +237,7 @@ class Application
 
             if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed in %s. Only value "before" and "after" allowed. Called', $this->filtersFile));
+                    sprintf('Filters declaration bad well formed in %s. Only value "application, controller" and "view" allowed. Called', $this->filtersFile));
             }
 
             if ($filterExecute != $execute) {
@@ -425,13 +427,13 @@ class Application
         $this->params     = $matches["params"];
 
         // before filters
-        $this->loadFilters(self::FILTER_BEFORE);
+        $this->loadFilters(self::FILTER_APPLICATION);
 
         // call controller
         print($this->renderController("{$this->getController()}:{$this->getAction()}", $this->getParams()));
 
         // after filters
-        $this->loadFilters(self::FILTER_AFTER);
+        $this->loadFilters(self::FILTER_VIEW);
     }
 
     /**
@@ -519,7 +521,7 @@ class Application
      *
      * @param TemplateInterface $template
      */
-    public function setTemplate(\Zanra\Framework\Template\TemplateInterface $template)
+    public function setTemplate(TemplateInterface $template)
     {
         $this->template = $template;
     }
@@ -531,8 +533,9 @@ class Application
      */
     public function getTemplate()
     {
-        // Use Framework default template
         if (null === $this->template) {
+			// after filters
+			$this->loadFilters(self::FILTER_CONTROLLER);
             $this->template = new Template($this->templateDir, $this->cacheDir);
         }
 
