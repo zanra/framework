@@ -49,9 +49,8 @@ class Application
     const CACHE_KEY = "cache.dir";
     const LOGS_KEY = "logs.dir";
     const SESSION_LOCALE_KEY = "_locale";
-    const FILTER_APPLICATION = "application";
-    const FILTER_CONTROLLER = "controller";
-    const FILTER_VIEW = "view";
+    const FILTER_BEFORE = "before";
+    const FILTER_AFTER = "after";
 
     /**
      * @var string
@@ -235,9 +234,9 @@ class Application
 
             $filterExecute = trim($filterExecute);
 
-            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_APPLICATION, self::FILTER_CONTROLLER, self::FILTER_VIEW))) {
+            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed in %s. Only value "application, controller" and "view" allowed. Called', $this->filtersFile));
+                    sprintf('Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called', $this->filtersFile, self::FILTER_BEFORE, self::FILTER_AFTER));
             }
 
             if ($filterExecute != $execute) {
@@ -427,13 +426,13 @@ class Application
         $this->params     = $matches["params"];
 
         // before filters
-        $this->loadFilters(self::FILTER_APPLICATION);
+        $this->loadFilters(self::FILTER_BEFORE);
 
         // call controller
         print($this->renderController("{$this->getController()}:{$this->getAction()}", $this->getParams()));
 
         // after filters
-        $this->loadFilters(self::FILTER_VIEW);
+        $this->loadFilters(self::FILTER_AFTER);
     }
 
     /**
@@ -534,8 +533,6 @@ class Application
     public function getTemplate()
     {
         if (null === $this->template) {
-            // after filters
-            $this->loadFilters(self::FILTER_CONTROLLER);
             $this->template = new Template($this->templateDir, $this->cacheDir);
         }
 
