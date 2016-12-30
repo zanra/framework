@@ -125,8 +125,8 @@ class Session implements SessionInterface
 
     public function destroy()
     {
-        if (!$this->started) {
-            return;
+        if (empty($_SESSION)) {
+           return;
         }
 
         $_SESSION = array();
