@@ -12,6 +12,7 @@
 namespace Zanra\Framework\FileLoader;
 
 use Zanra\Framework\FileLoader\Exception\FileNotFoundException;
+use Zanra\Framework\FileLoader\Exception\IllegalArgumentException;
 use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
 
 /**
@@ -89,6 +90,11 @@ class FileLoader implements FileLoaderInterface
             if (!file_exists($var)) {
                 throw new FileNotFoundException(
                     sprintf('File "%s" not found', $var));
+            }
+
+            if (is_dir($var)) {
+                throw new IllegalArgumentException(
+                    sprintf('%s is not a file path', $var));   
             }
 
             $extension = $this->getExtension($var);

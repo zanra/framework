@@ -16,6 +16,7 @@ use Zanra\Framework\Router\Router;
 use Zanra\Framework\Router\Exception\RouteNotFoundException;
 use Zanra\Framework\Session\Session;
 use Zanra\Framework\Template\Template;
+use Zanra\Framework\Template\TemplateInterface;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
 use Zanra\Framework\Application\Exception\LoadConfigFileException;
@@ -30,7 +31,6 @@ use Zanra\Framework\Application\Exception\ControllerActionMissingDefaultParamete
 use Zanra\Framework\Application\Exception\ControllerBadReturnResponseException;
 use Zanra\Framework\ErrorHandler\ErrorHandler;
 use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
-use \Zanra\Framework\Template\TemplateInterface;
 
 /**
  * Zanra Application
@@ -40,6 +40,7 @@ use \Zanra\Framework\Template\TemplateInterface;
  */
 class Application
 {
+    const IMPORT_SECTION = "import";
     const APPLICATION_SECTION = "application";
     const LOCALE_KEY = "default.locale";
     const ROUTING_KEY = "routing.file";
@@ -287,6 +288,20 @@ class Application
         $this->configLoaded   = true;
         $this->configRealPath = realpath(dirname($configFile));
         $this->resources      = $this->fileLoader->load($configFile);
+
+        // Import
+        if (!empty($this->resources->{self::IMPORT_SECTION})) {
+            $import = $this->resources->{self::IMPORT_SECTION};
+            foreach ($import as $key => $path) {
+                $path = empty($path) ? null : $path;
+
+                if ($path != null && $this->isRelativePath($path)) {
+                    $path = $this->configRealPath . DIRECTORY_SEPARATOR . $path;    
+                }
+
+                $this->resources->{self::IMPORT_SECTION}->$key  = $this->fileLoader->load($path);                
+            }
+        }
 
         // Application
         if (!isset($this->resources->{self::APPLICATION_SECTION})) {
