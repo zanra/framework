@@ -141,7 +141,7 @@ class Session implements SessionInterface
             );
         }
 
-        session_destroy();
+        @session_destroy();
 
         $this->closed = false;
         $this->started = false;
