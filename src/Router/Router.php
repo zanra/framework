@@ -73,7 +73,7 @@ class Router implements RouterInterface
     {
         $defaults = array();
 
-        if (!empty($route->params)) {
+        if (! empty($route->params)) {
             foreach ($route->params as $k => $v) {
                 $defaults[$k] = (trim($v) == '') ? null : trim($v);
             }
@@ -235,7 +235,7 @@ class Router implements RouterInterface
         // check availables slugs default values
         foreach ($slugs as $key => $value) {
             if (trim($value) == '') {
-                if (!in_array($key, array_keys($defaults))) {
+                if (! in_array($key, array_keys($defaults))) {
                     throw new MissingDefaultParameterException(
                         sprintf('missing slug "%s" default value', $key));
                 }
@@ -313,7 +313,7 @@ class Router implements RouterInterface
 
                 $routePattern = $urlBag->getBasePath() .$this->getRoutePattern($route);
 
-                if (!preg_match("#/$#", $routePattern) && preg_match("#/$#", $uri) && $uri != $rootUri) {
+                if (! preg_match("#/$#", $routePattern) && preg_match("#/$#", $uri) && $uri != $rootUri) {
                     continue;
                 }
 
@@ -354,7 +354,7 @@ class Router implements RouterInterface
      */
     public function generateUri($routename, array $params = array())
     {
-        if (!property_exists($this->routes, $routename)) {
+        if (! property_exists($this->routes, $routename)) {
             throw new RouteNotFoundException(
                 sprintf('unable to find Route "%s"', $routename));
         }
@@ -366,7 +366,7 @@ class Router implements RouterInterface
 
         // check if $params key is defined in pattern
         foreach ($params as $key => $val) {
-            if (!in_array($key, array_keys($slugs))) {
+            if (! in_array($key, array_keys($slugs))) {
                 throw new InvalidParameterException(
                    sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
             }
@@ -381,7 +381,7 @@ class Router implements RouterInterface
         $uri = $this->buildUri($delimiters, array_values($slugs));
 
 
-        if (!preg_match("#/$#", $routePattern)) {
+        if (! preg_match("#/$#", $routePattern)) {
             $uri = preg_replace("#/$#", "", $uri);
         }
 

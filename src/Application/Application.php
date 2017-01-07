@@ -214,7 +214,7 @@ class Application
     {
         $isRelative = false;
 
-        if (!preg_match("#^/|[a-zA-Z]:(\\\|/)#", $path)) {
+        if (! preg_match("#^/|[a-zA-Z]:(\\\|/)#", $path)) {
             $isRelative = true;
         }
 
@@ -235,7 +235,7 @@ class Application
 
             $filterExecute = trim($filterExecute);
 
-            if (empty($filterExecute) || !in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
+            if (empty($filterExecute) || ! in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
                 throw new FilterBadFormatException(
                     sprintf('Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called', $this->filtersFile, self::FILTER_BEFORE, self::FILTER_AFTER));
             }
@@ -262,7 +262,7 @@ class Application
                     sprintf('Class "%s" not found', $filterNamespaceClass));
             }
 
-            if (!method_exists($filterClass, $method)) {
+            if (! method_exists($filterClass, $method)) {
                 throw new FilterMethodNotFoundException(
                     sprintf('Unable to find Method "%s" for "%s" Class, defined in %s and called',
                     $method, $filterNamespaceClass, $this->filtersFile));
@@ -290,7 +290,7 @@ class Application
         $this->resources      = $this->fileLoader->load($configFile);
 
         // Import
-        if (!empty($this->resources->{self::IMPORT_SECTION})) {
+        if (! empty($this->resources->{self::IMPORT_SECTION})) {
             $import = $this->resources->{self::IMPORT_SECTION};
             foreach ($import as $key => $path) {
                 $path = empty($path) ? null : $path;
@@ -304,13 +304,13 @@ class Application
         }
 
         // Application
-        if (!isset($this->resources->{self::APPLICATION_SECTION})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION));
         }
 
         // Cache directory
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
         }
@@ -323,7 +323,7 @@ class Application
         }
 
         // Logs directory
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION));
         }
@@ -336,7 +336,7 @@ class Application
         }
 
         // Transation directory
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION));
         }
@@ -349,7 +349,7 @@ class Application
         }
 
         // Routes file
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION));
         }
@@ -365,7 +365,7 @@ class Application
 
 
         // Filters file
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION));
         }
@@ -380,7 +380,7 @@ class Application
         $this->filters = $this->fileLoader->load($this->filtersFile);
 
         // Template directory
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION));
         }
@@ -393,7 +393,7 @@ class Application
         }
 
         // Default Locale
-        if (!isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
+        if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
                 sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION));
         }
@@ -670,7 +670,7 @@ class Application
         }
 
         // Check Action
-        if (!method_exists($controllerClass, "{$action}")) {
+        if (! method_exists($controllerClass, "{$action}")) {
             throw new ControllerActionNotFoundException(
                 sprintf('unable to find "%s" in "%s" scope', $action, $controller));
         }
@@ -684,7 +684,7 @@ class Application
             if ($p->isOptional()) {
                 $methodArgs[$p->getName()] = $p->getDefaultValue();
             } else {
-                if (!isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
+                if (! isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
                     throw new ControllerActionMissingDefaultParameterException(
                         sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)",
                         $controller, $action, $p->getName()));
@@ -696,7 +696,7 @@ class Application
 
         // Call Action
         $callAction = call_user_func_array(array($controllerClass, $action), $params);
-        if (!isset($callAction)) {
+        if (! isset($callAction)) {
             throw new ControllerBadReturnResponseException(
                 sprintf('"%s:%s" must return a response. null given', $controller, $action));
         }
@@ -742,7 +742,7 @@ class Application
         $argv = count($args);
 
         if ($argv > 2) {
-            trigger_error( __METHOD__ ." expects at least 2 parameters, {$argv} given", E_USER_WARNING);
+            trigger_error(__METHOD__ ." expects at least 3 parameters, {$argv} given", E_USER_WARNING);
         }
 
         $firstArg = isset($args[0]) ? $args[0] : null;
@@ -751,8 +751,8 @@ class Application
         if ($firstArg !== null) {
 
             $gettype = gettype($firstArg);
-            if ($gettype != 'array' && !empty($secondArg)) {
-                trigger_error(__METHOD__ ." expects parameter 1 to be array, {$gettype} given", E_USER_WARNING);
+            if ($gettype != 'array' && ! empty($secondArg)) {
+                trigger_error(__METHOD__ ." expects parameter 2 to be array, {$gettype} given", E_USER_WARNING);
             }
 
             if (is_array($firstArg)) {
@@ -773,11 +773,11 @@ class Application
         }
 
         if ($locale == null) {
-            if (!$this->hasSession()) {
+            if (! $this->hasSession()) {
                 $locale = $this->defaultLocale;
             } else {
                 $sessionLocale = $this->getSession()->get(self::SESSION_LOCALE_KEY);
-                $locale = !empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
+                $locale = ! empty($sessionLocale) ? $sessionLocale : $this->defaultLocale;
             }
         }
 

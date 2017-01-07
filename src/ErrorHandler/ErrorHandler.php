@@ -42,7 +42,7 @@ class ErrorHandler
 
             try {
                 if (null !== $logsDir) {
-                    if (!is_dir($logsDir)) {
+                    if (! is_dir($logsDir)) {
                         throw new ErrorLogsDirectoryNotFoundException(
                             sprintf('Error logs directory "%s" not found', $logsDir));
                     }
@@ -81,7 +81,7 @@ class ErrorHandler
 
         // Error handler
         $error_handler = function($errno, $errstr, $errfile, $errline) use ($toErrorException) {
-            if (!(error_reporting() & $errno)) {
+            if (! (error_reporting() & $errno)) {
                 return;
             }
 

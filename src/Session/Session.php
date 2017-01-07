@@ -68,7 +68,7 @@ class Session implements SessionInterface
             ini_set('session.cache_limiter', null);
         }
 
-        if (!session_start()) {
+        if (! session_start()) {
             throw new SessionStartException(
                 sprintf('failed to start the session'));
         }
@@ -81,7 +81,7 @@ class Session implements SessionInterface
 
     public function close()
     {
-        if (!$this->started) {
+        if (! $this->started) {
             return;
         }
 
@@ -97,7 +97,7 @@ class Session implements SessionInterface
      */
     public function set($key, $val)
     {
-        if (!$this->started) {
+        if (! $this->started) {
             $this->start();
         }
 
@@ -111,7 +111,7 @@ class Session implements SessionInterface
      */
     public function get($key)
     {
-        if (!$this->started) {
+        if (! $this->started) {
             $this->start();
         }
 

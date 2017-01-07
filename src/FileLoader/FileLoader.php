@@ -87,7 +87,7 @@ class FileLoader implements FileLoaderInterface
         $parser = array();
 
         if (is_string($var)) {
-            if (!file_exists($var)) {
+            if (! file_exists($var)) {
                 throw new FileNotFoundException(
                     sprintf('File "%s" not found', $var));
             }

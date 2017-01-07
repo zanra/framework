@@ -58,7 +58,7 @@ class Translator implements TranslatorInterface
      */
     public function setTranslationDir($translationDir)
     {
-        if (!is_dir($translationDir)) {
+        if (! is_dir($translationDir)) {
             throw new TranslationDirectoryNotFoundException(
                 sprintf('Translation directory "%s" not found', $translationDir));
         }
@@ -94,18 +94,18 @@ class Translator implements TranslatorInterface
         $locale = strtolower($locale);
         $translationFile = "{$this->getTranslationDir()}/messages.{$locale}.ini";
 
-        if (!file_exists($translationFile)) {
+        if (! file_exists($translationFile)) {
             throw new TranslationFileNotFoundException(
                 sprintf('translation file "%s" not found', $translationFile));
         }
 
-        if (!isset($this->translations[$locale])) {
+        if (! isset($this->translations[$locale])) {
             $this->translations[$locale] = $this->fileLoader->load($translationFile);
         }
 
         $trans = $this->translations[$locale];
 
-        if (!empty($trans->$message)) {
+        if (! empty($trans->$message)) {
             $message = $trans->$message;
             foreach ($params as $key => $value) {
                 $message = preg_replace("#\{$key\}#", $value, $message);

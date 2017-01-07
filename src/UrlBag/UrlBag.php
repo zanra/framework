@@ -64,8 +64,8 @@ class UrlBag implements UrlBagInterface
         
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
                 $isSecure = true;
-            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' 
-                || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
+            } elseif (! empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' 
+                || ! empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
                 $isSecure = true;
             }
 
@@ -92,26 +92,26 @@ class UrlBag implements UrlBagInterface
 
         if (php_sapi_name() !== 'cli') {
             $scriptName = $_SERVER['SCRIPT_NAME'];
-            $rewriteOn = !preg_match("#{$scriptName}#", $this->getUrl());
+            $rewriteOn = ! preg_match("#{$scriptName}#", $this->getUrl());
         }
 
         $parseUrl = parse_url($this->url);
 
         $info = pathinfo($scriptName);
 
-        $context = (!empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
+        $context = (! empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
 
-        $scheme = !empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}://" : '';
-        $host = !empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
-        $port = !empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
-        $query = !empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
+        $scheme = ! empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}://" : '';
+        $host = ! empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
+        $port = ! empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
+        $query = ! empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
 
-        $this->path = !empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
+        $this->path = ! empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
 
         /* Normalize windows and *nix directory name by using "/" */
         /* Ex: windows directory name can be "\" and *nix directory name is "/" */
         /* This changes all "\" to "/" */
-        if (!empty($info['dirname'])) {
+        if (! empty($info['dirname'])) {
             $dirname = str_replace("\\", '/', $info['dirname']);
         }
 
