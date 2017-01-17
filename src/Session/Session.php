@@ -79,16 +79,32 @@ class Session implements SessionInterface
         $this->started = true;
     }
 
-    public function close()
+    public function getId()
     {
         if (! $this->started) {
-            return;
+            $this->start();
         }
 
-        session_write_close();
+        return session_id();
+    }
 
-        $this->closed = true;
-        $this->started = false;
+    public function setId($sessionId)
+    {
+        session_id($sessionId);
+    }
+
+    public function getName()
+    {
+        if (! $this->started) {
+            $this->start();
+        }
+
+        return session_name();
+    }
+
+    public function setName($sessionName)
+    {
+        session_name($sessionName);
     }
 
     /**
@@ -123,6 +139,27 @@ class Session implements SessionInterface
         return $val;
     }
 
+    public function close()
+    {
+        if (! $this->started) {
+            return;
+        }
+
+        session_write_close();
+
+        $this->closed = true;
+        $this->started = false;
+    }
+
+    public function regenerate()
+    {
+        if (! $this->started) {
+            $this->start();
+        }
+
+        session_regenerate_id();
+    }
+    
     public function destroy()
     {
         if (empty($_SESSION)) {
