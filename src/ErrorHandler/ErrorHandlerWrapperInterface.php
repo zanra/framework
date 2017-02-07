@@ -15,13 +15,12 @@ namespace Zanra\Framework\ErrorHandler;
  * Zanra ErrorHandlerWrapperInterface
  *
  * @author Targalis
- *
  */
 interface ErrorHandlerWrapperInterface
 {
     /**
      * @param $exception
-     * @param null $type
+     * @param null      $type
      *
      * @return mixed
      */

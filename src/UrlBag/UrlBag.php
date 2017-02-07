@@ -18,7 +18,6 @@ use Zanra\Framework\UrlBag\Exception\BadURLFormatException;
  * Zanra UrlBag
  *
  * @author Targalis
- *
  */
 class UrlBag implements UrlBagInterface
 {
@@ -59,21 +58,10 @@ class UrlBag implements UrlBagInterface
         $this->url = '';
 
         if (php_sapi_name() !== 'cli') {
-
-            $isSecure = false;
-        
-            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
-                $isSecure = true;
-            } elseif (! empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' 
-                || ! empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on') {
-                $isSecure = true;
-            }
-
-            $protocol = $isSecure ? 'https' : 'http';
-            $serverPort = ($_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443 ) ? '' : (":".$_SERVER["SERVER_PORT"]);
-            $hostName = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : $_SERVER['HTTP_HOST'];
-            $serverName = isset($_SERVER['HTTP_X_FORWARDED_SERVER']) ? $_SERVER['HTTP_X_FORWARDED_SERVER'] : $_SERVER['SERVER_NAME'];
-            $requestUri = $_SERVER['REQUEST_URI'];
+            $protocol = $this->isSecure() ? 'https' : 'http';
+            $serverPort = $this->getServerPort();
+            $serverName = $this->getServerName();
+            $requestUri = $this->filterServer('REQUEST_URI');
 
             $this->url = $protocol . "://" . $serverName . $serverPort . $requestUri;
         }
@@ -82,47 +70,195 @@ class UrlBag implements UrlBagInterface
     }
 
     /**
+     * Server port filter
+     *
+     * @return string
+     */
+    private function getServerPort()
+    {
+        $serverPort = $this->filterServer('SERVER_PORT');
+
+        if ($serverPort == 80 || $serverPort == 443) {
+            $serverPort = '';
+        }
+
+        return $serverPort;
+    }
+
+    /**
+     * Server name filter
+     *
+     * @return string
+     */
+    private function getServerName()
+    {
+        $serverName = $this->filterServer('SERVER_NAME');
+
+        if ($this->filterServer('HTTP_X_FORWARDED_SERVER') != null) {
+            $serverName = $this->filterServer('HTTP_X_FORWARDED_SERVER');
+        }
+
+        return $serverName;
+    }
+
+    /**
+     * Avoid directly access in $_SERVER
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
+    private function filterServer($name)
+    {
+        return filter_input(INPUT_SERVER, $name);
+    }
+
+    /**
+     * Check if url is secured
+     */
+    private function isSecure()
+    {
+        $isSecure = false;
+
+        $serverHTTPS = '';
+        $serverForwadedProto = '';
+        $serverForwadedSSL = '';
+
+        // HTTPS
+        if (! empty($this->filterServer('HTTPS'))) {
+            $serverHTTPS = strtolower($this->filterServer('HTTPS'));
+        }
+
+        // HTTP_X_FORWARDED_PROTO
+        if (! empty($this->filterServer('HTTP_X_FORWARDED_PROTO'))) {
+            $serverForwadedProto = strtolower($this->filterServer('HTTP_X_FORWARDED_PROTO'));
+        }
+
+        // HTTP_X_FORWARDED_SSL
+        if (! empty($this->filterServer('HTTP_X_FORWARDED_SSL'))) {
+            $serverForwadedSSL = strtolower($this->filterServer('HTTP_X_FORWARDED_SSL'));
+        }
+
+        if ($serverHTTPS == 'on' || $serverForwadedProto == 'https' || $serverForwadedSSL == 'on') {
+            $isSecure = true;
+        }
+
+        return $isSecure;
+    }
+
+    /* Normalize windows and *nix directory name by using "/"
+     * Ex: windows directory name can be "\" and *nix directory name is "/"
+     * This changes all "\" to "/"
+     */
+    private function dirnameNormaliser($directoryName)
+    {
+        $dirname = '/';
+
+        if (! empty($directoryName)) {
+            $dirname = str_replace("\\", '/', $directoryName);
+            $dirname = ($dirname != '/') ? $dirname . '/' : $dirname;
+        }
+
+        return $dirname;
+    }
+
+    /**
+     * Check if rewrite engine is on
+     *
+     * @return bool
+     */
+    private function isRewrite()
+    {
+        $rewrite = false;
+
+        if (php_sapi_name() !== 'cli') {
+            $rewrite = ! preg_match("#{$this->filterServer('SCRIPT_NAME')}#", $this->getUrl());
+        }
+
+        return $rewrite;
+    }
+
+    /**
+     * parse_url array filter
+     *
+     * @param $url
+     *
+     * @return array
+     */
+    private function parseUrl($url)
+    {
+        $parseUrl = parse_url($url);
+
+        if ($parseUrl === false) {
+            throw new BadURLFormatException(sprintf('Malformed URL "%s"', $url));
+        }
+
+        $parser = array(
+          'scheme'  => '',
+          'host'    => '',
+          'port'    => '',
+          'query'   => '',
+          'path'    => ''
+        );
+
+        if (! empty($parseUrl['scheme'])) {
+            $parser['scheme'] = "{$parseUrl['scheme']}://";
+        }
+
+        if (! empty($parseUrl['host'])) {
+            $parser['host'] = $parseUrl['host'];
+        }
+
+        if (! empty($parseUrl['port'])) {
+            $parser['port'] = ":{$parseUrl['port']}";
+        }
+
+        if (! empty($parseUrl['query'])) {
+            $parser['query'] = $parseUrl['query'];
+        }
+
+        if (! empty($parseUrl['path'])) {
+            $parser['path'] = $parseUrl['path'];
+        }
+
+        return $parser;
+    }
+
+    /**
+     * path_info array filter
+     *
+     * @param $scriptName
+     *
+     * @return array
+     */
+    private function parsePathInfo($scriptName)
+    {
+        $info = pathinfo($scriptName);
+
+        $parser['context'] = (! empty($info['basename']) && false === $this->isRewrite()) ? "/{$info['basename']}" : '';
+        $parser['dirname'] = $this->dirnameNormaliser($info['dirname']);
+
+        return $parser;
+    }
+
+    /**
      * initializeBag
      */
     private function initializeBag()
     {
-        $scriptName = '';
-        $dirname = '/';
-        $rewriteOn = false;
-
         if (php_sapi_name() !== 'cli') {
-            $scriptName = $_SERVER['SCRIPT_NAME'];
-            $rewriteOn = ! preg_match("#{$scriptName}#", $this->getUrl());
+            $parsedPathInfo = $this->parsePathInfo($this->filterServer('SCRIPT_NAME'));
+            $parsedUrl = $this->parseUrl($this->getUrl());
+
+            $this->assetPath = $parsedPathInfo['dirname'];
+            $this->path = ! empty($parsedUrl['path']) ? "{$parsedUrl['path']}{$parsedUrl['query']}" : '';
+            $this->basePath = rtrim($this->assetPath, '/') . $parsedPathInfo['context'];
+            $this->baseUrl = "{$parsedUrl['scheme']}{$parsedUrl['host']}{$parsedUrl['port']}{$this->basePath}";
         }
-
-        $parseUrl = parse_url($this->url);
-
-        $info = pathinfo($scriptName);
-
-        $context = (! empty($info['basename']) && php_sapi_name() !== 'cli' && false === $rewriteOn) ? "/{$info['basename']}" : '';
-
-        $scheme = ! empty($parseUrl['scheme']) ? "{$parseUrl['scheme']}://" : '';
-        $host = ! empty($parseUrl['host']) ? "{$parseUrl['host']}" : '';
-        $port = ! empty($parseUrl['port']) ? ":{$parseUrl['port']}" : '';
-        $query = ! empty($parseUrl['query']) ? "?{$parseUrl['query']}" : '';
-
-        $this->path = ! empty($parseUrl['path']) ? "{$parseUrl['path']}{$query}" : '';
-
-        /* Normalize windows and *nix directory name by using "/" */
-        /* Ex: windows directory name can be "\" and *nix directory name is "/" */
-        /* This changes all "\" to "/" */
-        if (! empty($info['dirname'])) {
-            $dirname = str_replace("\\", '/', $info['dirname']);
-        }
-
-        $this->assetPath = $dirname != '/' ? $dirname . '/' : $dirname;
-
-        $this->basePath = rtrim($this->assetPath, '/') . $context;
-        $this->baseUrl = "{$scheme}{$host}{$port}{$this->basePath}";
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getUrl()
     {

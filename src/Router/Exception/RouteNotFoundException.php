@@ -15,7 +15,6 @@ namespace Zanra\Framework\Router\Exception;
  * Zanra RouteNotFoundException
  *
  * @author Targalis
- *
  */
 class RouteNotFoundException extends \ErrorException
 {

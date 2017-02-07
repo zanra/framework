@@ -15,7 +15,6 @@ namespace Zanra\Framework\UrlBag;
  * Zanra UrlBagInterface
  *
  * @author Targalis
- *
  */
 interface UrlBagInterface
 {

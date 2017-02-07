@@ -17,7 +17,6 @@ use Zanra\Framework\Application\Application;
  * Zanra Abstract Controller
  *
  * @author Targalis
- *
  */
 abstract class Controller
 {
@@ -29,7 +28,7 @@ abstract class Controller
     /**
      * Controller constructor.
      */
-    public function __Construct()
+    public function __construct()
     {
         $this->app = Application::getInstance();
     }
@@ -38,7 +37,7 @@ abstract class Controller
      * Helper function to forward in a new controller method.
      *
      * @param $controller
-     * @param array $params
+     * @param array      $params
      *
      * @return mixed|string
      */
@@ -51,7 +50,7 @@ abstract class Controller
      * Helper function to render a view.
      *
      * @param $filename
-     * @param array $vars
+     * @param array    $vars
      *
      * @return string
      */

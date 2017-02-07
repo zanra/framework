@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra ControllerBadReturnResponseException
  *
  * @author Targalis
- *
  */
 class ControllerBadReturnResponseException extends \ErrorException
 {

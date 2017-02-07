@@ -16,7 +16,6 @@ use Zanra\Framework\Application\Application;
  * Zanra ErrorWrapperTest
  *
  * @author Targalis
- *
  */
 class ErrorWrapperTest implements ErrorHandlerWrapperInterface
 {
@@ -32,7 +31,7 @@ class ErrorWrapperTest implements ErrorHandlerWrapperInterface
      * final public function getTraceAsString();  // chaîne formatée de trace
      *
      * @param Exception $exception
-     * @param integer $type
+     * @param integer   $type
     */
     public function wrap($exception, $type = null)
     {

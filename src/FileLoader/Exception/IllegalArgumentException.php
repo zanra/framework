@@ -15,7 +15,6 @@ namespace Zanra\Framework\FileLoader\Exception;
  * Zanra IllegalArgumentException
  *
  * @author Targalis
- *
  */
 class IllegalArgumentException extends \ErrorException
 {

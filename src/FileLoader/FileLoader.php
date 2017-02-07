@@ -19,20 +19,9 @@ use Zanra\Framework\FileLoader\Exception\WrongFileExtensionException;
  * Zanra FileLoader
  *
  * @author Targalis
- *
  */
 class FileLoader implements FileLoaderInterface
 {
-    /**
-     * @var FileLoader
-     */
-    private static $_instance = null;
-
-    /**
-     * FileLoader constructor.
-     */
-    private function __Construct() {}
-
     /**
      * @param $string
      *
@@ -40,7 +29,7 @@ class FileLoader implements FileLoaderInterface
      */
     private function getExtension($string)
     {
-        return strtolower(substr(strrchr($string,'.'), 1));
+        return strtolower(substr(strrchr($string, '.'), 1));
     }
 
     /**
@@ -89,19 +78,22 @@ class FileLoader implements FileLoaderInterface
         if (is_string($var)) {
             if (! file_exists($var)) {
                 throw new FileNotFoundException(
-                    sprintf('File "%s" not found', $var));
+                    sprintf('File "%s" not found', $var)
+                );
             }
 
             if (is_dir($var)) {
                 throw new IllegalArgumentException(
-                    sprintf('%s is not a file path', $var));   
+                    sprintf('%s is not a file path', $var)
+                );
             }
 
             $extension = $this->getExtension($var);
 
             if (false === method_exists($this, "{$extension}FileParser")) {
                 throw new WrongFileExtensionException(
-                    sprintf('No FileLoader function was found for "%s" extension', $extension));
+                    sprintf('No FileLoader function was found for "%s" extension', $extension)
+                );
             }
 
             $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
@@ -111,19 +103,5 @@ class FileLoader implements FileLoaderInterface
         }
 
         return $this->toObject($parser);
-    }
-
-    /**
-     * Singleton
-     *
-     * @return FileLoader
-     */
-    public static function getInstance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new FileLoader();
-        }
-
-        return self::$_instance;
     }
 }

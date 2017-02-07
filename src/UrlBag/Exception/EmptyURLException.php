@@ -15,7 +15,6 @@ namespace Zanra\Framework\UrlBag\Exception;
  * Zanra EmptyURLException
  *
  * @author Targalis
- *
  */
 class EmptyURLException extends \ErrorException
 {

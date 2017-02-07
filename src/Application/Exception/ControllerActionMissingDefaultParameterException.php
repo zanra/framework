@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra ControllerActionMissingDefaultParameterException
  *
  * @author Targalis
- *
  */
 class ControllerActionMissingDefaultParameterException extends \Exception
 {

@@ -18,53 +18,45 @@ use Zanra\Framework\Application\Application;
  * Template engine
  *
  * @author Targalis
- *
  */
 class Template implements TemplateInterface
 {
-    /**
-     * @var Twig_Loader_Filesystem
-     */
-    private $loader;
-
     /**
      * @var Twig_Environment
      */
     private $engine;
 
     /**
-     * @var Application
-     */
-    private $application;
-
-    /**
      * Constructor
      *
      * @param string $templateDir
-     * @param bool $cacheDir
+     * @param bool   $cacheDir
      *
      * @throws TemplateDirectoryNotFoundException
      */
-    public function __Construct($templateDir, $cacheDir = false)
+    public function __construct(Application $application)
     {
+        $templateDir = $application->getTemplateDir();
+        $cacheDir = $application->getCacheDir();
+
         if (realpath($templateDir) === false) {
             throw new TemplateDirectoryNotFoundException(
-                sprintf('template directory not found in "%s"', $templateDir));
+                sprintf('template directory not found in "%s"', $templateDir)
+            );
         }
 
-        $this->application = Application::getInstance();
-        $this->loader = new \Twig_Loader_Filesystem($templateDir);
-        $this->engine = new \Twig_Environment($this->loader, array(
-            'cache' => $cacheDir,
-            'auto_reload' => true,
-            'strict_variables' => true
-        ));
+        $loader = new \Twig_Loader_Filesystem($templateDir);
+        $this->engine = new \Twig_Environment($loader);
 
-        $this->engine->addGlobal('app', $this->application);
+        $this->engine->setCache($cacheDir);
+        $this->engine->enableAutoReload();
+        $this->engine->enableStrictVariables();
+
+        $this->engine->addGlobal('app', $application);
     }
 
     /**
-     * getEngine
+     * Get Engine
      *
      * @return Twig_Environment
      */
@@ -75,7 +67,7 @@ class Template implements TemplateInterface
 
     /**
      * @param string $filename
-     * @param array $vars
+     * @param array  $vars
      *
      * @return string
      */

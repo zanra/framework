@@ -15,7 +15,6 @@ use Zanra\Framework\Application\Application;
  * ApplicationTest
  *
  * @author Targalis
- *
  */
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +38,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function testLoadConfigWithBadFiltersFileFormat()
     {
-        $this->application->loadConfig(__DIR__ . "/fixtures/bad_resources.ini");
+        $this->application->loadConfig(__DIR__ . "/fixtures/bad_filters_resources.ini");
         $this->application->mvcHandle(new ErrorWrapperTest());
     }
 

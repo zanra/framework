@@ -15,7 +15,6 @@ namespace Zanra\Framework\Router\Exception;
  * Zanra InvalidParameterException
  *
  * @author Targalis
- *
  */
 class InvalidParameterException extends \Exception
 {

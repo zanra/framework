@@ -15,7 +15,6 @@ namespace Zanra\Framework\Translator\Exception;
  * Zanra TranslationDirectoryNotFoundException
  *
  * @author Targalis
- *
  */
 class TranslationDirectoryNotFoundException extends \ErrorException
 {

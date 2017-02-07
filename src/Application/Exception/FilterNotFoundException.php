@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra FilterNotFoundException
  *
  * @author Targalis
- *
  */
 class FilterNotFoundException extends \ErrorException
 {

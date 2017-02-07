@@ -20,7 +20,6 @@ use Zanra\Framework\UrlBag\UrlBagInterface;
  * Zanra Router
  *
  * @author Targalis
- *
  */
 class Router implements RouterInterface
 {
@@ -28,11 +27,6 @@ class Router implements RouterInterface
      * @var RouterInterface
      */
     private $routes;
-
-    /**
-     * @var UrlBagInterface
-     */
-    private $urlBag;
 
     /**
      * Constructor
@@ -90,10 +84,11 @@ class Router implements RouterInterface
      */
     private function forceArrayCombine(array $array1, array $array2)
     {
-        $i = 0;
-        foreach ($array1 as $index => $val) {
-            $array1[$index] = isset($array2[$i]) ? $array2[$i] : $val;
-            $i++;
+        $index = 0;
+
+        foreach ($array1 as $key => $val) {
+            $array1[$key] = isset($array2[$index]) ? $array2[$index] : $val;
+            $index++;
         }
 
         return $array1;
@@ -106,10 +101,10 @@ class Router implements RouterInterface
      */
     private function getDelimiters($pattern)
     {
-        $p = preg_split("#\{[^\{]+\}#",$pattern);
+        $splits = preg_split("#\{[^\{]+\}#", $pattern);
         $delimiters = array();
 
-        foreach ($p as $delimiter) {
+        foreach ($splits as $delimiter) {
             $delimiters[] = $delimiter;
         }
 
@@ -126,6 +121,7 @@ class Router implements RouterInterface
         preg_match_all("#{(.*?)}#", $pattern, $matches);
 
         $slugs = array();
+
         foreach ($matches[1] as $slug) {
             $slugs[$slug] = '';
         }
@@ -135,7 +131,7 @@ class Router implements RouterInterface
 
     /**
      * @param string $uri
-     * @param array $delimiters
+     * @param array  $delimiters
      *
      * @return array
      */
@@ -147,13 +143,12 @@ class Router implements RouterInterface
         $delimiter = preg_quote($delimiters[0]);
 
         $uri = preg_replace("#^{$delimiter}#", '', $uri);
-        for ($i = 1; $i < count($delimiters); $i++) {
 
+        for ($i = 1; $i < count($delimiters); $i++) {
             $delimiter = preg_quote($delimiters[$i]);
 
             // if delimiter is not empty or is the latest
             if (trim($delimiter) != '' || ($i == count($delimiters)-1)) {
-
                 $splits = preg_split("#{$delimiter}#", $uri, 2);
                 $value = $splits[0];
 
@@ -168,10 +163,12 @@ class Router implements RouterInterface
                     $len = ((strlen($value)-$flag) < 1) ? 1 : strlen($value) - $flag;
                     $temp = array();
                     $temp[] = substr($value, 0, $len);
-                    for($t = 0; $t < $flag; $t++ ) {
+
+                    for ($t = 0; $t < $flag; $t++) {
                         $temp[] = substr($value, $len + $t, 1);
                     }
-                    $vars = array_merge($vars,$temp);
+
+                    $vars = array_merge($vars, $temp);
                     $flag = 0;
                 } else {
                     // default assignment
@@ -185,10 +182,13 @@ class Router implements RouterInterface
             }
         }
 
-        $vars = array_map(function($value) {
-            // if $value is false or $value contains "/" return empty
-            return ($value === false || preg_match("#/#", $value)) ? '' : $value;
-        }, $vars);
+        $vars = array_map(
+            function ($value) {
+                // if $value is false or $value contains "/" return empty
+                return ($value === false || preg_match("#/#", $value)) ? '' : $value;
+            },
+            $vars
+        );
 
         return $vars;
     }
@@ -198,8 +198,8 @@ class Router implements RouterInterface
      *
      * @return array
      */
-    private function encodeParams(array $params = array()) {
-
+    private function encodeParams(array $params = array())
+    {
         foreach ($params as $key => $param) {
             $params[$key] = urlencode($param);
         }
@@ -212,8 +212,8 @@ class Router implements RouterInterface
      *
      * @return array
      */
-    private function decodeParams(array $params = array()) {
-
+    private function decodeParams(array $params = array())
+    {
         foreach ($params as $key => $param) {
             $params[$key] = urldecode($param);
         }
@@ -224,20 +224,21 @@ class Router implements RouterInterface
     /**
      * @param array $slugs
      * @param array $defaults
-     * @param bool $setAll
+     * @param bool  $setAll
      *
      * @throws MissingDefaultParameterException
      *
      * @return array
      */
-    private function setSlugDefaultValues($slugs, $defaults, $setAll = true)
+    private function setSlugDefaultValues($slugs, $defaults, $setAll)
     {
         // check availables slugs default values
         foreach ($slugs as $key => $value) {
             if (trim($value) == '') {
                 if (! in_array($key, array_keys($defaults))) {
                     throw new MissingDefaultParameterException(
-                        sprintf('missing slug "%s" default value', $key));
+                        sprintf('missing slug "%s" default value', $key)
+                    );
                 }
 
                 $slugs[$key] = $defaults[$key];
@@ -303,14 +304,13 @@ class Router implements RouterInterface
         // empty parameters;
 
         $testUris = array($uri);
+
         if ($uri !== $rootUri) {
             array_push($testUris, "{$uri}/");
         }
 
         foreach ($testUris as $testUri) {
-
             foreach ($this->routes as $routename => $route) {
-
                 $routePattern = $urlBag->getBasePath() .$this->getRoutePattern($route);
 
                 if (! preg_match("#/$#", $routePattern) && preg_match("#/$#", $uri) && $uri != $rootUri) {
@@ -322,14 +322,13 @@ class Router implements RouterInterface
                 $buildUri = $this->buildUri($delimiters, $uriParams);
 
                 if ($buildUri == $testUri) {
-
                     $defaults = $this->getRouteParams($route);
 
                     $uriParams = $this->decodeParams($uriParams);
 
                     $params = $this->getSlugs($routePattern);
                     $params = $this->forceArrayCombine($params, $uriParams);
-                    $params = $this->setSlugDefaultValues($params, $defaults);
+                    $params = $this->setSlugDefaultValues($params, $defaults, true);
 
                     $controller = explode(':', $this->getRouteController($route));
 
@@ -348,7 +347,7 @@ class Router implements RouterInterface
 
     /**
      * @param string $routename
-     * @param array $params
+     * @param array  $params
      *
      * @return string
      */
@@ -356,7 +355,8 @@ class Router implements RouterInterface
     {
         if (! property_exists($this->routes, $routename)) {
             throw new RouteNotFoundException(
-                sprintf('unable to find Route "%s"', $routename));
+                sprintf('unable to find Route "%s"', $routename)
+            );
         }
 
         $route = $this->routes->$routename;
@@ -368,7 +368,8 @@ class Router implements RouterInterface
         foreach ($params as $key => $val) {
             if (! in_array($key, array_keys($slugs))) {
                 throw new InvalidParameterException(
-                   sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename));
+                    sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename)
+                );
             }
         }
 

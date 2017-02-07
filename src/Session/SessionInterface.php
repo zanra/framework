@@ -15,7 +15,6 @@ namespace Zanra\Framework\Session;
  * Zanra session interface
  *
  * @author Targalis
- *
  */
 interface SessionInterface
 {
@@ -39,6 +38,35 @@ interface SessionInterface
      * @param string $key
      */
     public function get($key);
+
+    /**
+     * Get sessionId
+     */
+    public function getId();
+
+    /**
+     * Set sessionId
+     *
+     * @param string $sessionId
+     */
+    public function setId($sessionId);
+
+    /**
+     * Get sessionName
+     */
+    public function getName();
+
+    /**
+     * Set sessionName
+     *
+     * @param string $sessionName
+     */
+    public function setName($sessionName);
+
+    /**
+     * Regenerate session
+     */
+    public function regenerate();
 
     /**
      * Destroy a session

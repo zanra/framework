@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra FilterBadFormatException
  *
  * @author Targalis
- *
  */
 class FilterBadFormatException extends \ErrorException
 {

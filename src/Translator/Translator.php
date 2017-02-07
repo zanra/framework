@@ -22,7 +22,6 @@ use Zanra\Framework\FileLoader\FileLoaderInterface;
  * Zanra Translator
  *
  * @author Targalis
- *
  */
 class Translator implements TranslatorInterface
 {
@@ -46,7 +45,7 @@ class Translator implements TranslatorInterface
      *
      * @param FileLoaderInterface $fileLoader
      */
-    public function __Construct(FileLoaderInterface $fileLoader)
+    public function __construct(FileLoaderInterface $fileLoader)
     {
         $this->fileLoader = $fileLoader;
     }
@@ -60,7 +59,8 @@ class Translator implements TranslatorInterface
     {
         if (! is_dir($translationDir)) {
             throw new TranslationDirectoryNotFoundException(
-                sprintf('Translation directory "%s" not found', $translationDir));
+                sprintf('Translation directory "%s" not found', $translationDir)
+            );
         }
 
         $this->translationDir = $translationDir;
@@ -76,7 +76,7 @@ class Translator implements TranslatorInterface
 
     /**
      * @param string $message
-     * @param null $locale
+     * @param null   $locale
      *
      * @return string
      *
@@ -87,7 +87,8 @@ class Translator implements TranslatorInterface
     {
         if ($locale === null) {
             throw new TranslationEmptyLocaleException(
-                sprintf('translation locale can\'t be empty'));
+                sprintf('translation locale can\'t be empty')
+            );
         }
 
         $message = (string) $message;
@@ -96,7 +97,8 @@ class Translator implements TranslatorInterface
 
         if (! file_exists($translationFile)) {
             throw new TranslationFileNotFoundException(
-                sprintf('translation file "%s" not found', $translationFile));
+                sprintf('translation file "%s" not found', $translationFile)
+            );
         }
 
         if (! isset($this->translations[$locale])) {
@@ -107,6 +109,7 @@ class Translator implements TranslatorInterface
 
         if (! empty($trans->$message)) {
             $message = $trans->$message;
+
             foreach ($params as $key => $value) {
                 $message = preg_replace("#\{$key\}#", $value, $message);
             }

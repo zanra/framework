@@ -15,7 +15,6 @@ use Zanra\Framework\FileLoader\FileLoader;
  * UrlBagTest
  *
  * @author Targalis
- *
  */
 class FileLoaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,7 +22,7 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fileLoader = FileLoader::getInstance();
+        $this->fileLoader = new FileLoader();
     }
 
     /**
@@ -31,7 +30,7 @@ class FileLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testFileNotFoundException()
     {
-        $this->fileLoader->load(__DIR__ . "/fixtures/no_routes.ini"); 
+        $this->fileLoader->load(__DIR__ . "/fixtures/no_routes.ini");
     }
 
     /**

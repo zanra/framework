@@ -15,7 +15,6 @@ namespace Zanra\Framework\FileLoader;
  * Zanra FileLoaderInterface
  *
  * @author Targalis
- *
  */
 interface FileLoaderInterface
 {

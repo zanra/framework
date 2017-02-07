@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra FilterMethodNotFoundException
  *
  * @author Targalis
- *
  */
 class FilterMethodNotFoundException extends \ErrorException
 {

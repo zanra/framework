@@ -15,7 +15,6 @@ namespace Zanra\Framework\UrlBag\Exception;
  * Zanra BadURLFormatException
  *
  * @author Targalis
- *
  */
 class BadURLFormatException extends \ErrorException
 {

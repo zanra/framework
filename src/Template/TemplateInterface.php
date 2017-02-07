@@ -15,7 +15,6 @@ namespace Zanra\Framework\Template;
  * Zanra TemplateInterface
  *
  * @author Targalis
- *
  */
 interface TemplateInterface
 {
@@ -23,7 +22,7 @@ interface TemplateInterface
      * Render a template view
      *
      * @param string $filename
-     * @param array $vars
+     * @param array  $vars
      */
     public function render($filename, array $vars = array());
 }

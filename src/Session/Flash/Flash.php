@@ -15,14 +15,13 @@ namespace Zanra\Framework\Session\Flash;
  * Zanra Flash
  *
  * @author Targalis
- *
  */
 class Flash implements FlashInterface
 {
     /**
      * @var string
      */
-     private $name = '_flash';
+    private $name = '_flash';
 
     /**
      * @var array

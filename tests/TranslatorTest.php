@@ -16,7 +16,6 @@ use Zanra\Framework\FileLoader\FileLoader;
  * UrlBagTest
  *
  * @author Targalis
- *
  */
 class TranslatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +25,7 @@ class TranslatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fileLoader = FileLoader::getInstance();
+        $this->fileLoader = new FileLoader();
         $this->translator = new Translator($this->fileLoader);
     }
 

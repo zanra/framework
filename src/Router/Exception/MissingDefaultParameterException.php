@@ -15,7 +15,6 @@ namespace Zanra\Framework\Router\Exception;
  * Zanra MissingDefaultParameterException
  *
  * @author Targalis
- *
  */
 class MissingDefaultParameterException extends \Exception
 {

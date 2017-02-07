@@ -15,7 +15,6 @@ namespace Zanra\Framework\Translator\Exception;
  * Zanra TranslationEmptyLocaleException
  *
  * @author Targalis
- *
  */
 class TranslationEmptyLocaleException extends \ErrorException
 {

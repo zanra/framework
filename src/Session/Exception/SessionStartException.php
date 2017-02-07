@@ -15,7 +15,6 @@ namespace Zanra\Framework\Session\Exception;
  * Zanra SessionStartException
  *
  * @author Targalis
- *
  */
 class SessionStartException extends \ErrorException
 {

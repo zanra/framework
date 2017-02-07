@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra ControllerActionNotFoundException
  *
  * @author Targalis
- *
  */
 class ControllerActionNotFoundException extends \ErrorException
 {

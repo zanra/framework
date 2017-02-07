@@ -15,7 +15,6 @@ namespace Zanra\Framework\FileLoader\Exception;
  * Zanra WrongFileExtensionException
  *
  * @author Targalis
- *
  */
 class WrongFileExtensionException extends \ErrorException
 {

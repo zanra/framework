@@ -15,7 +15,6 @@ namespace Zanra\Framework\Session\Flash;
  * Zanra FlashInterface
  *
  * @author Targalis
- *
  */
 interface FlashInterface
 {

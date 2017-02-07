@@ -15,7 +15,6 @@ namespace Zanra\Framework\ErrorHandler\Exception;
  * Zanra ErrorLogsDirectoryNotFoundException
  *
  * @author Targalis
- *
  */
 class ErrorLogsDirectoryNotFoundException extends \ErrorException
 {

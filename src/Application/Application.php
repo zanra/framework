@@ -36,7 +36,6 @@ use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
  * Zanra Application
  *
  * @author Targalis
- *
  */
 class Application
 {
@@ -61,7 +60,7 @@ class Application
     /**
      * @var string
      */
-    private $logsDir;
+    private $logDir;
 
     /**
      * @var string
@@ -161,29 +160,25 @@ class Application
     /**
      * @var Application
      */
-    private static $_instance = null;
+    private static $instance = null;
 
     /**
      * Application constructor.
      */
-    protected function __Construct()
+    protected function __construct()
     {
         $this->urlBag     = new UrlBag();
         $this->session    = new Session();
-        $this->fileLoader = FileLoader::getInstance();
+        $this->fileLoader = new FileLoader();
     }
 
     /**
      * Private clone method to prevent cloning of the instance of the
      * *Singleton* instance.
      */
-    private function __clone() {}
-
-    /**
-     * Private unserialize method to prevent unserializing of the *Singleton*
-     * instance.
-     */
-    private function __wakeup() {}
+    private function __clone()
+    {
+    }
 
     /**
      * Check if a php session has been started.
@@ -235,9 +230,10 @@ class Application
 
             $filterExecute = trim($filterExecute);
 
-            if (empty($filterExecute) || ! in_array($filterExecute ,array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
+            if (empty($filterExecute) || ! in_array($filterExecute, array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called', $this->filtersFile, self::FILTER_BEFORE, self::FILTER_AFTER));
+                    sprintf('Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called', $this->filtersFile, self::FILTER_BEFORE, self::FILTER_AFTER)
+                );
             }
 
             if ($filterExecute != $execute) {
@@ -248,7 +244,8 @@ class Application
 
             if (empty($part[0]) || empty($part[1])) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed. For a ClassFilter use Class.Method in %s', $this->filtersFile));
+                    sprintf('Filters declaration bad well formed. For a ClassFilter use Class.Method in %s', $this->filtersFile)
+                );
             }
 
             $class = $part[0];
@@ -259,13 +256,19 @@ class Application
 
             if (null === $filterClass) {
                 throw new FilterNotFoundException(
-                    sprintf('Class "%s" not found', $filterNamespaceClass));
+                    sprintf('Class "%s" not found', $filterNamespaceClass)
+                );
             }
 
             if (! method_exists($filterClass, $method)) {
                 throw new FilterMethodNotFoundException(
-                    sprintf('Unable to find Method "%s" for "%s" Class, defined in %s and called',
-                    $method, $filterNamespaceClass, $this->filtersFile));
+                    sprintf(
+                        'Unable to find Method "%s" for "%s" Class, defined in %s and called',
+                        $method,
+                        $filterNamespaceClass,
+                        $this->filtersFile
+                    )
+                );
             }
 
             call_user_func_array(array($filterClass, $method), array($this));
@@ -292,27 +295,30 @@ class Application
         // Import
         if (! empty($this->resources->{self::IMPORT_SECTION})) {
             $import = $this->resources->{self::IMPORT_SECTION};
+
             foreach ($import as $key => $path) {
                 $path = empty($path) ? null : $path;
 
                 if ($path != null && $this->isRelativePath($path)) {
-                    $path = $this->configRealPath . DIRECTORY_SEPARATOR . $path;    
+                    $path = $this->configRealPath . DIRECTORY_SEPARATOR . $path;
                 }
 
-                $this->resources->{self::IMPORT_SECTION}->$key  = $this->fileLoader->load($path);                
+                $this->resources->{self::IMPORT_SECTION}->$key  = $this->fileLoader->load($path);
             }
         }
 
         // Application
         if (! isset($this->resources->{self::APPLICATION_SECTION})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION));
+                sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION)
+            );
         }
 
         // Cache directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION));
+                sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $cacheDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY});
@@ -325,20 +331,22 @@ class Application
         // Logs directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION));
+                sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION)
+            );
         }
 
-        $logsDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY});
-        $this->logsDir = empty($logsDirKey) ? null : $logsDirKey;
+        $logDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY});
+        $this->logDir = empty($logDirKey) ? null : $logDirKey;
 
-        if ($this->logsDir != null && $this->isRelativePath($this->logsDir)) {
-            $this->logsDir = $this->configRealPath . DIRECTORY_SEPARATOR . $logsDirKey;
+        if ($this->logDir != null && $this->isRelativePath($this->logDir)) {
+            $this->logDir = $this->configRealPath . DIRECTORY_SEPARATOR . $logDirKey;
         }
 
         // Transation directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION));
+                sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $translationDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY});
@@ -351,7 +359,8 @@ class Application
         // Routes file
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION));
+                sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $routeFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY});
@@ -367,7 +376,8 @@ class Application
         // Filters file
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION));
+                sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $filterFileKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY});
@@ -382,7 +392,8 @@ class Application
         // Template directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION));
+                sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $templateDirKey = trim($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY});
@@ -395,7 +406,8 @@ class Application
         // Default Locale
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION));
+                sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION)
+            );
         }
 
         $this->defaultLocale = trim($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY});
@@ -415,11 +427,12 @@ class Application
             return;
         }
 
-        ErrorHandler::init($errorHandlerWrapper, $this->logsDir);
+        ErrorHandler::init($errorHandlerWrapper, $this->logDir);
 
         if (false === $this->configLoaded) {
             throw new LoadConfigFileException(
-                sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__));
+                sprintf('Please call "%s" before call "%s"', __CLASS__ . "::loadConfig", __METHOD__)
+            );
         }
 
         $this->router = new Router($this->getRoutes());
@@ -427,12 +440,17 @@ class Application
         // match current request
         if (false === $matches = $this->router->matchRequest($this->urlBag)) {
             throw new RouteNotFoundException(
-                sprintf('No route found for "%s"', $this->getUrl()));
+                sprintf('No route found for "%s"', $this->getUrl())
+            );
         }
 
         if (empty($matches["controller"]) || empty($matches["action"])) {
             throw new RouteBadFormatException(
-                sprintf('Routing declaration bad well formed. For a ClassController use Class:Method in %s', $this->routesFile));
+                sprintf(
+                    'Routing declaration bad well formed. For a ClassController use Class:Method in %s',
+                    $this->routesFile
+                )
+            );
         }
 
         $this->route      = $matches["route"];
@@ -448,6 +466,46 @@ class Application
 
         // after filters
         $this->loadFilters(self::FILTER_AFTER);
+    }
+
+    /**
+     * Get cache directory
+     *
+     * @return string
+     */
+    public function getCacheDir()
+    {
+        return $this->cacheDir;
+    }
+
+    /**
+     * Get log directory
+     *
+     * @return string
+     */
+    public function getLogDir()
+    {
+        return $this->logDir;
+    }
+
+    /**
+     * Get template directory
+     *
+     * @return string
+     */
+    public function getTemplateDir()
+    {
+        return $this->templateDir;
+    }
+
+    /**
+     * Get translation directory
+     *
+     * @return string
+     */
+    public function getTranslationDir()
+    {
+        return $this->translationDir;
     }
 
     /**
@@ -548,7 +606,7 @@ class Application
     public function getTemplate()
     {
         if (null === $this->template) {
-            $this->template = new Template($this->templateDir, $this->cacheDir);
+            $this->template = new Template($this);
         }
 
         return $this->template;
@@ -608,7 +666,7 @@ class Application
      * Generate url
      *
      * @param string $route
-     * @param array $params
+     * @param array  $params
      *
      * @return null|string
      */
@@ -620,7 +678,7 @@ class Application
     /**
      * Generate path
      *
-     * @param string $route
+     * @param string   $route
      * @param string[] $params
      *
      * @return null|string
@@ -645,8 +703,8 @@ class Application
     /**
      * Render a controller
      *
-     * @param $controller
-     * @param array $params
+     * @param string $controller
+     * @param array  $params
      *
      * @return mixed
      *
@@ -662,33 +720,44 @@ class Application
         $controller = "\\Controller\\{$parts[0]}Controller";
         $action = "{$parts[1]}Action";
 
-        // Check Controller\Zanra\Framework\Controller
-        $controllerClass = class_exists($controller) ? new $controller() : null;
-        if (null === $controllerClass) {
+        // Check Controller
+        if (! class_exists($controller)) {
             throw new ControllerNotFoundException(
-                sprintf('"%s" not found', $controller));
+                sprintf('"%s" not found', $controller)
+            );
         }
+
+        $controllerClass = new $controller();
 
         // Check Action
         if (! method_exists($controllerClass, "{$action}")) {
             throw new ControllerActionNotFoundException(
-                sprintf('unable to find "%s" in "%s" scope', $action, $controller));
+                sprintf('unable to find "%s" in "%s" scope', $action, $controller)
+            );
         }
 
         // Method Args
         $methodArgs = array();
 
         $reflexion = new \ReflectionMethod($controller, $action);
+
         foreach ($reflexion->getParameters() as $p) {
+            if (! $p->isOptional() && ! isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
+                throw new ControllerActionMissingDefaultParameterException(
+                    sprintf(
+                        "missing '%s:%s' argument '%s' value (because there is no default value or
+                        because there is a non optional argument after this one)",
+                        $controller,
+                        $action,
+                        $p->getName()
+                    )
+                );
+            }
+
             $methodArgs[$p->getName()] = null;
+
             if ($p->isOptional()) {
                 $methodArgs[$p->getName()] = $p->getDefaultValue();
-            } else {
-                if (! isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
-                    throw new ControllerActionMissingDefaultParameterException(
-                        sprintf("missing '%s:%s' argument '%s' value (because there is no default value or because there is a non optional argument after this one)",
-                        $controller, $action, $p->getName()));
-                }
             }
         }
 
@@ -696,9 +765,11 @@ class Application
 
         // Call Action
         $callAction = call_user_func_array(array($controllerClass, $action), $params);
+
         if (! isset($callAction)) {
             throw new ControllerBadReturnResponseException(
-                sprintf('"%s:%s" must return a response. null given', $controller, $action));
+                sprintf('"%s:%s" must return a response. null given', $controller, $action)
+            );
         }
 
         return $callAction;
@@ -707,8 +778,8 @@ class Application
     /**
      * Render a template
      *
-     * @param $filename
-     * @param array $vars
+     * @param string $filename
+     * @param array  $vars
      *
      * @return string
      */
@@ -720,8 +791,8 @@ class Application
     /**
      * Translator
      *
-     * @param $message
-     * @param mixed $params|$locale
+     * @param string $message
+     * @param mixed  $params|$locale
      *
      * @return string
      */
@@ -749,8 +820,8 @@ class Application
         $secondArg = isset($args[1]) ? $args[1] : null;
 
         if ($firstArg !== null) {
-
             $gettype = gettype($firstArg);
+
             if ($gettype != 'array' && ! empty($secondArg)) {
                 trigger_error(__METHOD__ ." expects parameter 2 to be array, {$gettype} given", E_USER_WARNING);
             }
@@ -763,8 +834,8 @@ class Application
         }
 
         if ($locale === null && $secondArg !== null) {
-
             $gettype = gettype($secondArg);
+
             if ($gettype != 'string') {
                 trigger_error(__METHOD__ ." expects parameter 1 to be string, {$gettype} given", E_USER_WARNING);
             }
@@ -791,10 +862,10 @@ class Application
      */
     public static function getInstance()
     {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new Application();
+        if (is_null(self::$instance)) {
+            self::$instance = new Application();
         }
 
-        return self::$_instance;
+        return self::$instance;
     }
 }

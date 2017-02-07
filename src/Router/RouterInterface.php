@@ -12,11 +12,11 @@
 namespace Zanra\Framework\Router;
 
 use Zanra\Framework\UrlBag\UrlBagInterface;
+
 /**
  * Zanra RouterInterface
  *
  * @author Targalis
- *
  */
 interface RouterInterface
 {

@@ -15,7 +15,6 @@ namespace Filter;
  * Zanra Filter
  *
  * @author Targalis
- *
  */
 class DefaultFilter
 {

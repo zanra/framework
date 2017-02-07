@@ -18,7 +18,6 @@ use Zanra\Framework\Session\Flash\Flash;
  * Zanra session
  *
  * @author Targalis
- *
  */
 class Session implements SessionInterface
 {
@@ -45,7 +44,7 @@ class Session implements SessionInterface
     /**
      * Constructor.
      */
-    public function __Construct()
+    public function __construct()
     {
         $this->flash = new Flash();
         $this->flashname = $this->flash->getName();
@@ -70,7 +69,8 @@ class Session implements SessionInterface
 
         if (! session_start()) {
             throw new SessionStartException(
-                sprintf('failed to start the session'));
+                sprintf('failed to start the session')
+            );
         }
 
         $_SESSION[$this->flashname] = isset($_SESSION[$this->flashname]) ? $_SESSION[$this->flashname] : $this->flash;
@@ -132,6 +132,7 @@ class Session implements SessionInterface
         }
 
         $val = null;
+
         if (isset($_SESSION[$key])) {
             $val = $_SESSION[$key];
         }
@@ -159,18 +160,22 @@ class Session implements SessionInterface
 
         session_regenerate_id();
     }
-    
+
     public function destroy()
     {
         if (empty($_SESSION)) {
-           return;
+            return;
         }
 
         $_SESSION = array();
 
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000,
+
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
                 $params["path"],
                 $params["domain"],
                 $params["secure"],

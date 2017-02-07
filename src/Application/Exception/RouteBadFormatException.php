@@ -15,7 +15,6 @@ namespace Zanra\Framework\Application\Exception;
  * Zanra RouteBadFormatException
  *
  * @author Targalis
- *
  */
 class RouteBadFormatException extends \ErrorException
 {

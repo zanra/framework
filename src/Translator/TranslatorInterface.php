@@ -15,7 +15,6 @@ namespace Zanra\Framework\Translator;
  * Zanra TranslatorInterface
  *
  * @author Targalis
- *
  */
 interface TranslatorInterface
 {
