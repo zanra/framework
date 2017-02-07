@@ -16,7 +16,7 @@ namespace Zanra\Framework\Application\Exception;
  *
  * @author Targalis
  */
-class RouteBadFormatException extends \ErrorException
+class RouteBadFormatException extends \Exception
 {
     public function __construct($message = null)
     {

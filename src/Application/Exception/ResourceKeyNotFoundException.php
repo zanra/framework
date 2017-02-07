@@ -16,7 +16,7 @@ namespace Zanra\Framework\Application\Exception;
  *
  * @author Targalis
  */
-class ResourceKeyNotFoundException extends \ErrorException
+class ResourceKeyNotFoundException extends \Exception
 {
     public function __construct($message = null)
     {

@@ -16,7 +16,7 @@ namespace Zanra\Framework\Application\Exception;
  *
  * @author Targalis
  */
-class FilterBadFormatException extends \ErrorException
+class FilterBadFormatException extends \Exception
 {
     public function __construct($message = null)
     {

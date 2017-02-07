@@ -16,7 +16,7 @@ namespace Zanra\Framework\Session\Exception;
  *
  * @author Targalis
  */
-class SessionStartException extends \ErrorException
+class SessionStartException extends \Exception
 {
     public function __construct($message = null)
     {

@@ -16,7 +16,7 @@ namespace Zanra\Framework\FileLoader\Exception;
  *
  * @author Targalis
  */
-class IllegalArgumentException extends \ErrorException
+class IllegalArgumentException extends \Exception
 {
     public function __construct($message = null)
     {

@@ -16,7 +16,7 @@ namespace Zanra\Framework\FileLoader\Exception;
  *
  * @author Targalis
  */
-class WrongFileExtensionException extends \ErrorException
+class WrongFileExtensionException extends \Exception
 {
     public function __construct($message = null)
     {

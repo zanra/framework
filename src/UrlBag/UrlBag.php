@@ -125,17 +125,17 @@ class UrlBag implements UrlBagInterface
         $serverForwadedSSL = '';
 
         // HTTPS
-        if (! empty($this->filterServer('HTTPS'))) {
+        if ($this->filterServer('HTTPS') !== null) {
             $serverHTTPS = strtolower($this->filterServer('HTTPS'));
         }
 
         // HTTP_X_FORWARDED_PROTO
-        if (! empty($this->filterServer('HTTP_X_FORWARDED_PROTO'))) {
+        if ($this->filterServer('HTTP_X_FORWARDED_PROTO') !== null) {
             $serverForwadedProto = strtolower($this->filterServer('HTTP_X_FORWARDED_PROTO'));
         }
 
         // HTTP_X_FORWARDED_SSL
-        if (! empty($this->filterServer('HTTP_X_FORWARDED_SSL'))) {
+        if ($this->filterServer('HTTP_X_FORWARDED_SSL') !== null) {
             $serverForwadedSSL = strtolower($this->filterServer('HTTP_X_FORWARDED_SSL'));
         }
 

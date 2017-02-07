@@ -16,7 +16,7 @@ namespace Zanra\Framework\Translator\Exception;
  *
  * @author Targalis
  */
-class TranslationEmptyLocaleException extends \ErrorException
+class TranslationEmptyLocaleException extends \Exception
 {
     public function __construct($message = null)
     {

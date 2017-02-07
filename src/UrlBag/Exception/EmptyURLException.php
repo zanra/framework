@@ -16,7 +16,7 @@ namespace Zanra\Framework\UrlBag\Exception;
  *
  * @author Targalis
  */
-class EmptyURLException extends \ErrorException
+class EmptyURLException extends \Exception
 {
     public function __construct($message = null)
     {

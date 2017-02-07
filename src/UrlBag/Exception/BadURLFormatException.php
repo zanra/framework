@@ -16,7 +16,7 @@ namespace Zanra\Framework\UrlBag\Exception;
  *
  * @author Targalis
  */
-class BadURLFormatException extends \ErrorException
+class BadURLFormatException extends \Exception
 {
     public function __construct($message = null)
     {

@@ -16,7 +16,7 @@ namespace Zanra\Framework\Translator\Exception;
  *
  * @author Targalis
  */
-class TranslationDirectoryNotFoundException extends \ErrorException
+class TranslationDirectoryNotFoundException extends \Exception
 {
     public function __construct($message = null)
     {

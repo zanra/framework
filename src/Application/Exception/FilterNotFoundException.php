@@ -16,7 +16,7 @@ namespace Zanra\Framework\Application\Exception;
  *
  * @author Targalis
  */
-class FilterNotFoundException extends \ErrorException
+class FilterNotFoundException extends \Exception
 {
     public function __construct($message = null)
     {

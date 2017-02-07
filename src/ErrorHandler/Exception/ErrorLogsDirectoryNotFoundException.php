@@ -16,7 +16,7 @@ namespace Zanra\Framework\ErrorHandler\Exception;
  *
  * @author Targalis
  */
-class ErrorLogsDirectoryNotFoundException extends \ErrorException
+class ErrorLogsDirectoryNotFoundException extends \Exception
 {
     public function __construct($message = null)
     {
