@@ -372,7 +372,6 @@ class Application
 
         $this->routes = $this->fileLoader->load($this->routesFile);
 
-
         // Filters file
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
             throw new ResourceKeyNotFoundException(
