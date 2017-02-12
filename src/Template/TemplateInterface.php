@@ -19,6 +19,11 @@ namespace Zanra\Framework\Template;
 interface TemplateInterface
 {
     /**
+     * Get engine
+     */
+    public function getEngine();
+
+    /**
      * Render a template view
      *
      * @param string $filename

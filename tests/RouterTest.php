@@ -26,7 +26,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-          $this->fileLoader = new FileLoader();
+        $this->fileLoader = new FileLoader();
     }
 
     public function testMatchRequest()

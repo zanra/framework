@@ -28,16 +28,16 @@ abstract class Controller
     /**
      * Controller constructor.
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
-        $this->app = Application::getInstance();
+        $this->app = $app;
     }
 
     /**
      * Helper function to forward in a new controller method.
      *
-     * @param $controller
-     * @param array      $params
+     * @param string $controller
+     * @param array  $params
      *
      * @return mixed|string
      */
@@ -49,8 +49,8 @@ abstract class Controller
     /**
      * Helper function to render a view.
      *
-     * @param $filename
-     * @param array    $vars
+     * @param string $filename
+     * @param array  $vars
      *
      * @return string
      */
@@ -62,8 +62,8 @@ abstract class Controller
     /**
      * Redirect to new route
      *
-     * @param $route
-     * @param array $params
+     * @param string $route
+     * @param array  $params
      */
     public function redirect($route, array $params = array())
     {

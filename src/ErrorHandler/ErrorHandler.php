@@ -130,15 +130,13 @@ class ErrorHandler
                     $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
                     error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
                 }
-
             } catch (\Exception $e) {
                 $exception = $e;
             }
 
             $code = $exception->getCode();
             $code = ($code === 0) ? 500 : $code;
-
-            //http_response_code($code);
+            
             self::setHeaderStatusCode($code);
             $wrapper->wrap($exception, $type);
 

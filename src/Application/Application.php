@@ -227,7 +227,6 @@ class Application
     private function loadFilters($execute)
     {
         foreach ($this->getFilters() as $filter => $filterExecute) {
-
             $filterExecute = trim($filterExecute);
 
             if (empty($filterExecute) || ! in_array($filterExecute, array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
@@ -726,7 +725,8 @@ class Application
             );
         }
 
-        $controllerClass = new $controller();
+        // Dependency Injection in Abstract Controller constructor
+        $controllerClass = new $controller($this);
 
         // Check Action
         if (! method_exists($controllerClass, "{$action}")) {
@@ -802,13 +802,11 @@ class Application
             $this->translator->setTranslationDir($this->translationDir);
         }
 
-        $args = func_get_args();
-
         $params = array();
         $locale = null;
+        $args = func_get_args();
 
         $message = array_shift($args);
-
         $argv = count($args);
 
         if ($argv > 2) {

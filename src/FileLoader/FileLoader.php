@@ -97,7 +97,6 @@ class FileLoader implements FileLoaderInterface
             }
 
             $parser = call_user_func_array(array($this, "{$extension}FileParser"), array($var));
-
         } elseif (is_array($var)) {
             $parser = $var;
         }
