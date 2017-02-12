@@ -61,12 +61,36 @@ class UrlBag implements UrlBagInterface
             $protocol = $this->isSecure() ? 'https' : 'http';
             $serverPort = $this->getServerPort();
             $serverName = $this->getServerName();
-            $requestUri = $this->filterServer('REQUEST_URI');
+            $requestUri = $this->getRequestURI();
 
             $this->url = $protocol . "://" . $serverName . $serverPort . $requestUri;
         }
 
         $this->initializeBag();
+    }
+
+    /**
+     * Server script name
+     *
+     * @return string
+     */
+    private function getServerScriptName()
+    {
+        $scriptName = filter_input(INPUT_SERVER, 'SCRIPT_NAME');
+
+        return $scriptName;
+    }
+
+    /**
+     * Server request URI
+     *
+     * @return string
+     */
+    private function getRequestURI()
+    {
+        $requestURI = filter_input(INPUT_SERVER, 'REQUEST_URI');
+
+        return $requestURI;
     }
 
     /**
@@ -76,7 +100,7 @@ class UrlBag implements UrlBagInterface
      */
     private function getServerPort()
     {
-        $serverPort = $this->filterServer('SERVER_PORT');
+        $serverPort = filter_input(INPUT_SERVER, 'SERVER_PORT');
 
         if ($serverPort == 80 || $serverPort == 443) {
             $serverPort = '';
@@ -92,25 +116,14 @@ class UrlBag implements UrlBagInterface
      */
     private function getServerName()
     {
-        $serverName = $this->filterServer('SERVER_NAME');
+        $serverName = filter_input(INPUT_SERVER, 'SERVER_NAME');
+        $httpXForwardedServer = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_SERVER');
 
-        if ($this->filterServer('HTTP_X_FORWARDED_SERVER') != null) {
-            $serverName = $this->filterServer('HTTP_X_FORWARDED_SERVER');
+        if ($httpXForwardedServer != null) {
+            $serverName = $httpXForwardedServer;
         }
 
         return $serverName;
-    }
-
-    /**
-     * Avoid directly access in $_SERVER
-     *
-     * @param string $name
-     *
-     * @return mixed
-     */
-    private function filterServer($name)
-    {
-        return filter_input(INPUT_SERVER, $name);
     }
 
     /**
@@ -120,23 +133,23 @@ class UrlBag implements UrlBagInterface
     {
         $isSecure = false;
 
-        $serverHTTPS = '';
-        $serverForwadedProto = '';
-        $serverForwadedSSL = '';
+        $serverHTTPS = filter_input(INPUT_SERVER, 'HTTPS');
+        $serverForwadedProto = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_PROTO');
+        $serverForwadedSSL = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_SSL');
 
         // HTTPS
-        if ($this->filterServer('HTTPS') !== null) {
-            $serverHTTPS = strtolower($this->filterServer('HTTPS'));
+        if ($serverHTTPS !== null) {
+            $serverHTTPS = strtolower($serverHTTPS);
         }
 
         // HTTP_X_FORWARDED_PROTO
-        if ($this->filterServer('HTTP_X_FORWARDED_PROTO') !== null) {
-            $serverForwadedProto = strtolower($this->filterServer('HTTP_X_FORWARDED_PROTO'));
+        if ($serverForwadedProto !== null) {
+            $serverForwadedProto = strtolower($serverForwadedProto);
         }
 
         // HTTP_X_FORWARDED_SSL
-        if ($this->filterServer('HTTP_X_FORWARDED_SSL') !== null) {
-            $serverForwadedSSL = strtolower($this->filterServer('HTTP_X_FORWARDED_SSL'));
+        if ($serverForwadedSSL !== null) {
+            $serverForwadedSSL = strtolower($serverForwadedSSL);
         }
 
         if ($serverHTTPS == 'on' || $serverForwadedProto == 'https' || $serverForwadedSSL == 'on') {
@@ -172,7 +185,7 @@ class UrlBag implements UrlBagInterface
         $rewrite = false;
 
         if (php_sapi_name() !== 'cli') {
-            $rewrite = ! preg_match("#{$this->filterServer('SCRIPT_NAME')}#", $this->getUrl());
+            $rewrite = ! preg_match("#{$this->getServerScriptName()}#", $this->getUrl());
         }
 
         return $rewrite;
@@ -247,7 +260,7 @@ class UrlBag implements UrlBagInterface
     private function initializeBag()
     {
         if (php_sapi_name() !== 'cli') {
-            $parsedPathInfo = $this->parsePathInfo($this->filterServer('SCRIPT_NAME'));
+            $parsedPathInfo = $this->parsePathInfo($this->getServerScriptName());
             $parsedUrl = $this->parseUrl($this->getUrl());
 
             $this->assetPath = $parsedPathInfo['dirname'];

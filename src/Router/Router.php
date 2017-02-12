@@ -148,7 +148,7 @@ class Router implements RouterInterface
             $delimiter = preg_quote($delimiters[$i]);
 
             // if delimiter is not empty or is the latest
-            if (trim($delimiter) != '' || ($i == count($delimiters)-1)) {
+            if (trim($delimiter) != '' || ($i == count($delimiters) - 1)) {
                 $splits = preg_split("#{$delimiter}#", $uri, 2);
                 $value = $splits[0];
 
@@ -365,7 +365,7 @@ class Router implements RouterInterface
         $slugs = $this->getSlugs($routePattern);
 
         // check if $params key is defined in pattern
-        foreach ($params as $key => $val) {
+        foreach ($params as $key) {
             if (! in_array($key, array_keys($slugs))) {
                 throw new InvalidParameterException(
                     sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename)

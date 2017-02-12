@@ -67,7 +67,7 @@ abstract class Controller
      */
     public function redirect($route, array $params = array())
     {
-        \header('Location: ' .$this->app->path($route, $params));
+        \header('Location: ' . $this->app->path($route, $params));
         exit();
     }
 }

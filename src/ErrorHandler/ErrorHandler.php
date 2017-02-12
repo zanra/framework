@@ -128,7 +128,7 @@ class ErrorHandler
 
                     $logsFile = date("Y-m-d"). '.log';
                     $errorLog = sprintf("[%s] %s", date("Y-m-d h:i:s"), $exception);
-                    error_log($errorLog. "\n", 3, $logsDir. '/' .$logsFile);
+                    error_log($errorLog . '\n', 3, $logsDir . '/' . $logsFile);
                 }
             } catch (\Exception $e) {
                 $exception = $e;
@@ -136,7 +136,7 @@ class ErrorHandler
 
             $code = $exception->getCode();
             $code = ($code === 0) ? 500 : $code;
-            
+
             self::setHeaderStatusCode($code);
             $wrapper->wrap($exception, $type);
 
@@ -169,8 +169,10 @@ class ErrorHandler
         // Fatal error handler
         $fatalHandler = function () use ($toErrorException) {
             $error = error_get_last();
-            if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
-                $toErrorException(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'], $error['line']);
+            if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR,
+            E_RECOVERABLE_ERROR, E_CORE_WARNING, E_COMPILE_WARNING, E_PARSE))) {
+                $toErrorException(self::FATAL_ERROR_EXCEPTION, $error['type'], 0, $error['message'], $error['file'],
+                $error['line']);
             }
         };
 

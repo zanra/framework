@@ -39,18 +39,18 @@ use Zanra\Framework\ErrorHandler\ErrorHandlerWrapperInterface;
  */
 class Application
 {
-    const IMPORT_SECTION = "import";
+    const IMPORT_SECTION      = "import";
     const APPLICATION_SECTION = "application";
-    const LOCALE_KEY = "default.locale";
-    const ROUTING_KEY = "routing.file";
-    const FILTERS_KEY = "filters.file";
-    const TRANSLATION_KEY = "translation.dir";
-    const TEMPLATE_KEY = "template.dir";
-    const CACHE_KEY = "cache.dir";
-    const LOGS_KEY = "logs.dir";
-    const SESSION_LOCALE_KEY = "_locale";
-    const FILTER_BEFORE = "before";
-    const FILTER_AFTER = "after";
+    const LOCALE_KEY          = "default.locale";
+    const ROUTING_KEY         = "routing.file";
+    const FILTERS_KEY         = "filters.file";
+    const TRANSLATION_KEY     = "translation.dir";
+    const TEMPLATE_KEY        = "template.dir";
+    const CACHE_KEY           = "cache.dir";
+    const LOGS_KEY            = "logs.dir";
+    const SESSION_LOCALE_KEY  = "_locale";
+    const FILTER_BEFORE       = "before";
+    const FILTER_AFTER        = "after";
 
     /**
      * @var string
@@ -155,7 +155,7 @@ class Application
     /**
      * @var bool
      */
-    private $configLoaded  = false;
+    private $configLoaded = false;
 
     /**
      * @var Application
@@ -231,7 +231,12 @@ class Application
 
             if (empty($filterExecute) || ! in_array($filterExecute, array(self::FILTER_BEFORE, self::FILTER_AFTER))) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called', $this->filtersFile, self::FILTER_BEFORE, self::FILTER_AFTER)
+                    sprintf(
+                        'Filters declaration bad well formed in %s. Only value "%s" and "%s" allowed. Called',
+                        $this->filtersFile,
+                        self::FILTER_BEFORE,
+                        self::FILTER_AFTER
+                    )
                 );
             }
 
@@ -243,7 +248,7 @@ class Application
 
             if (empty($part[0]) || empty($part[1])) {
                 throw new FilterBadFormatException(
-                    sprintf('Filters declaration bad well formed. For a ClassFilter use Class.Method in %s', $this->filtersFile)
+                    sprintf('Filters declaration bad well formed. Must be Class.Method in %s', $this->filtersFile)
                 );
             }
 
@@ -309,14 +314,14 @@ class Application
         // Application
         if (! isset($this->resources->{self::APPLICATION_SECTION})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('section key "[%s]" not declared in resources', self::APPLICATION_SECTION)
+                sprintf('section key "[%s]" not defined in resources', self::APPLICATION_SECTION)
             );
         }
 
         // Cache directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::CACHE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION)
+                sprintf('key "%s" not defined in resources [%s] section', self::CACHE_KEY, self::APPLICATION_SECTION)
             );
         }
 
@@ -330,7 +335,7 @@ class Application
         // Logs directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOGS_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION)
+                sprintf('key "%s" not defined in resources [%s] section', self::LOGS_KEY, self::APPLICATION_SECTION)
             );
         }
 
@@ -344,7 +349,11 @@ class Application
         // Transation directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TRANSLATION_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('resource key "%s" not declared in resources [%s] section', self::TRANSLATION_KEY, self::APPLICATION_SECTION)
+                sprintf(
+                    'resource key "%s" not defined in resources [%s] section',
+                    self::TRANSLATION_KEY,
+                    self::APPLICATION_SECTION
+                )
             );
         }
 
@@ -358,7 +367,7 @@ class Application
         // Routes file
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::ROUTING_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION)
+                sprintf('key "%s" not defined in resources [%s] section', self::ROUTING_KEY, self::APPLICATION_SECTION)
             );
         }
 
@@ -374,7 +383,7 @@ class Application
         // Filters file
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::FILTERS_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION)
+                sprintf('key "%s" not defined in resources [%s] section', self::FILTERS_KEY, self::APPLICATION_SECTION)
             );
         }
 
@@ -390,7 +399,7 @@ class Application
         // Template directory
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::TEMPLATE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('key "%s" not declared in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION)
+                sprintf('key "%s" not defined in resources [%s] section', self::TEMPLATE_KEY, self::APPLICATION_SECTION)
             );
         }
 
@@ -404,7 +413,7 @@ class Application
         // Default Locale
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('resource key "%s" not declared in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION)
+                sprintf('resource key "%s" not defined in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION)
             );
         }
 
