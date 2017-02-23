@@ -12,21 +12,16 @@
 namespace Zanra\Framework\Template;
 
 /**
- * Zanra TemplateInterface
+ * Zanra EngineInterface
  *
  * @author Targalis
  */
-interface TemplateInterface
+interface EngineInterface
 {
     /**
-     * Get engine
+     * Get environment
      */
-    public function getEngine();
-
-    /**
-     * Set engine
-     */
-    public function setEngine();
+    public function getEnvironment();
 
     /**
      * Render a template view

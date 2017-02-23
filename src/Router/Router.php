@@ -365,7 +365,9 @@ class Router implements RouterInterface
         $slugs = $this->getSlugs($routePattern);
 
         // check if $params key is defined in pattern
-        foreach ($params as $key) {
+        $keys = array_keys($params);
+
+        foreach ($keys as $key) {
             if (! in_array($key, array_keys($slugs))) {
                 throw new InvalidParameterException(
                     sprintf('parameter "%s" doesn\'t exists in route "%s"', $key, $routename)

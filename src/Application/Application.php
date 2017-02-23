@@ -413,7 +413,11 @@ class Application
         // Default Locale
         if (! isset($this->resources->{self::APPLICATION_SECTION}->{self::LOCALE_KEY})) {
             throw new ResourceKeyNotFoundException(
-                sprintf('resource key "%s" not defined in resources [%s] section', self::LOCALE_KEY, self::APPLICATION_SECTION)
+                sprintf(
+                    'resource key "%s" not defined in resources [%s] section',
+                    self::LOCALE_KEY,
+                    self::APPLICATION_SECTION
+                )
             );
         }
 
@@ -596,16 +600,6 @@ class Application
     }
 
     /**
-     * Set template
-     *
-     * @param TemplateInterface $template
-     */
-    public function setTemplate(TemplateInterface $template)
-    {
-        $this->template = $template;
-    }
-
-    /**
      * Get template
      *
      * @return Template
@@ -613,7 +607,8 @@ class Application
     public function getTemplate()
     {
         if (null === $this->template) {
-            $this->template = new Template($this);
+            $templateEngine = new TwigEngine($this);
+            $this->template = new Template($templateEngine);
         }
 
         return $this->template;

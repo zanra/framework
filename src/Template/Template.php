@@ -11,9 +11,6 @@
 
 namespace Zanra\Framework\Template;
 
-use Zanra\Framework\Template\Exception\TemplateDirectoryNotFoundException;
-use Zanra\Framework\Application\Application;
-
 /**
  * Template engine
  *
@@ -22,47 +19,38 @@ use Zanra\Framework\Application\Application;
 class Template implements TemplateInterface
 {
     /**
-     * @var Twig_Environment
+     * @var EngineInterface
      */
     private $engine;
 
     /**
      * Constructor
      *
-     * @param string $templateDir
-     * @param bool   $cacheDir
-     *
-     * @throws TemplateDirectoryNotFoundException
+     * @param EngineInterface $engine
      */
-    public function __construct(Application $application)
+    public function __construct(EngineInterface $engine)
     {
-        $templateDir = $application->getTemplateDir();
-        $cacheDir = $application->getCacheDir();
-
-        if (realpath($templateDir) === false) {
-            throw new TemplateDirectoryNotFoundException(
-                sprintf('template directory not found in "%s"', $templateDir)
-            );
-        }
-
-        $loader = new \Twig_Loader_Filesystem($templateDir);
-        $this->engine = new \Twig_Environment($loader);
-
-        $this->engine->setCache($cacheDir);
-        $this->engine->enableAutoReload();
-        $this->engine->enableStrictVariables();
-
-        $this->engine->addGlobal('app', $application);
+        $this->engine = $engine;
     }
 
     /**
      * Get Engine
      *
-     * @return Twig_Environment
+     * @return EngineInterface
      */
     public function getEngine()
     {
         return $this->engine;
+    }
+
+    /**
+     * Set Engine
+     *
+     * @return EngineInterface
+     */
+    public function setEngine(EngineInterface $engine)
+    {
+        $this->engine = $engine;
     }
 
     /**
@@ -73,6 +61,6 @@ class Template implements TemplateInterface
      */
     public function render($filename, array $vars = array())
     {
-        return $this->getEngine()->render($filename, $vars);
+        return $this->engine->getEnvironment()->render($filename, $vars);
     }
 }
