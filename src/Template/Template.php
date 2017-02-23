@@ -46,7 +46,7 @@ class Template implements TemplateInterface
     /**
      * Set Engine
      *
-     * @return EngineInterface
+     * @param EngineInterface $engine
      */
     public function setEngine(EngineInterface $engine)
     {

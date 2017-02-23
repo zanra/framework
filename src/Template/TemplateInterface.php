@@ -11,6 +11,8 @@
 
 namespace Zanra\Framework\Template;
 
+use Zanra\Framework\Template\EngineInterface;
+
 /**
  * Zanra TemplateInterface
  *
@@ -20,13 +22,17 @@ interface TemplateInterface
 {
     /**
      * Get engine
+     *
+     * @return EngineInterface
      */
     public function getEngine();
 
     /**
      * Set engine
+     *
+     * @param EngineInterface $engine
      */
-    public function setEngine();
+    public function setEngine(EngineInterface $engine);
 
     /**
      * Render a template view

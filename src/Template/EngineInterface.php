@@ -20,6 +20,8 @@ interface EngineInterface
 {
     /**
      * Get environment
+     *
+     * @return environment
      */
     public function getEnvironment();
 
