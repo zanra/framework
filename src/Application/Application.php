@@ -16,7 +16,7 @@ use Zanra\Framework\Router\Router;
 use Zanra\Framework\Router\Exception\RouteNotFoundException;
 use Zanra\Framework\Session\Session;
 use Zanra\Framework\Template\Template;
-use Zanra\Framework\Template\TemplateInterface;
+use Zanra\Framework\Template\TwigEngine;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
 use Zanra\Framework\Application\Exception\LoadConfigFileException;
