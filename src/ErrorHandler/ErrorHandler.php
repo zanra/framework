@@ -87,7 +87,7 @@ class ErrorHandler
 
         $statusMessage = $messages[$code];
 
-        $serverProto = filter_input(INPUT_SERVER, "SERVER_PROTOCOL");
+        $serverProto = isset($_SERVER["SERVER_PROTOCOL"]) ? $_SERVER["SERVER_PROTOCOL"] : null;
 
         if ($serverProto === null) {
             $serverProto = "HTTP/1.0";

@@ -68,7 +68,7 @@ class UrlBag implements UrlBagInterface
 
         $this->initializeBag();
     }
-
+	
     /**
      * Server script name
      *
@@ -76,7 +76,7 @@ class UrlBag implements UrlBagInterface
      */
     private function getServerScriptName()
     {
-        $scriptName = filter_input(INPUT_SERVER, 'SCRIPT_NAME');
+        $scriptName = isset($_SERVER["SCRIPT_NAME"]) ? $_SERVER["SCRIPT_NAME"] : null;
 
         return $scriptName;
     }
@@ -88,7 +88,7 @@ class UrlBag implements UrlBagInterface
      */
     private function getRequestURI()
     {
-        $requestURI = filter_input(INPUT_SERVER, 'REQUEST_URI');
+        $requestURI = isset($_SERVER["REQUEST_URI"]) ? $_SERVER["REQUEST_URI"] : null;
 
         return $requestURI;
     }
@@ -100,7 +100,7 @@ class UrlBag implements UrlBagInterface
      */
     private function getServerPort()
     {
-        $serverPort = filter_input(INPUT_SERVER, 'SERVER_PORT');
+        $serverPort = isset($_SERVER["SERVER_PORT"]) ? $_SERVER["SERVER_PORT"] : null;
 
         if ($serverPort == 80 || $serverPort == 443) {
             $serverPort = '';
@@ -116,8 +116,8 @@ class UrlBag implements UrlBagInterface
      */
     private function getServerName()
     {
-        $serverName = filter_input(INPUT_SERVER, 'SERVER_NAME');
-        $httpXForwardedServer = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_SERVER');
+        $serverName = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : null;
+        $httpXForwardedServer = isset($_SERVER["HTTP_X_FORWARDED_SERVER"]) ? $_SERVER["HTTP_X_FORWARDED_SERVER"] : null;
 
         if ($httpXForwardedServer != null) {
             $serverName = $httpXForwardedServer;
@@ -133,9 +133,9 @@ class UrlBag implements UrlBagInterface
     {
         $isSecure = false;
 
-        $serverHTTPS = filter_input(INPUT_SERVER, 'HTTPS');
-        $serverForwadedProto = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_PROTO');
-        $serverForwadedSSL = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_SSL');
+        $serverHTTPS = isset($_SERVER["HTTPS"]) ? $_SERVER["HTTPS"] : null;
+        $serverForwadedProto = isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) ? $_SERVER["HTTP_X_FORWARDED_PROTO"] : null;
+        $serverForwadedSSL = isset($_SERVER["HTTP_X_FORWARDED_SSL"]) ? $_SERVER["HTTP_X_FORWARDED_SSL"] : null;
 
         // HTTPS
         if ($serverHTTPS !== null) {
@@ -227,7 +227,7 @@ class UrlBag implements UrlBagInterface
         }
 
         if (! empty($parseUrl['query'])) {
-            $parser['query'] = $parseUrl['query'];
+            $parser['query'] = "?{$parseUrl['query']}";
         }
 
         if (! empty($parseUrl['path'])) {
