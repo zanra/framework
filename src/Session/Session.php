@@ -140,6 +140,17 @@ class Session implements SessionInterface
         return $val;
     }
 
+	public function remove($key)
+    {
+        if (! $this->started) {
+            $this->start();
+        }
+
+		if (isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
+        }
+    }
+	
     public function close()
     {
         if (! $this->started) {
