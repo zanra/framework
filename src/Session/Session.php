@@ -140,7 +140,7 @@ class Session implements SessionInterface
         return $val;
     }
 
-/**
+    /**
      * @param string $key
      */
     public function remove($key)
