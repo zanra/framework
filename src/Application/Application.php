@@ -19,6 +19,7 @@ use Zanra\Framework\Template\Template;
 use Zanra\Framework\Template\TwigEngine;
 use Zanra\Framework\FileLoader\FileLoader;
 use Zanra\Framework\Translator\Translator;
+use Zanra\Framework\Application\Registry\Registry;
 use Zanra\Framework\Application\Exception\LoadConfigFileException;
 use Zanra\Framework\Application\Exception\FilterNotFoundException;
 use Zanra\Framework\Application\Exception\FilterMethodNotFoundException;
@@ -151,6 +152,11 @@ class Application
      * @var Template
      */
     private $template;
+
+    /**
+     * @var Registry
+     */
+    private $registry;
 
     /**
      * @var bool
@@ -587,6 +593,20 @@ class Application
     public function getFilters()
     {
         return $this->filters;
+    }
+
+    /**
+     * Get registry
+     *
+     * @return Registry
+     */
+    public function getRegistry()
+    {
+        if (null === $this->registry) {
+            $this->registry = new Registry();
+        }
+
+        return $this->registry;
     }
 
     /**
