@@ -9,14 +9,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Zanra\Framework\Application\Exception;
+namespace Zanra\Framework\Router\Exception;
 
 /**
  * Zanra RouteBadFormatException
  *
  * @author Targalis
+ *
  */
-class RouteBadFormatException extends \Exception
+class RouteBadFormatException extends \ErrorException
 {
     public function __construct($message = null)
     {

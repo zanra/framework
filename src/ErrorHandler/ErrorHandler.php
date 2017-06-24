@@ -136,8 +136,8 @@ class ErrorHandler
         if ($phpSapiName == "cgi" || $phpSapiName == "fpm") {
             $serverProto = "Status: ";
         }
-
-        header("{$serverProto} {$code} {$statusMessage}");
+		
+        @header("{$serverProto} {$code} {$statusMessage}");
 
         return $code;
     }

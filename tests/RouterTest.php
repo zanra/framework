@@ -38,15 +38,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $router->matchRequest($urlBag));
     }
 
-    public function testMatchRequestFalse()
-    {
-        $urlBag = new UrlBag();
-        $routes = $this->fileLoader->load(__DIR__ . "/fixtures/no_pattern.ini");
-        $router = new Router($routes);
-
-        $this->assertFalse($router->matchRequest($urlBag));
-    }
-
     /**
      * @expectedException Zanra\Framework\Router\Exception\RouteNotFoundException
      */

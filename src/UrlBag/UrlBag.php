@@ -68,7 +68,7 @@ class UrlBag implements UrlBagInterface
 
         $this->initializeBag();
     }
-	
+
     /**
      * Server script name
      *

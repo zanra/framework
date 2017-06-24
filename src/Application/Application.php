@@ -13,7 +13,6 @@ namespace Zanra\Framework\Application;
 
 use Zanra\Framework\UrlBag\UrlBag;
 use Zanra\Framework\Router\Router;
-use Zanra\Framework\Router\Exception\RouteNotFoundException;
 use Zanra\Framework\Session\Session;
 use Zanra\Framework\Template\Template;
 use Zanra\Framework\Template\TwigEngine;
@@ -24,7 +23,6 @@ use Zanra\Framework\Application\Exception\LoadConfigFileException;
 use Zanra\Framework\Application\Exception\FilterNotFoundException;
 use Zanra\Framework\Application\Exception\FilterMethodNotFoundException;
 use Zanra\Framework\Application\Exception\FilterBadFormatException;
-use Zanra\Framework\Application\Exception\RouteBadFormatException;
 use Zanra\Framework\Application\Exception\ResourceKeyNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerNotFoundException;
 use Zanra\Framework\Application\Exception\ControllerActionNotFoundException;
@@ -436,7 +434,6 @@ class Application
      * @param ErrorHandlerWrapperInterface $errorHandlerWrapper
      *
      * @throws LoadConfigFileException
-     * @throws RouteNotFoundException
      */
     public function mvcHandle(ErrorHandlerWrapperInterface $errorHandlerWrapper)
     {
@@ -455,20 +452,7 @@ class Application
         $this->router = new Router($this->getRoutes());
 
         // match current request
-        if (false === $matches = $this->router->matchRequest($this->urlBag)) {
-            throw new RouteNotFoundException(
-                sprintf('No route found for "%s"', $this->getUrl())
-            );
-        }
-
-        if (empty($matches["controller"]) || empty($matches["action"])) {
-            throw new RouteBadFormatException(
-                sprintf(
-                    'Routing declaration bad well formed. For a ClassController use Class:Method in %s',
-                    $this->routesFile
-                )
-            );
-        }
+        $matches = $this->router->matchRequest($this->urlBag);
 
         $this->route      = $matches["route"];
         $this->controller = $matches["controller"];
