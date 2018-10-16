@@ -737,7 +737,7 @@ class Application
         $controllerClass = new $controller($this);
 
         // Check Action
-        if (! method_exists($controllerClass, "{$action}")) {
+        if (! method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__class") ) {
             throw new ControllerActionNotFoundException(
                 sprintf('unable to find "%s" in "%s" scope', $action, $controller)
             );
@@ -746,29 +746,32 @@ class Application
         // Method Args
         $methodArgs = array();
 
-        $reflexion = new \ReflectionMethod($controller, $action);
+        if ( method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__class") ) {
+		
+		$reflexion = new \ReflectionMethod($controller, $action);
 
-        foreach ($reflexion->getParameters() as $p) {
-            if (! $p->isOptional() && ! isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
-                throw new ControllerActionMissingDefaultParameterException(
-                    sprintf(
-                        "missing '%s:%s' argument '%s' value (because there is no default value or
-                        because there is a non optional argument after this one)",
-                        $controller,
-                        $action,
-                        $p->getName()
-                    )
-                );
-            }
+        	foreach ($reflexion->getParameters() as $p) {
+        	    if (! $p->isOptional() && ! isset($params[$p->getName()]) && $params[$p->getName()] !== null) {
+                	throw new ControllerActionMissingDefaultParameterException(
+	                    sprintf(
+        	                "missing '%s:%s' argument '%s' value (because there is no default value or
+	                        because there is a non optional argument after this one)",
+	                        $controller,
+	                        $action,
+	                        $p->getName()
+	                    )
+	                );
+	            }
 
-            $methodArgs[$p->getName()] = null;
+	            $methodArgs[$p->getName()] = null;
 
-            if ($p->isOptional()) {
-                $methodArgs[$p->getName()] = $p->getDefaultValue();
-            }
-        }
+	            if ($p->isOptional()) {
+	                $methodArgs[$p->getName()] = $p->getDefaultValue();
+	            }
+	        }
 
-        $params = array_merge($methodArgs, $params);
+		$params = array_merge($methodArgs, $params);
+	}
 
         // Call Action
         $callAction = call_user_func_array(array($controllerClass, $action), $params);
