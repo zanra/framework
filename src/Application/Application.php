@@ -737,7 +737,7 @@ class Application
         $controllerClass = new $controller($this);
 
         // Check Action
-        if (! method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__class") ) {
+        if (! method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__call") ) {
             throw new ControllerActionNotFoundException(
                 sprintf('unable to find "%s" in "%s" scope', $action, $controller)
             );
@@ -746,7 +746,7 @@ class Application
         // Method Args
         $methodArgs = array();
 
-        if ( method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__class") ) {
+        if ( method_exists($controllerClass, "{$action}") && !method_exists($controllerClass,"__call") ) {
 		
 		$reflexion = new \ReflectionMethod($controller, $action);
 
